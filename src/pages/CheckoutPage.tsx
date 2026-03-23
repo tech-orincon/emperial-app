@@ -103,7 +103,7 @@ export function CheckoutPage() {
               type: 'spring',
               damping: 20
             }}>
-
+            
             <GlassCard className="max-w-md w-full p-8 text-center">
               <motion.div
                 initial={{
@@ -118,7 +118,7 @@ export function CheckoutPage() {
                   delay: 0.2
                 }}
                 className="w-20 h-20 rounded-full bg-green-500/20 flex items-center justify-center mx-auto mb-6">
-
+                
                 <motion.div
                   initial={{
                     scale: 0
@@ -131,7 +131,7 @@ export function CheckoutPage() {
                     damping: 10,
                     delay: 0.4
                   }}>
-
+                  
                   <CheckCircle2 className="w-10 h-10 text-green-500" />
                 </motion.div>
               </motion.div>
@@ -148,7 +148,7 @@ export function CheckoutPage() {
                 transition={{
                   delay: 0.3
                 }}>
-
+                
                 <h1 className="text-2xl font-bold text-white mb-2">
                   Order Confirmed!
                 </h1>
@@ -168,7 +168,7 @@ export function CheckoutPage() {
                 <Button
                   className="w-full group"
                   onClick={() => navigate(`/account/orders/${orderId}`)}>
-
+                  
                   View My Orders
                   <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
@@ -176,7 +176,7 @@ export function CheckoutPage() {
                   variant="ghost"
                   className="w-full"
                   onClick={() => navigate('/catalog')}>
-
+                  
                   Return to Catalog
                 </Button>
               </div>
@@ -193,7 +193,7 @@ export function CheckoutPage() {
                   delay: 0.5
                 }}
                 className="mt-6 pt-6 border-t border-white/10">
-
+                
                 <div className="flex items-center justify-center gap-2 text-sm text-slate-500">
                   <Clock className="w-4 h-4" />
                   <span>Redirecting to orders in {countdown}s</span>
@@ -211,7 +211,7 @@ export function CheckoutPage() {
                       duration: 10,
                       ease: 'linear'
                     }} />
-
+                  
                 </div>
               </motion.div>
             </GlassCard>
@@ -241,7 +241,7 @@ export function CheckoutPage() {
               type: 'spring',
               damping: 20
             }}>
-
+            
             <GlassCard className="max-w-md w-full p-8 text-center border-red-500/30">
               <motion.div
                 initial={{
@@ -255,7 +255,7 @@ export function CheckoutPage() {
                   damping: 15
                 }}
                 className="w-20 h-20 rounded-full bg-red-500/20 flex items-center justify-center mx-auto mb-6">
-
+                
                 <XCircle className="w-10 h-10 text-red-500" />
               </motion.div>
 
@@ -291,7 +291,7 @@ export function CheckoutPage() {
                   variant="ghost"
                   className="w-full"
                   onClick={() => navigate('/catalog')}>
-
+                  
                   Cancel Order
                 </Button>
               </div>
@@ -324,7 +324,7 @@ export function CheckoutPage() {
         opacity: 0
       }}
       className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center">
-
+      
           <motion.div
         initial={{
           scale: 0.9,
@@ -338,7 +338,7 @@ export function CheckoutPage() {
           scale: 0.9,
           opacity: 0
         }}>
-
+        
             <GlassCard className="p-8 text-center max-w-sm">
               <div className="relative w-16 h-16 mx-auto mb-6">
                 <motion.div
@@ -351,7 +351,7 @@ export function CheckoutPage() {
                 ease: 'linear'
               }}
               className="absolute inset-0">
-
+              
                   <Loader2 className="w-16 h-16 text-emperial-500" />
                 </motion.div>
               </div>
@@ -371,13 +371,13 @@ export function CheckoutPage() {
               <div className="flex items-center justify-center gap-2 mt-4">
                 <div
               className={`w-2 h-2 rounded-full ${paymentState === 'processing' ? 'bg-emperial-500 animate-pulse' : 'bg-green-500'}`} />
-
+            
                 <div
               className={`w-8 h-0.5 ${paymentState === 'pending' ? 'bg-emperial-500' : 'bg-slate-700'}`} />
-
+            
                 <div
               className={`w-2 h-2 rounded-full ${paymentState === 'pending' ? 'bg-emperial-500 animate-pulse' : 'bg-slate-700'}`} />
-
+            
                 <div className="w-8 h-0.5 bg-slate-700" />
                 <div className="w-2 h-2 rounded-full bg-slate-700" />
               </div>
@@ -435,7 +435,7 @@ export function CheckoutPage() {
                       }
                       className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emperial-500"
                       placeholder="e.g. Arthas" />
-
+                    
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-slate-400">
@@ -445,7 +445,7 @@ export function CheckoutPage() {
                       value={formData.realm}
                       onChange={(e) => updateFormData('realm', e.target.value)}
                       className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emperial-500">
-
+                      
                       <option value="">Select Realm</option>
                       <option value="illidan">Illidan (US)</option>
                       <option value="stormrage">Stormrage (US)</option>
@@ -461,7 +461,7 @@ export function CheckoutPage() {
                       value={formData.region}
                       onChange={(e) => updateFormData('region', e.target.value)}
                       className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emperial-500">
-
+                      
                       <option>North America (US)</option>
                       <option>Europe (EU)</option>
                       <option>Asia (KR/TW)</option>
@@ -482,7 +482,7 @@ export function CheckoutPage() {
                           updateFormData('faction', e.target.value)
                           }
                           className="text-emperial-500 focus:ring-emperial-500 bg-slate-800" />
-
+                        
                         <span className="text-slate-300">Horde</span>
                       </label>
                       <label className="flex items-center gap-2 cursor-pointer">
@@ -495,7 +495,7 @@ export function CheckoutPage() {
                           updateFormData('faction', e.target.value)
                           }
                           className="text-emperial-500 focus:ring-emperial-500 bg-slate-800" />
-
+                        
                         <span className="text-slate-300">Alliance</span>
                       </label>
                     </div>
@@ -511,7 +511,7 @@ export function CheckoutPage() {
                     onChange={(e) => updateFormData('notes', e.target.value)}
                     className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emperial-500 h-24"
                     placeholder="When are you available? Any specific requests?" />
-
+                  
                 </div>
               </GlassCard>
 
@@ -550,7 +550,7 @@ export function CheckoutPage() {
                         }
                         className="w-full bg-slate-800 border border-white/10 rounded-lg pl-12 pr-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-emperial-500"
                         placeholder="Card number" />
-
+                      
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
@@ -560,14 +560,14 @@ export function CheckoutPage() {
                       onChange={(e) => updateFormData('expiry', e.target.value)}
                       className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-emperial-500"
                       placeholder="MM / YY" />
-
+                    
                     <input
                       type="text"
                       value={formData.cvc}
                       onChange={(e) => updateFormData('cvc', e.target.value)}
                       className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-emperial-500"
                       placeholder="CVC" />
-
+                    
                   </div>
                 </div>
               </GlassCard>
@@ -585,7 +585,7 @@ export function CheckoutPage() {
                     src="https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&q=80&w=200"
                     alt="Service"
                     className="w-16 h-16 rounded-lg object-cover" />
-
+                  
                   <div>
                     <h4 className="font-bold text-white text-sm">
                       Mythic+ 20 Timed Run
@@ -618,7 +618,7 @@ export function CheckoutPage() {
                   size="lg"
                   onClick={simulatePayment}
                   disabled={paymentState !== 'idle'}>
-
+                  
                   {paymentState === 'idle' ? 'Pay Now' : 'Processing...'}
                 </Button>
 

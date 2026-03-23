@@ -87,7 +87,7 @@ export function CatalogPage() {
         transition={{
           delay: i * 0.1
         }}>
-
+        
             {selectedCategory ?
         <SkeletonServiceCard /> :
 
@@ -126,12 +126,12 @@ export function CatalogPage() {
             }
             onReset={handleReset}
             onClearCategory={() => setSelectedCategory(null)} />
-
+          
 
           <GameSelector
             selectedGame={selectedGame}
             onSelectGame={setSelectedGame} />
-
+          
 
           <AnimatePresence mode="wait">
             {loadingState === 'loading' &&
@@ -146,7 +146,7 @@ export function CatalogPage() {
               exit={{
                 opacity: 0
               }}>
-
+              
                 <LoadingSkeleton />
               </motion.div>
             }
@@ -166,13 +166,13 @@ export function CatalogPage() {
                 opacity: 0
               }}
               className="py-16">
-
+              
                 <ErrorState
                 title="Unable to load services"
                 description="We couldn't fetch the available services. This might be a temporary issue."
                 onRetry={handleRetry}
                 onSupport={() => toast.info('Opening support chat...')} />
-
+              
               </motion.div>
             }
 
@@ -190,7 +190,7 @@ export function CatalogPage() {
               exit={{
                 opacity: 0
               }}>
-
+              
                 <EmptyState
                 variant="search"
                 title="No quests found in this realm"
@@ -206,7 +206,7 @@ export function CatalogPage() {
                     setShowEmptyDemo(false);
                   }
                 }} />
-
+              
               </motion.div>
             }
 
@@ -230,7 +230,7 @@ export function CatalogPage() {
               transition={{
                 duration: 0.3
               }}>
-
+              
                   <CategoryGrid onSelectCategory={setSelectedCategory} />
                 </motion.div>
             }
@@ -255,7 +255,7 @@ export function CatalogPage() {
               transition={{
                 duration: 0.3
               }}>
-
+              
                   <ServiceGrid category={selectedCategory} />
                 </motion.div>
             }

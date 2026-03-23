@@ -235,7 +235,7 @@ export function ServiceDetailPage() {
           variant="ghost"
           className="w-full"
           onClick={() => navigate('/')}>
-
+          
             Return to Home
           </Button>
         </div>
@@ -256,7 +256,7 @@ export function ServiceDetailPage() {
             style={{
               backgroundImage: `url(${service.image})`
             }} />
-
+          
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -265,7 +265,7 @@ export function ServiceDetailPage() {
             <span
               className="hover:text-white cursor-pointer"
               onClick={() => navigate('/catalog')}>
-
+              
               Services
             </span>
             <ChevronRight className="w-4 h-4 mx-2" />
@@ -287,7 +287,7 @@ export function ServiceDetailPage() {
               exit={{
                 opacity: 0
               }}>
-
+              
                 <LoadingSkeleton />
               </motion.div>
             }
@@ -307,13 +307,13 @@ export function ServiceDetailPage() {
                 opacity: 0
               }}
               className="py-16">
-
+              
                 <ErrorState
                 title="Unable to load service"
                 description="We couldn't fetch the service details. Please try again."
                 onRetry={handleRetry}
                 onSupport={() => toast.info('Opening support...')} />
-
+              
               </motion.div>
             }
 
@@ -331,7 +331,7 @@ export function ServiceDetailPage() {
               exit={{
                 opacity: 0
               }}>
-
+              
                 <UnavailableState />
               </motion.div>
             }
@@ -348,7 +348,7 @@ export function ServiceDetailPage() {
               exit={{
                 opacity: 0
               }}>
-
+              
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                   {/* Main Content */}
                   <div className="lg:col-span-2 space-y-8">
@@ -359,7 +359,7 @@ export function ServiceDetailPage() {
                       <span
                         key={badge}
                         className="bg-emperial-500/20 text-emperial-300 text-xs font-bold px-2 py-1 rounded border border-emperial-500/20">
-
+                        
                             {badge}
                           </span>
                       )}
@@ -390,7 +390,7 @@ export function ServiceDetailPage() {
                         key={tab}
                         onClick={() => setActiveTab(tab.toLowerCase())}
                         className={`pb-4 text-sm font-medium transition-colors relative ${activeTab === tab.toLowerCase() ? 'text-white' : 'text-slate-400 hover:text-white'}`}>
-
+                        
                             {tab}
                             {activeTab === tab.toLowerCase() &&
                         <motion.div
@@ -414,7 +414,7 @@ export function ServiceDetailPage() {
                         opacity: 1
                       }}
                       className="space-y-8">
-
+                      
                           <div className="prose prose-invert max-w-none">
                             <p className="text-slate-300 leading-relaxed">
                               Conquer the toughest dungeons in Azeroth with our
@@ -433,7 +433,7 @@ export function ServiceDetailPage() {
                           <li
                             key={feature}
                             className="flex items-center gap-2 text-slate-300">
-
+                            
                                   <Check className="w-4 h-4 text-emperial-500" />
                                   {feature}
                                 </li>
@@ -450,7 +450,7 @@ export function ServiceDetailPage() {
                             src={service.provider.avatar}
                             alt={service.provider.name}
                             className="w-12 h-12 rounded-full bg-slate-800" />
-
+                          
                               <div>
                                 <div className="flex items-center gap-2">
                                   <span className="font-bold text-white">
@@ -467,7 +467,7 @@ export function ServiceDetailPage() {
                             variant="secondary"
                             size="sm"
                             className="ml-auto">
-
+                            
                                 View Profile
                               </Button>
                             </div>
@@ -483,7 +483,7 @@ export function ServiceDetailPage() {
                       animate={{
                         opacity: 1
                       }}>
-
+                      
                           <ul className="space-y-4">
                             <li className="flex items-start gap-3">
                               <div className="w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center text-sm font-bold text-slate-400">
@@ -525,7 +525,7 @@ export function ServiceDetailPage() {
                         opacity: 1
                       }}
                       className="space-y-4">
-
+                      
                           {[1, 2, 3].map((i) =>
                       <GlassCard key={i} className="p-4">
                               <div className="flex items-center justify-between mb-2">
@@ -575,7 +575,7 @@ export function ServiceDetailPage() {
                           key={pkg.id}
                           onClick={() => setSelectedPackage(pkg.id)}
                           className={`p-3 rounded-lg border text-center transition-all ${selectedPackage === pkg.id ? 'bg-emperial-500/20 border-emperial-500 text-white' : 'bg-slate-800/50 border-white/10 text-slate-400 hover:bg-slate-800'}`}>
-
+                          
                               <div className="text-sm font-bold">
                                 {pkg.name}
                               </div>
@@ -604,14 +604,14 @@ export function ServiceDetailPage() {
                       <label
                         key={addon.id}
                         className="flex items-center justify-between p-3 rounded-lg bg-slate-800/30 border border-white/5 cursor-pointer hover:bg-slate-800/50 transition-colors">
-
+                        
                             <div className="flex items-center gap-3">
                               <input
                             type="checkbox"
                             checked={addons.includes(addon.id)}
                             onChange={() => toggleAddon(addon.id)}
                             className="w-4 h-4 rounded border-slate-600 text-emperial-500 focus:ring-emperial-500 bg-slate-700" />
-
+                          
                               <span className="text-sm text-slate-300">
                                 {addon.name}
                               </span>
@@ -636,14 +636,14 @@ export function ServiceDetailPage() {
                           className="w-full"
                           size="lg"
                           onClick={() => navigate('/checkout')}>
-
+                          
                             Buy Now
                           </Button>
                           <Button
                           variant="secondary"
                           className="w-full"
                           size="lg">
-
+                          
                             Reserve Slot
                           </Button>
                         </div>

@@ -71,7 +71,7 @@ export function Services() {
               once: true
             }}
             className="text-3xl md:text-4xl font-bold text-white mb-4">
-
+            
             Choose Your Adventure
           </motion.h2>
           <motion.p
@@ -90,7 +90,7 @@ export function Services() {
               delay: 0.1
             }}
             className="text-slate-400 text-lg">
-
+            
             From high-key Mythic+ runs to full Mythic raid clears, our elite
             roster is ready to help you achieve your in-game goals.
           </motion.p>
@@ -102,7 +102,7 @@ export function Services() {
             key={service.title}
             hoverEffect
             className={`p-8 flex flex-col relative ${service.popular ? 'border-emperial-500/50 bg-emperial-900/10' : ''}`}>
-
+            
               {service.popular &&
             <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-emperial-500 text-white px-4 py-1 rounded-full text-sm font-bold shadow-lg shadow-emperial-500/30 tracking-wide uppercase text-xs">
                   Best Seller
@@ -125,11 +125,11 @@ export function Services() {
                 delay: index * 0.1
               }}
               className="flex-1 flex flex-col">
-
+              
                 <div className="flex items-center justify-between mb-6">
                   <div
                   className={`p-3 rounded-xl ${service.popular ? 'bg-emperial-500/20 text-emperial-300' : 'bg-slate-800 text-slate-300'}`}>
-
+                  
                     <service.icon className="w-6 h-6" />
                   </div>
                   <div className="text-right">
@@ -159,7 +159,7 @@ export function Services() {
                 <Button
                 variant={service.popular ? 'primary' : 'secondary'}
                 className="w-full">
-
+                
                   Select Service
                 </Button>
               </motion.div>

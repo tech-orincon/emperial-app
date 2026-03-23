@@ -93,13 +93,13 @@ export function OrdersPage() {
                   type="text"
                   placeholder="Search orders..."
                   className="bg-slate-800 border border-white/10 rounded-lg pl-10 pr-4 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-emperial-500 w-64" />
-
+                
               </div>
               <Button
                 variant="secondary"
                 size="sm"
                 className="flex items-center gap-2">
-
+                
                 <Filter className="w-4 h-4" /> Filter
               </Button>
             </div>
@@ -119,7 +119,7 @@ export function OrdersPage() {
                 opacity: 0
               }}
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-
+              
                 {[1, 2, 3].map((i) =>
               <motion.div
                 key={i}
@@ -134,7 +134,7 @@ export function OrdersPage() {
                 transition={{
                   delay: i * 0.1
                 }}>
-
+                
                     <SkeletonOrderRow />
                   </motion.div>
               )}
@@ -156,12 +156,12 @@ export function OrdersPage() {
                 opacity: 0
               }}
               className="py-16">
-
+              
                 <ErrorState
                 title="Unable to load orders"
                 description="We couldn't fetch your order history. Please try again."
                 onRetry={handleRetry} />
-
+              
               </motion.div>
             }
 
@@ -179,7 +179,7 @@ export function OrdersPage() {
               exit={{
                 opacity: 0
               }}>
-
+              
                 <EmptyState
                 variant="orders"
                 title="No quests in your journal"
@@ -188,7 +188,7 @@ export function OrdersPage() {
                   label: 'Browse Services',
                   onClick: () => navigate('/catalog')
                 }} />
-
+              
               </motion.div>
             }
 
@@ -205,7 +205,7 @@ export function OrdersPage() {
                 opacity: 0
               }}
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-
+              
                 {orders.map((order, index) =>
               <motion.div
                 key={order.id}
@@ -220,12 +220,12 @@ export function OrdersPage() {
                 transition={{
                   delay: index * 0.1
                 }}>
-
+                
                     <GlassCard hoverEffect className="p-6 flex flex-col h-full">
                       <div className="flex items-start justify-between mb-4">
                         <div
                       className={`px-2 py-1 rounded text-xs font-bold border ${getStatusColor(order.status)}`}>
-
+                      
                           {order.status}
                         </div>
                         <span className="text-xs text-slate-500">
@@ -260,7 +260,7 @@ export function OrdersPage() {
                           duration: 1,
                           delay: index * 0.1
                         }} />
-
+                      
                         </div>
 
                         <div className="flex items-center justify-between">
@@ -278,7 +278,7 @@ export function OrdersPage() {
                         onClick={() =>
                         navigate(`/account/orders/${order.id}`)
                         }>
-
+                        
                             View Details
                           </Button>
                         </div>

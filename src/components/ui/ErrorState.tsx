@@ -67,7 +67,7 @@ export function ErrorState({
         scale: 1
       }}
       className={`rounded-2xl border ${config.borderColor} ${config.bgColor} p-8 text-center max-w-md mx-auto`}>
-
+      
       <motion.div
         initial={{
           scale: 0
@@ -81,7 +81,7 @@ export function ErrorState({
           delay: 0.1
         }}
         className={`w-16 h-16 rounded-full ${config.bgColor} flex items-center justify-center mx-auto mb-6`}>
-
+        
         <Icon className={`w-8 h-8 ${config.color}`} />
       </motion.div>
 
@@ -102,7 +102,7 @@ export function ErrorState({
           variant="ghost"
           onClick={onSupport}
           className="flex items-center gap-2">
-
+          
             <MessageCircle className="w-4 h-4" />
             Contact Support
           </Button>

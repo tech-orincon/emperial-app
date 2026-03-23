@@ -34,7 +34,7 @@ export function ProfilePage() {
                     type="text"
                     defaultValue="Champion123"
                     className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-emperial-500" />
-
+                  
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-slate-400">
@@ -45,7 +45,7 @@ export function ProfilePage() {
                     defaultValue="champion@example.com"
                     disabled
                     className="w-full bg-slate-800/50 border border-white/5 rounded-lg px-4 py-2 text-slate-400 cursor-not-allowed" />
-
+                  
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-slate-400">
@@ -117,7 +117,7 @@ export function ProfilePage() {
                   variant="ghost"
                   size="sm"
                   className="text-red-400 hover:text-red-300 hover:bg-red-500/10">
-
+                  
                   Disconnect
                 </Button>
               </div>

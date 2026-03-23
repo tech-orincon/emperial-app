@@ -26,7 +26,7 @@ export function Skeleton({
     <div
       className={`${baseClasses} ${variantClasses[variant]} ${className}`}
       style={style}>
-
+      
       {/* Shimmer effect */}
       <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-slate-700/50 to-transparent" />
     </div>);
@@ -37,7 +37,7 @@ export function SkeletonCard({ className = '' }: {className?: string;}) {
   return (
     <div
       className={`bg-slate-900/40 border border-white/10 rounded-2xl p-6 ${className}`}>
-
+      
       <div className="flex items-start justify-between mb-4">
         <Skeleton width={80} height={24} className="rounded" />
         <Skeleton width={60} height={16} />
@@ -63,7 +63,7 @@ export function SkeletonServiceCard({
   return (
     <div
       className={`bg-slate-900/40 border border-white/10 rounded-2xl overflow-hidden ${className}`}>
-
+      
       <Skeleton height={192} className="rounded-none" />
       <div className="p-6">
         <div className="flex items-center justify-between mb-2">
@@ -91,7 +91,7 @@ export function SkeletonCategoryCard({
   return (
     <div
       className={`bg-slate-900/40 border border-white/10 rounded-2xl p-8 ${className}`}>
-
+      
       <div className="flex items-start justify-between mb-6">
         <Skeleton width={64} height={64} className="rounded-xl" />
         <Skeleton width={80} height={24} className="rounded-full" />
@@ -107,7 +107,7 @@ export function SkeletonOrderRow({ className = '' }: {className?: string;}) {
   return (
     <div
       className={`bg-slate-900/40 border border-white/10 rounded-2xl p-6 ${className}`}>
-
+      
       <div className="flex items-start justify-between mb-4">
         <Skeleton width={80} height={24} className="rounded" />
         <Skeleton width={80} height={16} />
@@ -135,7 +135,7 @@ export function SkeletonTimeline({ className = '' }: {className?: string;}) {
   return (
     <div
       className={`space-y-6 pl-4 border-l-2 border-slate-800 ml-2 ${className}`}>
-
+      
       {[1, 2, 3, 4].map((i) =>
       <div key={i} className="relative">
           <Skeleton
@@ -143,7 +143,7 @@ export function SkeletonTimeline({ className = '' }: {className?: string;}) {
           width={16}
           height={16}
           className="absolute -left-[21px]" />
-
+        
           <Skeleton width={120} height={18} className="mb-1" />
           <Skeleton width={100} height={14} />
         </div>

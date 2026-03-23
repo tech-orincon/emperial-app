@@ -58,7 +58,7 @@ export function KeyFeatures() {
               once: true
             }}
             className="inline-block text-emperial-400 font-medium text-sm uppercase tracking-wider mb-4">
-
+            
             Why Choose Us
           </motion.span>
           <motion.h2
@@ -77,7 +77,7 @@ export function KeyFeatures() {
               delay: 0.1
             }}
             className="text-3xl md:text-5xl font-bold text-white mb-4">
-
+            
             Built for Gamers,{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emperial-400 to-purple-400">
               By Gamers
@@ -99,7 +99,7 @@ export function KeyFeatures() {
               delay: 0.2
             }}
             className="text-slate-400 text-lg max-w-2xl mx-auto">
-
+            
             We understand what matters to you because we're gamers too
           </motion.p>
         </div>
@@ -123,18 +123,18 @@ export function KeyFeatures() {
               delay: index * 0.1
             }}
             className="group">
-
+            
               <div className="relative h-full p-8 rounded-2xl bg-slate-900/50 border border-white/10 hover:border-white/20 transition-all duration-300 overflow-hidden">
                 {/* Subtle glow on hover */}
                 <div
                 className={`absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br ${feature.color} rounded-full blur-3xl opacity-0 group-hover:opacity-20 transition-opacity duration-500`} />
-
+              
 
                 <div className="relative z-10">
                   {/* Icon */}
                   <div
                   className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${feature.color} p-0.5 mb-6`}>
-
+                  
                     <div className="w-full h-full rounded-2xl bg-slate-900 flex items-center justify-center">
                       <feature.icon className="w-7 h-7 text-white" />
                     </div>

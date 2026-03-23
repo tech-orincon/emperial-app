@@ -19,7 +19,7 @@ export function ServiceCard({ service }: {service: ServiceProps;}) {
     <GlassCard
       hoverEffect
       className="flex flex-col h-full group overflow-hidden">
-
+      
       {/* Image Header */}
       <div className="relative h-48 overflow-hidden">
         <div
@@ -27,7 +27,7 @@ export function ServiceCard({ service }: {service: ServiceProps;}) {
           style={{
             backgroundImage: `url(${service.image})`
           }} />
-
+        
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/20 to-transparent" />
 
         {/* Badges */}
@@ -79,7 +79,7 @@ export function ServiceCard({ service }: {service: ServiceProps;}) {
           <Button
             size="sm"
             className="bg-white/10 hover:bg-emperial-500 border-white/10">
-
+            
             View Details
           </Button>
         </div>

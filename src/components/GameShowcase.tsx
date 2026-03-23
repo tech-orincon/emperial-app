@@ -71,7 +71,7 @@ export function GameShowcase() {
                 once: true
               }}
               className="text-3xl md:text-4xl font-bold text-white mb-2">
-
+              
               Explore Games
             </motion.h2>
             <motion.p
@@ -90,14 +90,14 @@ export function GameShowcase() {
                 delay: 0.1
               }}
               className="text-slate-400">
-
+              
               Choose your battlefield and dominate
             </motion.p>
           </div>
           <Link
             to="/catalog"
             className="hidden md:flex items-center gap-1 text-emperial-400 hover:text-emperial-300 transition-colors font-medium">
-
+            
             View All <ChevronRight className="w-4 h-4" />
           </Link>
         </div>
@@ -106,7 +106,7 @@ export function GameShowcase() {
         <div
           ref={scrollRef}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-
+          
           {games.map((game, index) =>
           <motion.div
             key={game.id}
@@ -124,7 +124,7 @@ export function GameShowcase() {
             transition={{
               delay: index * 0.1
             }}>
-
+            
               <Link to="/catalog" className="block group">
                 <div className="relative h-64 rounded-2xl overflow-hidden border border-white/10 bg-slate-900/50">
                   {/* Background Image */}
@@ -133,12 +133,12 @@ export function GameShowcase() {
                   style={{
                     backgroundImage: `url(${game.image})`
                   }} />
-
+                
 
                   {/* Gradient Overlay */}
                   <div
                   className={`absolute inset-0 bg-gradient-to-t ${game.color} opacity-80`} />
-
+                
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-transparent" />
 
                   {/* Content */}
@@ -146,7 +146,7 @@ export function GameShowcase() {
                     <div className="flex items-center gap-3 mb-3">
                       <div
                       className={`w-10 h-10 rounded-lg bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/20`}>
-
+                      
                         <game.icon className="w-5 h-5 text-white" />
                       </div>
                       <span className="text-xs font-medium text-white/70 bg-white/10 backdrop-blur-sm px-2 py-1 rounded">
@@ -174,7 +174,7 @@ export function GameShowcase() {
           <Link
             to="/catalog"
             className="inline-flex items-center gap-1 text-emperial-400 hover:text-emperial-300 transition-colors font-medium">
-
+            
             View All Games <ChevronRight className="w-4 h-4" />
           </Link>
         </div>

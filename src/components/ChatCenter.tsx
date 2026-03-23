@@ -346,7 +346,7 @@ export function ChatCenter() {
           type="text"
           placeholder="Search conversations..."
           className="w-full bg-slate-800 border border-white/10 rounded-lg pl-10 pr-4 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emperial-500" />
-
+        
         </div>
       </div>
 
@@ -362,7 +362,7 @@ export function ChatCenter() {
         whileTap={{
           scale: 0.98
         }}>
-
+        
               <div className="relative shrink-0">
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emperial-500 to-purple-600 flex items-center justify-center text-white font-bold">
                   {conv.avatar}
@@ -411,7 +411,7 @@ export function ChatCenter() {
         whileTap={{
           scale: 0.98
         }}>
-
+        
               <div className="relative shrink-0">
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white font-bold text-sm">
                   {conv.avatar}
@@ -455,13 +455,13 @@ export function ChatCenter() {
           <button
             onClick={() => setIsMobileListView(true)}
             className="md:hidden p-2 -ml-2 hover:bg-white/5 rounded-lg">
-
+            
             <ChevronLeft className="w-5 h-5 text-slate-400" />
           </button>
           <div className="relative shrink-0">
             <div
               className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold ${isSupport ? 'bg-gradient-to-br from-emperial-500 to-purple-600' : 'bg-gradient-to-br from-purple-500 to-pink-600'}`}>
-
+              
               {activeConversation.avatar}
             </div>
             {activeConversation.isOnline &&
@@ -509,10 +509,10 @@ export function ChatCenter() {
               y: 0
             }}
             className={`flex ${message.isMe ? 'justify-end' : 'justify-start'}`}>
-
+            
               <div
               className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm ${message.isMe ? 'bg-emperial-500 text-white rounded-tr-sm' : 'bg-slate-800 text-slate-200 rounded-tl-sm'}`}>
-
+              
                 {message.text}
               </div>
             </motion.div>
@@ -528,7 +528,7 @@ export function ChatCenter() {
                 key={action.label}
                 onClick={() => handleQuickAction(action)}
                 className="flex items-center gap-2 p-3 rounded-xl bg-slate-800/50 border border-white/5 text-left hover:bg-slate-800 hover:border-emperial-500/30 transition-all group">
-
+                
                     <action.icon className="w-4 h-4 text-emperial-400 group-hover:text-emperial-300" />
                     <span className="text-xs text-slate-300 group-hover:text-white">
                       {action.label}
@@ -552,12 +552,12 @@ export function ChatCenter() {
               onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
               placeholder="Type your message..."
               className="flex-1 bg-slate-800 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emperial-500" />
-
+            
             <button
               onClick={handleSendMessage}
               disabled={!inputValue.trim()}
               className="w-11 h-11 rounded-xl bg-emperial-500 text-white flex items-center justify-center hover:bg-emperial-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-
+              
               <Send className="w-4 h-4" />
             </button>
           </div>
@@ -572,7 +572,7 @@ export function ChatCenter() {
         openProviderChat,
         isOpen
       }}>
-
+      
       {/* Floating Button */}
       <motion.button
         onClick={() => openChat()}
@@ -587,7 +587,7 @@ export function ChatCenter() {
           boxShadow:
           '0 0 30px rgba(59, 130, 246, 0.4), 0 0 60px rgba(59, 130, 246, 0.2)'
         }}>
-
+        
         <MessageCircle className="w-6 h-6" />
         {totalUnread > 0 &&
         <motion.span
@@ -598,7 +598,7 @@ export function ChatCenter() {
             scale: 1
           }}
           className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-bold border-2 border-slate-900">
-
+          
             {totalUnread}
           </motion.span>
         }
@@ -621,7 +621,7 @@ export function ChatCenter() {
             }}
             className="fixed inset-0 bg-black/50 z-40"
             onClick={() => setIsOpen(false)} />
-
+          
 
             {/* Panel */}
             <motion.div
@@ -661,12 +661,12 @@ export function ChatCenter() {
               boxShadow:
               '0 0 40px rgba(0, 0, 0, 0.5), 0 0 80px rgba(59, 130, 246, 0.1)'
             }}>
-
+            
               {/* Close button */}
               <button
               onClick={() => setIsOpen(false)}
               className="absolute top-4 right-4 z-10 w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-400 hover:text-white transition-colors">
-
+              
                 <X className="w-4 h-4" />
               </button>
 
@@ -712,7 +712,7 @@ export function ChatCenter() {
                     x: -20
                   }}
                   className="h-full">
-
+                  
                       <ConversationList />
                     </motion.div> :
 
@@ -731,7 +731,7 @@ export function ChatCenter() {
                     x: 20
                   }}
                   className="h-full">
-
+                  
                       <ChatWindow />
                     </motion.div>
                 }

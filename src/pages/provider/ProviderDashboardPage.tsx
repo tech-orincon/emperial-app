@@ -184,7 +184,7 @@ export function ProviderDashboardPage() {
             size="sm"
             onClick={() => handleJobAction(job, 'accept')}
             className="bg-purple-500 hover:bg-purple-400">
-
+            
             Accept Job
           </Button>);
 
@@ -194,7 +194,7 @@ export function ProviderDashboardPage() {
             size="sm"
             onClick={() => handleJobAction(job, 'start')}
             className="bg-blue-500 hover:bg-blue-400">
-
+            
             <Play className="w-3 h-3 mr-1" /> Start Job
           </Button>);
 
@@ -204,7 +204,7 @@ export function ProviderDashboardPage() {
             size="sm"
             onClick={() => handleJobAction(job, 'complete')}
             className="bg-green-500 hover:bg-green-400">
-
+            
             <CheckCircle2 className="w-3 h-3 mr-1" /> Complete
           </Button>);
 
@@ -232,7 +232,7 @@ export function ProviderDashboardPage() {
       x: 20
     }}
     className="fixed inset-y-0 right-0 w-full max-w-lg bg-slate-900 border-l border-white/10 shadow-2xl z-50 overflow-y-auto">
-
+    
       {/* Header */}
       <div className="sticky top-0 bg-slate-900/95 backdrop-blur-lg border-b border-white/10 p-4 flex items-center justify-between">
         <div>
@@ -242,7 +242,7 @@ export function ProviderDashboardPage() {
         <button
         onClick={() => setSelectedJob(null)}
         className="p-2 hover:bg-white/5 rounded-lg transition-colors">
-
+        
           <X className="w-5 h-5 text-slate-400" />
         </button>
       </div>
@@ -252,7 +252,7 @@ export function ProviderDashboardPage() {
         <div className="flex items-center gap-3">
           <span
           className={`px-3 py-1 rounded-full text-xs font-bold border ${getStatusConfig(job.status).color}`}>
-
+          
             {getStatusConfig(job.status).label}
           </span>
           {job.priority === 'high' &&
@@ -279,7 +279,7 @@ export function ProviderDashboardPage() {
             variant="secondary"
             size="sm"
             className="flex items-center gap-1">
-
+            
               <MessageSquare className="w-4 h-4" /> Chat
             </Button>
           </div>
@@ -315,7 +315,7 @@ export function ProviderDashboardPage() {
               <span
                 key={addon}
                 className="px-2 py-1 rounded bg-slate-800 text-xs text-slate-300">
-
+                
                       {addon}
                     </span>
               )}
@@ -359,7 +359,7 @@ export function ProviderDashboardPage() {
           <div className="relative">
                 <div
               className={`absolute -left-[21px] w-4 h-4 rounded-full border-2 border-slate-900 ${job.status === 'in-progress' ? 'bg-purple-500 animate-pulse' : 'bg-purple-500'}`} />
-
+            
                 <p className="text-white text-sm font-medium">In Progress</p>
                 <p className="text-xs text-slate-500">
                   {job.status === 'in-progress' ?
@@ -392,7 +392,7 @@ export function ProviderDashboardPage() {
         <Button
         variant="secondary"
         className="flex-1 flex items-center justify-center gap-2">
-
+        
           <MessageSquare className="w-4 h-4" /> Contact Customer
         </Button>
         {job.status === 'in-progress' &&
@@ -434,7 +434,7 @@ export function ProviderDashboardPage() {
                 );
               }}
               className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all ${isOnline ? 'bg-green-500/10 border-green-500/30 text-green-400' : 'bg-slate-800 border-white/10 text-slate-400'}`}>
-
+              
               {isOnline ?
               <>
                   <span className="relative flex h-2 w-2">
@@ -482,7 +482,7 @@ export function ProviderDashboardPage() {
             transition={{
               delay: 0
             }}>
-
+            
             <GlassCard className="p-5 border-purple-500/20">
               <div className="flex items-start justify-between">
                 <div>
@@ -514,7 +514,7 @@ export function ProviderDashboardPage() {
             transition={{
               delay: 0.1
             }}>
-
+            
             <GlassCard className="p-5 border-green-500/20">
               <div className="flex items-start justify-between">
                 <div>
@@ -546,7 +546,7 @@ export function ProviderDashboardPage() {
             transition={{
               delay: 0.2
             }}>
-
+            
             <GlassCard className="p-5 border-emerald-500/20">
               <div className="flex items-start justify-between">
                 <div>
@@ -578,7 +578,7 @@ export function ProviderDashboardPage() {
             transition={{
               delay: 0.3
             }}>
-
+            
             <GlassCard className="p-5 border-amber-500/20">
               <div className="flex items-start justify-between">
                 <div>
@@ -612,7 +612,7 @@ export function ProviderDashboardPage() {
                   key={tab}
                   onClick={() => setActiveTab(tab)}
                   className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${activeTab === tab ? 'bg-purple-500 text-white' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}>
-
+                  
                     {tab === 'in-progress' ?
                   'Active' :
                   tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -637,7 +637,7 @@ export function ProviderDashboardPage() {
                     opacity: 1
                   }}
                   className="text-center py-12">
-
+                  
                     <div className="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center mx-auto mb-4">
                       <Briefcase className="w-8 h-8 text-slate-600" />
                     </div>
@@ -663,17 +663,17 @@ export function ProviderDashboardPage() {
                   transition={{
                     delay: index * 0.05
                   }}>
-
+                  
                       <GlassCard
                     hoverEffect
                     className={`p-5 cursor-pointer transition-all ${job.priority === 'high' ? 'border-l-4 border-l-red-500' : ''}`}
                     onClick={() => setSelectedJob(job)}>
-
+                    
                         <div className="flex items-start justify-between gap-4">
                           <div className="flex items-start gap-4 flex-1 min-w-0">
                             <div
                           className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${job.status === 'new' ? 'bg-amber-500/10 text-amber-400' : job.status === 'accepted' ? 'bg-blue-500/10 text-blue-400' : job.status === 'in-progress' ? 'bg-purple-500/10 text-purple-400' : 'bg-green-500/10 text-green-400'}`}>
-
+                          
                               <Briefcase className="w-6 h-6" />
                             </div>
                             <div className="flex-1 min-w-0">
@@ -698,7 +698,7 @@ export function ProviderDashboardPage() {
                               <div className="flex items-center gap-2 mt-2">
                                 <span
                               className={`px-2 py-0.5 rounded text-xs font-medium border ${getStatusConfig(job.status).color}`}>
-
+                              
                                   {getStatusConfig(job.status).label}
                                 </span>
                               </div>
@@ -827,7 +827,7 @@ export function ProviderDashboardPage() {
                 <div
                   key={i}
                   className="pb-4 border-b border-white/5 last:border-0 last:pb-0">
-
+                  
                     <div className="flex items-center justify-between mb-2">
                       <span className="font-medium text-white text-sm">
                         {review.name}
@@ -863,7 +863,7 @@ export function ProviderDashboardPage() {
             }}
             className="fixed inset-0 bg-black/50 z-40"
             onClick={() => setSelectedJob(null)} />
-
+          
             <JobDetailPanel job={selectedJob} />
           </>
         }

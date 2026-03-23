@@ -126,7 +126,7 @@ export function OrderDetailPage() {
             <span
               className="hover:text-white cursor-pointer"
               onClick={() => navigate('/account/orders')}>
-
+              
               My Orders
             </span>
             <ChevronRight className="w-4 h-4 mx-2" />
@@ -146,7 +146,7 @@ export function OrderDetailPage() {
               exit={{
                 opacity: 0
               }}>
-
+              
                 <LoadingSkeleton />
               </motion.div>
             }
@@ -166,12 +166,12 @@ export function OrderDetailPage() {
                 opacity: 0
               }}
               className="py-16">
-
+              
                 <ErrorState
                 title="Unable to load order details"
                 description="We couldn't fetch the details for this order. Please try again."
                 onRetry={handleRetry} />
-
+              
               </motion.div>
             }
 
@@ -187,7 +187,7 @@ export function OrderDetailPage() {
               exit={{
                 opacity: 0
               }}>
-
+              
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                   {/* Left Column - Details */}
                   <div className="lg:col-span-2 space-y-6">
@@ -204,7 +204,7 @@ export function OrderDetailPage() {
                         <div className="flex flex-col items-end gap-2">
                           <div
                           className={`px-3 py-1 rounded-full font-bold text-sm ${refundRequested ? 'bg-amber-500/10 border border-amber-500/20 text-amber-400' : 'bg-blue-500/10 border border-blue-500/20 text-blue-400'}`}>
-
+                          
                             {refundRequested ?
                           'Refund Requested' :
                           'In Progress'}
@@ -233,7 +233,7 @@ export function OrderDetailPage() {
                           transition={{
                             delay: 0.1
                           }}>
-
+                          
                             <div className="absolute -left-[21px] w-4 h-4 rounded-full bg-green-500 border-2 border-slate-900" />
                             <h4 className="text-white font-medium">
                               Order Placed
@@ -255,7 +255,7 @@ export function OrderDetailPage() {
                           transition={{
                             delay: 0.2
                           }}>
-
+                          
                             <div className="absolute -left-[21px] w-4 h-4 rounded-full bg-green-500 border-2 border-slate-900" />
                             <h4 className="text-white font-medium">
                               Booster Assigned
@@ -277,7 +277,7 @@ export function OrderDetailPage() {
                           transition={{
                             delay: 0.3
                           }}>
-
+                          
                             <div className="absolute -left-[21px] w-4 h-4 rounded-full bg-blue-500 border-2 border-slate-900 animate-pulse" />
                             <h4 className="text-white font-medium">
                               Service In Progress
@@ -299,7 +299,7 @@ export function OrderDetailPage() {
                           transition={{
                             delay: 0.4
                           }}>
-
+                          
                             <div className="absolute -left-[21px] w-4 h-4 rounded-full bg-slate-700 border-2 border-slate-900" />
                             <h4 className="text-white font-medium">
                               Completion
@@ -368,7 +368,7 @@ export function OrderDetailPage() {
                         src="https://api.dicebear.com/7.x/avataaars/svg?seed=Shadowblade"
                         alt="Provider"
                         className="w-12 h-12 rounded-full bg-slate-800" />
-
+                      
                         <div className="flex-1">
                           <div className="font-bold text-white flex items-center gap-1">
                             Shadowblade
@@ -388,7 +388,7 @@ export function OrderDetailPage() {
                         variant="secondary"
                         className="w-full"
                         onClick={() => navigate('/provider/shadowblade')}>
-
+                        
                           View Profile
                         </Button>
                       </div>
@@ -402,7 +402,7 @@ export function OrderDetailPage() {
                       !issueReported && setIsReportModalOpen(true)
                       }
                       disabled={issueReported}>
-
+                      
                         {issueReported ?
                       <>
                             <CheckCircle2 className="w-4 h-4" /> Issue Reported
@@ -420,7 +420,7 @@ export function OrderDetailPage() {
                       !refundRequested && setIsRefundModalOpen(true)
                       }
                       disabled={refundRequested}>
-
+                      
                         {refundRequested ?
                       'Refund Pending Review' :
                       'Request Refund'}
@@ -441,7 +441,7 @@ export function OrderDetailPage() {
         isOpen={isReportModalOpen}
         onClose={() => setIsReportModalOpen(false)}
         title="Report an Issue">
-
+        
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-slate-400 mb-2">
@@ -451,7 +451,7 @@ export function OrderDetailPage() {
               value={issueType}
               onChange={(e) => setIssueType(e.target.value)}
               className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-emperial-500">
-
+              
               <option value="">Select issue type...</option>
               <option value="delay">Delay</option>
               <option value="wrong-service">Wrong Service</option>
@@ -468,14 +468,14 @@ export function OrderDetailPage() {
               onChange={(e) => setIssueDescription(e.target.value)}
               placeholder="Please describe the issue in detail..."
               className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-emperial-500 h-32 resize-none" />
-
+            
           </div>
           <div className="flex gap-3 pt-4">
             <Button
               variant="secondary"
               className="flex-1"
               onClick={() => setIsReportModalOpen(false)}>
-
+              
               Cancel
             </Button>
             <Button className="flex-1" onClick={handleReportIssue}>
@@ -490,7 +490,7 @@ export function OrderDetailPage() {
         isOpen={isRefundModalOpen}
         onClose={() => setIsRefundModalOpen(false)}
         title="Request Refund">
-
+        
         <div className="space-y-4">
           <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/20">
             <p className="text-sm text-amber-300">
@@ -507,7 +507,7 @@ export function OrderDetailPage() {
               value={refundReason}
               onChange={(e) => setRefundReason(e.target.value)}
               className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-emperial-500">
-
+              
               <option value="">Select reason...</option>
               <option value="not-delivered">Service not delivered</option>
               <option value="quality">Quality issue</option>
@@ -520,7 +520,7 @@ export function OrderDetailPage() {
               checked={refundConfirmed}
               onChange={(e) => setRefundConfirmed(e.target.checked)}
               className="mt-1 w-4 h-4 rounded border-slate-600 text-emperial-500 focus:ring-emperial-500 bg-slate-700" />
-
+            
             <span className="text-sm text-slate-300">
               I understand this request will be reviewed by the support team and
               may take 3-5 business days to process.
@@ -531,14 +531,14 @@ export function OrderDetailPage() {
               variant="secondary"
               className="flex-1"
               onClick={() => setIsRefundModalOpen(false)}>
-
+              
               Cancel
             </Button>
             <Button
               className="flex-1 bg-red-500 hover:bg-red-400"
               onClick={handleRequestRefund}
               disabled={!refundReason || !refundConfirmed}>
-
+              
               Submit Request
             </Button>
           </div>

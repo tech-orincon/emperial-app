@@ -49,7 +49,7 @@ export function BoosterRecruitment() {
                 once: true
               }}
               className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-sm font-medium mb-6">
-
+              
               <Trophy className="w-4 h-4" />
               Now Recruiting
             </motion.span>
@@ -70,7 +70,7 @@ export function BoosterRecruitment() {
                 delay: 0.1
               }}
               className="text-4xl md:text-5xl font-bold text-white mb-6">
-
+              
               Join Our{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
                 Elite Booster
@@ -94,7 +94,7 @@ export function BoosterRecruitment() {
                 delay: 0.2
               }}
               className="text-xl text-slate-400 mb-8 max-w-xl">
-
+              
               Turn your gaming skills into real income. Work from anywhere, set
               your own schedule, and join a community of professional players.
             </motion.p>
@@ -114,12 +114,12 @@ export function BoosterRecruitment() {
               transition={{
                 delay: 0.3
               }}>
-
+              
               <Link to="/provider/login">
                 <Button
                   size="lg"
                   className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-400 hover:to-pink-400 border-0 group">
-
+                  
                   Become a Booster
                   <ChevronRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Button>
@@ -148,7 +148,7 @@ export function BoosterRecruitment() {
                   delay: 0.2 + index * 0.1
                 }}
                 className="p-6 rounded-2xl bg-slate-900/50 border border-white/10 backdrop-blur-sm hover:border-purple-500/30 transition-colors">
-
+                
                   <div className="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center mb-4">
                     <benefit.icon className="w-6 h-6 text-purple-400" />
                   </div>

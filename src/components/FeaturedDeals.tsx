@@ -78,7 +78,7 @@ export function FeaturedDeals() {
               once: true
             }}
             className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-medium mb-4">
-
+            
             <Zap className="w-4 h-4" />
             Limited Time Offers
           </motion.div>
@@ -98,7 +98,7 @@ export function FeaturedDeals() {
               delay: 0.1
             }}
             className="text-3xl md:text-4xl font-bold text-white mb-4">
-
+            
             Featured Deals
           </motion.h2>
           <motion.p
@@ -117,7 +117,7 @@ export function FeaturedDeals() {
               delay: 0.2
             }}
             className="text-slate-400 text-lg max-w-2xl mx-auto">
-
+            
             Grab these exclusive offers before they're gone
           </motion.p>
         </div>
@@ -140,7 +140,7 @@ export function FeaturedDeals() {
             transition={{
               delay: index * 0.1
             }}>
-
+            
               <Link to={`/service/${deal.id}`} className="block group">
                 <div className="bg-slate-900/50 border border-white/10 rounded-2xl overflow-hidden hover:border-emperial-500/30 transition-all duration-300">
                   {/* Image */}
@@ -150,7 +150,7 @@ export function FeaturedDeals() {
                     style={{
                       backgroundImage: `url(${deal.image})`
                     }} />
-
+                  
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent" />
 
                     {/* Discount Badge */}

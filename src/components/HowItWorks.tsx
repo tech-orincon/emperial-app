@@ -45,7 +45,7 @@ export function HowItWorks() {
               once: true
             }}
             className="inline-block text-emperial-400 font-medium text-sm uppercase tracking-wider mb-4">
-
+            
             Simple Process
           </motion.span>
           <motion.h2
@@ -64,7 +64,7 @@ export function HowItWorks() {
               delay: 0.1
             }}
             className="text-3xl md:text-4xl font-bold text-white mb-4">
-
+            
             How It Works
           </motion.h2>
           <motion.p
@@ -83,7 +83,7 @@ export function HowItWorks() {
               delay: 0.2
             }}
             className="text-slate-400 text-lg max-w-2xl mx-auto">
-
+            
             Get started in minutes with our streamlined process
           </motion.p>
         </div>
@@ -110,7 +110,7 @@ export function HowItWorks() {
               delay: index * 0.15
             }}
             className="relative">
-
+            
               <div className="flex flex-col items-center text-center group">
                 {/* Step Number & Icon */}
                 <div className="relative mb-8">
