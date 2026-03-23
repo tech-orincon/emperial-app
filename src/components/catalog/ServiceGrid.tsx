@@ -121,7 +121,7 @@ export function ServiceGrid({ category }: ServiceGridProps) {
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
               className="appearance-none pl-4 pr-10 py-2 bg-slate-800/50 border border-white/10 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-colors text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emperial-500">
-
+              
               <option value="popular">Most Popular</option>
               <option value="price-low">Price: Low to High</option>
               <option value="price-high">Price: High to Low</option>
@@ -148,7 +148,7 @@ export function ServiceGrid({ category }: ServiceGridProps) {
           transition={{
             delay: index * 0.05
           }}>
-
+          
             <ServiceCard service={service} />
           </motion.div>
         )}

@@ -43,7 +43,7 @@ export function Testimonials() {
               once: true
             }}
             className="text-3xl md:text-4xl font-bold text-white mb-4">
-
+            
             Guild Chat
           </motion.h2>
           <p className="text-slate-400 text-lg">
@@ -70,7 +70,7 @@ export function Testimonials() {
               transition={{
                 delay: index * 0.1
               }}>
-
+              
                 <Quote className="w-8 h-8 text-emperial-500/40 mb-6" />
                 <p className="text-slate-300 text-lg mb-6 leading-relaxed">
                   "{item.quote}"

@@ -63,19 +63,19 @@ export function Footer() {
               <a
                 href="#"
                 className="text-slate-400 hover:text-white transition-colors">
-
+                
                 <Twitter className="w-5 h-5" />
               </a>
               <a
                 href="#"
                 className="text-slate-400 hover:text-white transition-colors">
-
+                
                 <Disc className="w-5 h-5" />
               </a>
               <a
                 href="#"
                 className="text-slate-400 hover:text-white transition-colors">
-
+                
                 <Instagram className="w-5 h-5" />
               </a>
             </div>
@@ -89,7 +89,7 @@ export function Footer() {
                 <Link
                   to="/catalog"
                   className="hover:text-emperial-400 transition-colors">
-
+                  
                   World of Warcraft
                 </Link>
               </li>
@@ -97,7 +97,7 @@ export function Footer() {
                 <Link
                   to="/catalog"
                   className="hover:text-emperial-400 transition-colors">
-
+                  
                   League of Legends
                 </Link>
               </li>
@@ -105,7 +105,7 @@ export function Footer() {
                 <Link
                   to="/catalog"
                   className="hover:text-emperial-400 transition-colors">
-
+                  
                   Valorant
                 </Link>
               </li>
@@ -113,7 +113,7 @@ export function Footer() {
                 <Link
                   to="/catalog"
                   className="hover:text-emperial-400 transition-colors">
-
+                  
                   Apex Legends
                 </Link>
               </li>
@@ -121,7 +121,7 @@ export function Footer() {
                 <Link
                   to="/catalog"
                   className="hover:text-emperial-400 transition-colors">
-
+                  
                   Coaching
                 </Link>
               </li>
@@ -136,7 +136,7 @@ export function Footer() {
                 <a
                   href="#"
                   className="hover:text-emperial-400 transition-colors">
-
+                  
                   About Us
                 </a>
               </li>
@@ -144,7 +144,7 @@ export function Footer() {
                 <Link
                   to="/provider/login"
                   className="hover:text-emperial-400 transition-colors">
-
+                  
                   Work with Us
                 </Link>
               </li>
@@ -152,7 +152,7 @@ export function Footer() {
                 <a
                   href="#"
                   className="hover:text-emperial-400 transition-colors">
-
+                  
                   Reviews
                 </a>
               </li>
@@ -160,7 +160,7 @@ export function Footer() {
                 <a
                   href="#"
                   className="hover:text-emperial-400 transition-colors">
-
+                  
                   Blog
                 </a>
               </li>
@@ -175,7 +175,7 @@ export function Footer() {
                 <button
                   onClick={handleHelpCenter}
                   className="hover:text-emperial-400 transition-colors">
-
+                  
                   Help Center
                 </button>
               </li>
@@ -183,7 +183,7 @@ export function Footer() {
                 <button
                   onClick={() => setIsContactModalOpen(true)}
                   className="hover:text-emperial-400 transition-colors">
-
+                  
                   Contact Us
                 </button>
               </li>
@@ -191,7 +191,7 @@ export function Footer() {
                 <Link
                   to="/terms"
                   className="hover:text-emperial-400 transition-colors">
-
+                  
                   Terms of Service
                 </Link>
               </li>
@@ -199,7 +199,7 @@ export function Footer() {
                 <Link
                   to="/privacy"
                   className="hover:text-emperial-400 transition-colors">
-
+                  
                   Privacy Policy
                 </Link>
               </li>
@@ -207,7 +207,7 @@ export function Footer() {
                 <Link
                   to="/refund-policy"
                   className="hover:text-emperial-400 transition-colors">
-
+                  
                   Refund Policy
                 </Link>
               </li>
@@ -232,7 +232,7 @@ export function Footer() {
         isOpen={isContactModalOpen}
         onClose={resetContactForm}
         title="Contact Us">
-
+        
         <AnimatePresence mode="wait">
           {!contactSubmitted ?
           <motion.div
@@ -247,7 +247,7 @@ export function Footer() {
               opacity: 0
             }}
             className="space-y-4">
-
+            
               <div>
                 <label className="block text-sm font-medium text-slate-400 mb-2">
                   Name
@@ -263,7 +263,7 @@ export function Footer() {
                 }
                 placeholder="Your name"
                 className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-emperial-500" />
-
+              
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-400 mb-2">
@@ -280,7 +280,7 @@ export function Footer() {
                 }
                 placeholder="your@email.com"
                 className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-emperial-500" />
-
+              
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-400 mb-2">
@@ -296,20 +296,20 @@ export function Footer() {
                 }
                 placeholder="How can we help you?"
                 className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-emperial-500 h-32 resize-none" />
-
+              
               </div>
               <div className="flex gap-3 pt-4">
                 <Button
                 variant="secondary"
                 className="flex-1"
                 onClick={resetContactForm}>
-
+                
                   Cancel
                 </Button>
                 <Button
                 className="flex-1 flex items-center justify-center gap-2"
                 onClick={handleContactSubmit}>
-
+                
                   <Send className="w-4 h-4" /> Send Message
                 </Button>
               </div>
@@ -326,7 +326,7 @@ export function Footer() {
               scale: 1
             }}
             className="text-center py-8">
-
+            
               <div className="w-16 h-16 rounded-full bg-green-500/20 flex items-center justify-center mx-auto mb-4">
                 <CheckCircle2 className="w-8 h-8 text-green-500" />
               </div>

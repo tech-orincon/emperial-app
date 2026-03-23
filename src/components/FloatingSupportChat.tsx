@@ -122,7 +122,7 @@ export function FloatingSupportChat() {
           boxShadow:
           '0 0 30px rgba(59, 130, 246, 0.4), 0 0 60px rgba(59, 130, 246, 0.2)'
         }}>
-
+        
         <MessageCircle className="w-6 h-6" />
       </motion.button>
 
@@ -143,7 +143,7 @@ export function FloatingSupportChat() {
             }}
             className="fixed inset-0 bg-black/50 z-40 md:hidden"
             onClick={() => setIsOpen(false)} />
-
+          
 
             <motion.div
             ref={chatRef}
@@ -188,7 +188,7 @@ export function FloatingSupportChat() {
               boxShadow:
               '0 0 40px rgba(0, 0, 0, 0.5), 0 0 80px rgba(59, 130, 246, 0.1)'
             }}>
-
+            
               {/* Header */}
               <div className="flex items-center justify-between p-4 border-b border-white/10 bg-slate-800/50">
                 <div className="flex items-center gap-3">
@@ -211,7 +211,7 @@ export function FloatingSupportChat() {
                 <button
                 onClick={() => setIsOpen(false)}
                 className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-400 hover:text-white transition-colors">
-
+                
                   <X className="w-4 h-4" />
                 </button>
               </div>
@@ -230,10 +230,10 @@ export function FloatingSupportChat() {
                   y: 0
                 }}
                 className={`flex ${message.isBot ? 'justify-start' : 'justify-end'}`}>
-
+                
                     <div
                   className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm ${message.isBot ? 'bg-slate-800 text-slate-200 rounded-tl-sm' : 'bg-emperial-500 text-white rounded-tr-sm'}`}>
-
+                  
                       {message.text}
                     </div>
                   </motion.div>
@@ -251,7 +251,7 @@ export function FloatingSupportChat() {
                     key={action.label}
                     onClick={() => handleQuickAction(action)}
                     className="flex items-center gap-2 p-3 rounded-xl bg-slate-800/50 border border-white/5 text-left hover:bg-slate-800 hover:border-emperial-500/30 transition-all group">
-
+                    
                           <action.icon className="w-4 h-4 text-emperial-400 group-hover:text-emperial-300" />
                           <span className="text-xs text-slate-300 group-hover:text-white">
                             {action.label}
@@ -274,12 +274,12 @@ export function FloatingSupportChat() {
                   onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                   placeholder="Type your message..."
                   className="flex-1 bg-slate-800 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emperial-500 focus:border-transparent" />
-
+                
                   <button
                   onClick={handleSendMessage}
                   disabled={!inputValue.trim()}
                   className="w-11 h-11 rounded-xl bg-emperial-500 text-white flex items-center justify-center hover:bg-emperial-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-
+                  
                     <Send className="w-4 h-4" />
                   </button>
                 </div>

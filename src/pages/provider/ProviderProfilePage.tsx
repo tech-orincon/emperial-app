@@ -72,7 +72,7 @@ export function ProviderProfilePage() {
           <button
             onClick={() => navigate(-1)}
             className="flex items-center gap-2 text-slate-400 hover:text-white mb-8 transition-colors">
-
+            
             <ChevronLeft className="w-4 h-4" />
             Back
           </button>
@@ -87,7 +87,7 @@ export function ProviderProfilePage() {
                   src={provider.avatar}
                   alt={provider.name}
                   className="w-24 h-24 rounded-2xl bg-slate-800 border-2 border-purple-500/30" />
-
+                
                 {provider.isOnline &&
                 <span className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-green-500 border-2 border-slate-900 flex items-center justify-center">
                     <span className="w-2 h-2 rounded-full bg-white" />
@@ -119,7 +119,7 @@ export function ProviderProfilePage() {
                   <span
                     key={badge}
                     className="px-2 py-1 rounded-full text-xs font-medium bg-slate-800 text-slate-300 border border-white/10">
-
+                    
                       {badge}
                     </span>
                   )}
@@ -148,7 +148,7 @@ export function ProviderProfilePage() {
               transition={{
                 delay: 0.1
               }}>
-
+              
               <GlassCard className="p-5 text-center">
                 <CheckCircle2 className="w-6 h-6 text-green-400 mx-auto mb-2" />
                 <p className="text-2xl font-bold text-white">
@@ -170,7 +170,7 @@ export function ProviderProfilePage() {
               transition={{
                 delay: 0.2
               }}>
-
+              
               <GlassCard className="p-5 text-center">
                 <Star className="w-6 h-6 text-amber-400 mx-auto mb-2" />
                 <p className="text-2xl font-bold text-white flex items-center justify-center gap-1">
@@ -195,7 +195,7 @@ export function ProviderProfilePage() {
               transition={{
                 delay: 0.3
               }}>
-
+              
               <GlassCard className="p-5 text-center">
                 <Calendar className="w-6 h-6 text-purple-400 mx-auto mb-2" />
                 <p className="text-2xl font-bold text-white">
@@ -217,7 +217,7 @@ export function ProviderProfilePage() {
               transition={{
                 delay: 0.4
               }}>
-
+              
               <GlassCard className="p-5 text-center">
                 <Target className="w-6 h-6 text-blue-400 mx-auto mb-2" />
                 <p className="text-2xl font-bold text-white">
@@ -239,7 +239,7 @@ export function ProviderProfilePage() {
               transition={{
                 delay: 0.5
               }}>
-
+              
               <GlassCard className="p-5 text-center">
                 <Clock className="w-6 h-6 text-emerald-400 mx-auto mb-2" />
                 <p className="text-2xl font-bold text-white">
@@ -261,7 +261,7 @@ export function ProviderProfilePage() {
               transition={{
                 delay: 0.6
               }}>
-
+              
               <GlassCard className="p-5 text-center">
                 <Zap className="w-6 h-6 text-yellow-400 mx-auto mb-2" />
                 <p className="text-2xl font-bold text-white">Fast</p>
@@ -291,7 +291,7 @@ export function ProviderProfilePage() {
                   delay: 0.1 * index
                 }}
                 className="pb-6 border-b border-white/5 last:border-0 last:pb-0">
-
+                
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-sm font-bold text-white">

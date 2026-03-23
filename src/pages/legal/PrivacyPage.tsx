@@ -15,7 +15,7 @@ export function PrivacyPage() {
           <button
             onClick={() => navigate('/')}
             className="flex items-center gap-2 text-slate-400 hover:text-white mb-8 transition-colors">
-
+            
             <ChevronLeft className="w-4 h-4" />
             Back to Home
           </button>

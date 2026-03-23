@@ -17,7 +17,7 @@ export function Breadcrumb({
       <button
         onClick={onReset}
         className="flex items-center hover:text-white transition-colors">
-
+        
         <Home className="w-4 h-4 mr-2" />
         Home
       </button>
@@ -31,7 +31,7 @@ export function Breadcrumb({
         'text-white font-medium'
         }
         onClick={category ? onClearCategory : undefined}>
-
+        
         {game}
       </span>
 

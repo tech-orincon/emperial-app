@@ -60,7 +60,7 @@ export function TrustSection() {
               delay: index * 0.1
             }}
             className="text-center">
-
+            
               <div className="text-4xl md:text-5xl font-bold text-white mb-1 tracking-tight">
                 {stat.value}
               </div>
@@ -90,7 +90,7 @@ export function TrustSection() {
               transition={{
                 delay: index * 0.1
               }}>
-
+              
                 <div className="w-12 h-12 rounded-xl bg-emperial-500/10 flex items-center justify-center mb-6 border border-emperial-500/20">
                   <feature.icon className="w-6 h-6 text-emperial-400" />
                 </div>

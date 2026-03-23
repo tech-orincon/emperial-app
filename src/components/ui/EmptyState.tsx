@@ -49,7 +49,7 @@ export function EmptyState({
         y: 0
       }}
       className="flex flex-col items-center justify-center py-16 px-4 text-center">
-
+      
       {/* Animated Icon Container */}
       <motion.div
         initial={{
@@ -64,7 +64,7 @@ export function EmptyState({
           delay: 0.1
         }}
         className={`relative w-24 h-24 rounded-2xl bg-gradient-to-br ${gradientColor} flex items-center justify-center mb-6`}>
-
+        
         {/* Floating particles effect */}
         <div className="absolute inset-0 overflow-hidden rounded-2xl">
           {[...Array(3)].map((_, i) =>
@@ -103,7 +103,7 @@ export function EmptyState({
           delay: 0.2
         }}
         className="text-xl font-bold text-white mb-2">
-
+        
         {title}
       </motion.h3>
 
@@ -118,7 +118,7 @@ export function EmptyState({
           delay: 0.3
         }}
         className="text-slate-400 max-w-md mb-8">
-
+        
         {description}
       </motion.p>
 
@@ -135,7 +135,7 @@ export function EmptyState({
           delay: 0.4
         }}
         className="flex flex-col sm:flex-row items-center gap-3">
-
+        
         {primaryAction &&
         <Button onClick={primaryAction.onClick}>{primaryAction.label}</Button>
         }

@@ -50,7 +50,7 @@ export function Modal({
           }}
           className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
           onClick={onClose} />
-
+        
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <motion.div
             initial={{
@@ -75,14 +75,14 @@ export function Modal({
             }}
             className={`w-full ${sizeClasses[size]} bg-slate-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden`}
             onClick={(e) => e.stopPropagation()}>
-
+            
               {title &&
             <div className="flex items-center justify-between p-4 border-b border-white/10">
                   <h3 className="text-lg font-bold text-white">{title}</h3>
                   <button
                 onClick={onClose}
                 className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-400 hover:text-white transition-colors">
-
+                
                     <X className="w-4 h-4" />
                   </button>
                 </div>

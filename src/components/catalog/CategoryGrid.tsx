@@ -55,7 +55,7 @@ export function CategoryGrid({ onSelectCategory }: CategoryGridProps) {
           y: 0
         }}
         className="text-3xl font-bold text-white mb-2">
-
+        
         Choose Your Path
       </motion.h2>
       <motion.p
@@ -71,7 +71,7 @@ export function CategoryGrid({ onSelectCategory }: CategoryGridProps) {
           delay: 0.1
         }}
         className="text-slate-400 mb-10">
-
+        
         Select a category to browse our available services and products.
       </motion.p>
 
@@ -92,7 +92,7 @@ export function CategoryGrid({ onSelectCategory }: CategoryGridProps) {
           }}
           onClick={() => onSelectCategory(category.id)}
           className="cursor-pointer group">
-
+          
             <GlassCard hoverEffect className="h-full p-8 flex flex-col">
               <div className="flex items-start justify-between mb-6">
                 <div className="p-4 rounded-xl bg-emperial-500/10 text-emperial-400 group-hover:bg-emperial-500 group-hover:text-white transition-colors duration-300">

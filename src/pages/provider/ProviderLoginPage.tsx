@@ -31,7 +31,7 @@ export function ProviderLoginPage() {
             e.preventDefault();
             navigate('/provider/dashboard');
           }}>
-
+          
           <div className="space-y-2">
             <label className="text-sm font-medium text-slate-400">
               Email Address
@@ -40,7 +40,7 @@ export function ProviderLoginPage() {
               type="email"
               className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-emperial-500"
               placeholder="booster@emperial.com" />
-
+            
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium text-slate-400">
@@ -50,7 +50,7 @@ export function ProviderLoginPage() {
               type="password"
               className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-emperial-500"
               placeholder="••••••••" />
-
+            
           </div>
 
           <div className="flex items-center justify-between text-sm">
@@ -58,7 +58,7 @@ export function ProviderLoginPage() {
               <input
                 type="checkbox"
                 className="rounded border-slate-600 text-emperial-500 focus:ring-emperial-500 bg-slate-700" />
-
+              
               <span className="text-slate-400">Remember me</span>
             </label>
             <a href="#" className="text-emperial-400 hover:text-emperial-300">
@@ -76,7 +76,7 @@ export function ProviderLoginPage() {
           <a
             href="#"
             className="text-emperial-400 hover:text-emperial-300 font-medium">
-
+            
             Apply here
           </a>
         </div>
