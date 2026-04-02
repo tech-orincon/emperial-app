@@ -164,30 +164,29 @@ export function Navbar() {
           </div>
         </div>
 
-        <Link to="/provider/login">
+        <Link to="/auth">
           <Button variant="ghost" size="sm" className="text-slate-400">
             Provider Portal
           </Button>
         </Link>
 
-        <Button
-        variant="secondary"
-        size="sm"
-        onClick={() => handleLogin('customer')}
-        className="flex items-center gap-2">
-        
-          <LogIn className="w-4 h-4" />
-          Login
-        </Button>
+        <Link to="/auth">
+          <Button
+          variant="secondary"
+          size="sm"
+          className="flex items-center gap-2">
+          
+            <LogIn className="w-4 h-4" />
+            Login
+          </Button>
+        </Link>
 
-        <Button
-        size="sm"
-        onClick={() => handleLogin('customer')}
-        className="flex items-center gap-2">
-        
-          <UserPlus className="w-4 h-4" />
-          Sign Up
-        </Button>
+        <Link to="/auth">
+          <Button size="sm" className="flex items-center gap-2">
+            <UserPlus className="w-4 h-4" />
+            Sign Up
+          </Button>
+        </Link>
       </div>
     </>;
 
@@ -482,21 +481,26 @@ export function Navbar() {
       <div className="pt-4 border-t border-white/5 space-y-3">
         {role === 'guest' &&
       <>
-            <Button
-          variant="secondary"
-          className="w-full justify-start"
-          onClick={() => handleLogin('customer')}>
+            <Link
+          to="/auth"
+          onClick={() => setIsOpen(false)}
+          className="block w-full">
           
-              <LogIn className="w-4 h-4 mr-2" />
-              Login
-            </Button>
-            <Button
-          className="w-full justify-start"
-          onClick={() => handleLogin('customer')}>
+              <Button variant="secondary" className="w-full justify-start">
+                <LogIn className="w-4 h-4 mr-2" />
+                Login
+              </Button>
+            </Link>
+            <Link
+          to="/auth"
+          onClick={() => setIsOpen(false)}
+          className="block w-full mt-3">
           
-              <UserPlus className="w-4 h-4 mr-2" />
-              Sign Up
-            </Button>
+              <Button className="w-full justify-start">
+                <UserPlus className="w-4 h-4 mr-2" />
+                Sign Up
+              </Button>
+            </Link>
           </>
       }
 
