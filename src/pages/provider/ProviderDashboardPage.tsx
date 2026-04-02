@@ -107,6 +107,9 @@ const mockJobs: Job[] = [
 }];
 
 export function ProviderDashboardPage() {
+  const [providerStatus, setProviderStatus] = useState<'pending' | 'approved'>(
+    'pending'
+  );
   const [activeTab, setActiveTab] = useState<JobStatus | 'all'>('new');
   const [isOnline, setIsOnline] = useState(true);
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
@@ -403,28 +406,96 @@ export function ProviderDashboardPage() {
       </div>
     </motion.div>;
 
-  return (
-    <div className="min-h-screen bg-slate-900 text-slate-50">
-      <Toaster theme="dark" position="top-right" richColors />
+  if (providerStatus === 'pending') {
+    return (
+      <div className="min-h-screen bg-slate-900 pt-20 pb-12 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center">
+        <div className="absolute top-24 right-8">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setProviderStatus('approved')}
+            className="text-xs border-purple-500/30 text-purple-400">
+            
+            Demo: Switch to Approved
+          </Button>
+        </div>
 
-      {/* Provider Nav */}
-      <nav className="sticky top-0 z-40 bg-slate-800/95 backdrop-blur-lg border-b border-purple-500/20 px-4 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Link to="/" className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-purple-500/20">
-                E
+        <GlassCard className="max-w-md w-full p-8 text-center">
+          <div className="w-20 h-20 rounded-full bg-amber-500/20 flex items-center justify-center mx-auto mb-6">
+            <AlertCircle className="w-10 h-10 text-amber-400" />
+          </div>
+          <h1 className="text-2xl font-bold text-white mb-4">
+            Account Under Review
+          </h1>
+          <p className="text-slate-400 mb-8">
+            Your provider application is currently being reviewed by our team.
+            This process usually takes 24-48 hours. We will notify you via email
+            once a decision has been made.
+          </p>
+
+          <div className="space-y-4">
+            <div className="p-4 rounded-lg bg-slate-800/50 border border-white/5 flex items-start gap-3 text-left">
+              <Shield className="w-5 h-5 text-purple-400 shrink-0 mt-0.5" />
+              <div>
+                <h3 className="text-sm font-medium text-white">
+                  Why the review?
+                </h3>
+                <p className="text-xs text-slate-400 mt-1">
+                  We verify all boosters to maintain the highest quality of
+                  service for our customers.
+                </p>
               </div>
-              <span className="font-bold text-white">
-                Emperial<span className="text-purple-400">Boosting</span>
-              </span>
+            </div>
+
+            <Button
+              className="w-full bg-purple-600 hover:bg-purple-500"
+              onClick={() => {
+                const event = new CustomEvent('openChat');
+                window.dispatchEvent(event);
+              }}>
+              
+              <MessageSquare className="w-4 h-4 mr-2" />
+              Contact Support
+            </Button>
+
+            <Link to="/">
+              <Button variant="ghost" className="w-full mt-2">
+                Return to Home
+              </Button>
             </Link>
-            <span className="hidden sm:inline-flex px-2 py-0.5 rounded text-xs font-bold bg-purple-500/20 text-purple-400 border border-purple-500/20">
-              PROVIDER
-            </span>
+          </div>
+        </GlassCard>
+      </div>);
+
+  }
+  return (
+    <div className="min-h-screen bg-slate-900 pt-20 pb-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Header & Controls */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+          <div>
+            <div className="flex items-center gap-3 mb-1">
+              <h1 className="text-2xl font-bold text-white">
+                Provider Dashboard
+              </h1>
+              <span className="px-2 py-1 rounded text-xs font-bold bg-purple-500/20 text-purple-400 border border-purple-500/20">
+                PRO
+              </span>
+            </div>
+            <p className="text-slate-400">
+              Manage your active jobs and earnings
+            </p>
           </div>
 
           <div className="flex items-center gap-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setProviderStatus('pending')}
+              className="text-xs border-amber-500/30 text-amber-400">
+              
+              Demo: Switch to Pending
+            </Button>
             {/* Availability Toggle */}
             <button
               onClick={() => {
@@ -465,9 +536,7 @@ export function ProviderDashboardPage() {
             </div>
           </div>
         </div>
-      </nav>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* KPI Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <motion.div
@@ -845,7 +914,7 @@ export function ProviderDashboardPage() {
             </GlassCard>
           </div>
         </div>
-      </main>
+      </div>
 
       {/* Job Detail Slide-over */}
       <AnimatePresence>
