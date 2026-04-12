@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { Button } from '../../components/ui/Button';
-import { GlassCard } from '../../components/ui/GlassCard';
+import React, { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Link } from 'react-router-dom'
+import { Button } from '../../components/ui/Button'
+import { GlassCard } from '../../components/ui/GlassCard'
 import {
   Briefcase,
   DollarSign,
@@ -27,158 +27,158 @@ import {
   Zap,
   Crown,
   Target,
-  Timer } from
-'lucide-react';
-import { Toaster, toast } from 'sonner';
-type JobStatus = 'new' | 'accepted' | 'in-progress' | 'completed';
-type JobPriority = 'high' | 'normal';
+  Timer,
+} from 'lucide-react'
+import { Toaster, toast } from 'sonner'
+type JobStatus = 'new' | 'accepted' | 'in-progress' | 'completed'
+type JobPriority = 'high' | 'normal'
 interface Job {
-  id: string;
-  service: string;
-  customer: string;
-  customerAvatar: string;
-  realm: string;
-  reward: number;
-  deadline: string;
-  status: JobStatus;
-  priority: JobPriority;
-  notes?: string;
-  addons?: string[];
+  id: string
+  service: string
+  customer: string
+  customerAvatar: string
+  realm: string
+  reward: number
+  deadline: string
+  status: JobStatus
+  priority: JobPriority
+  notes?: string
+  addons?: string[]
 }
 const mockJobs: Job[] = [
-{
-  id: 'JOB-001',
-  service: 'Mythic+ 20 Timed Run',
-  customer: 'Arthas',
-  customerAvatar: 'A',
-  realm: 'Illidan (US)',
-  reward: 35,
-  deadline: 'Today, 2:00 PM',
-  status: 'new',
-  priority: 'high',
-  notes: 'Need loot funnel for plate',
-  addons: ['Loot Funnel', 'Stream']
-},
-{
-  id: 'JOB-002',
-  service: 'Amirdrassil Heroic Clear',
-  customer: 'Jaina',
-  customerAvatar: 'J',
-  realm: 'Stormrage (US)',
-  reward: 89,
-  deadline: 'Today, 4:30 PM',
-  status: 'new',
-  priority: 'normal',
-  addons: ['VIP Priority']
-},
-{
-  id: 'JOB-003',
-  service: 'M+ 15 Weekly Vault',
-  customer: 'Thrall',
-  customerAvatar: 'T',
-  realm: 'Area 52 (US)',
-  reward: 15,
-  deadline: 'In Progress',
-  status: 'in-progress',
-  priority: 'normal'
-},
-{
-  id: 'JOB-004',
-  service: 'Keystone Master Push',
-  customer: 'Sylvanas',
-  customerAvatar: 'S',
-  realm: 'Kazzak (EU)',
-  reward: 149,
-  deadline: 'Tomorrow, 10:00 AM',
-  status: 'accepted',
-  priority: 'high',
-  notes: 'Available after 8PM EST'
-},
-{
-  id: 'JOB-005',
-  service: 'Gold Delivery 500k',
-  customer: 'Anduin',
-  customerAvatar: 'A',
-  realm: 'Illidan (US)',
-  reward: 25,
-  deadline: 'Completed',
-  status: 'completed',
-  priority: 'normal'
-}];
-
+  {
+    id: 'JOB-001',
+    service: 'Mythic+ 20 Timed Run',
+    customer: 'Arthas',
+    customerAvatar: 'A',
+    realm: 'Illidan (US)',
+    reward: 35,
+    deadline: 'Today, 2:00 PM',
+    status: 'new',
+    priority: 'high',
+    notes: 'Need loot funnel for plate',
+    addons: ['Loot Funnel', 'Stream'],
+  },
+  {
+    id: 'JOB-002',
+    service: 'Amirdrassil Heroic Clear',
+    customer: 'Jaina',
+    customerAvatar: 'J',
+    realm: 'Stormrage (US)',
+    reward: 89,
+    deadline: 'Today, 4:30 PM',
+    status: 'new',
+    priority: 'normal',
+    addons: ['VIP Priority'],
+  },
+  {
+    id: 'JOB-003',
+    service: 'M+ 15 Weekly Vault',
+    customer: 'Thrall',
+    customerAvatar: 'T',
+    realm: 'Area 52 (US)',
+    reward: 15,
+    deadline: 'In Progress',
+    status: 'in-progress',
+    priority: 'normal',
+  },
+  {
+    id: 'JOB-004',
+    service: 'Keystone Master Push',
+    customer: 'Sylvanas',
+    customerAvatar: 'S',
+    realm: 'Kazzak (EU)',
+    reward: 149,
+    deadline: 'Tomorrow, 10:00 AM',
+    status: 'accepted',
+    priority: 'high',
+    notes: 'Available after 8PM EST',
+  },
+  {
+    id: 'JOB-005',
+    service: 'Gold Delivery 500k',
+    customer: 'Anduin',
+    customerAvatar: 'A',
+    realm: 'Illidan (US)',
+    reward: 25,
+    deadline: 'Completed',
+    status: 'completed',
+    priority: 'normal',
+  },
+]
 export function ProviderDashboardPage() {
   const [providerStatus, setProviderStatus] = useState<'pending' | 'approved'>(
-    'pending'
-  );
-  const [activeTab, setActiveTab] = useState<JobStatus | 'all'>('new');
-  const [isOnline, setIsOnline] = useState(true);
-  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
-  const [jobs, setJobs] = useState(mockJobs);
+    'pending',
+  )
+  const [activeTab, setActiveTab] = useState<JobStatus | 'all'>('new')
+  const [isOnline, setIsOnline] = useState(true)
+  const [selectedJob, setSelectedJob] = useState<Job | null>(null)
+  const [jobs, setJobs] = useState(mockJobs)
   const stats = {
     activeJobs: jobs.filter(
-      (j) => j.status === 'in-progress' || j.status === 'accepted'
+      (j) => j.status === 'in-progress' || j.status === 'accepted',
     ).length,
     completedToday: 5,
     earningsToday: 245,
     rating: 4.9,
-    totalReviews: 1240
-  };
+    totalReviews: 1240,
+  }
   const filteredJobs =
-  activeTab === 'all' ? jobs : jobs.filter((j) => j.status === activeTab);
+    activeTab === 'all' ? jobs : jobs.filter((j) => j.status === activeTab)
   const getStatusConfig = (status: JobStatus) => {
     switch (status) {
       case 'new':
         return {
           label: 'New',
-          color: 'bg-amber-500/20 text-amber-400 border-amber-500/30'
-        };
+          color: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
+        }
       case 'accepted':
         return {
           label: 'Accepted',
-          color: 'bg-blue-500/20 text-blue-400 border-blue-500/30'
-        };
+          color: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+        }
       case 'in-progress':
         return {
           label: 'In Progress',
-          color: 'bg-purple-500/20 text-purple-400 border-purple-500/30'
-        };
+          color: 'bg-purple-500/20 text-purple-400 border-purple-500/30',
+        }
       case 'completed':
         return {
           label: 'Completed',
-          color: 'bg-green-500/20 text-green-400 border-green-500/30'
-        };
+          color: 'bg-green-500/20 text-green-400 border-green-500/30',
+        }
     }
-  };
+  }
   const handleJobAction = (
-  job: Job,
-  action: 'accept' | 'start' | 'complete') =>
-  {
+    job: Job,
+    action: 'accept' | 'start' | 'complete',
+  ) => {
     const newStatus: JobStatus =
-    action === 'accept' ?
-    'accepted' :
-    action === 'start' ?
-    'in-progress' :
-    'completed';
+      action === 'accept'
+        ? 'accepted'
+        : action === 'start'
+          ? 'in-progress'
+          : 'completed'
     setJobs(
       jobs.map((j) =>
-      j.id === job.id ?
-      {
-        ...j,
-        status: newStatus
-      } :
-      j
-      )
-    );
+        j.id === job.id
+          ? {
+              ...j,
+              status: newStatus,
+            }
+          : j,
+      ),
+    )
     toast.success(
-      `Job ${action === 'accept' ? 'accepted' : action === 'start' ? 'started' : 'completed'}!`
-    );
+      `Job ${action === 'accept' ? 'accepted' : action === 'start' ? 'started' : 'completed'}!`,
+    )
     if (selectedJob?.id === job.id) {
       setSelectedJob({
         ...job,
-        status: newStatus
-      });
+        status: newStatus,
+      })
     }
-  };
+  }
   const getActionButton = (job: Job) => {
     switch (job.status) {
       case 'new':
@@ -186,56 +186,56 @@ export function ProviderDashboardPage() {
           <Button
             size="sm"
             onClick={() => handleJobAction(job, 'accept')}
-            className="bg-purple-500 hover:bg-purple-400">
-            
+            className="bg-purple-500 hover:bg-purple-400"
+          >
             Accept Job
-          </Button>);
-
+          </Button>
+        )
       case 'accepted':
         return (
           <Button
             size="sm"
             onClick={() => handleJobAction(job, 'start')}
-            className="bg-blue-500 hover:bg-blue-400">
-            
+            className="bg-blue-500 hover:bg-blue-400"
+          >
             <Play className="w-3 h-3 mr-1" /> Start Job
-          </Button>);
-
+          </Button>
+        )
       case 'in-progress':
         return (
           <Button
             size="sm"
             onClick={() => handleJobAction(job, 'complete')}
-            className="bg-green-500 hover:bg-green-400">
-            
+            className="bg-green-500 hover:bg-green-400"
+          >
             <CheckCircle2 className="w-3 h-3 mr-1" /> Complete
-          </Button>);
-
+          </Button>
+        )
       case 'completed':
         return (
           <Button size="sm" variant="secondary" disabled>
             Completed
-          </Button>);
-
+          </Button>
+        )
     }
-  };
+  }
   // Job Detail Panel
-  const JobDetailPanel = ({ job }: {job: Job;}) =>
-  <motion.div
-    initial={{
-      opacity: 0,
-      x: 20
-    }}
-    animate={{
-      opacity: 1,
-      x: 0
-    }}
-    exit={{
-      opacity: 0,
-      x: 20
-    }}
-    className="fixed inset-y-0 right-0 w-full max-w-lg bg-slate-900 border-l border-white/10 shadow-2xl z-50 overflow-y-auto">
-    
+  const JobDetailPanel = ({ job }: { job: Job }) => (
+    <motion.div
+      initial={{
+        opacity: 0,
+        x: 20,
+      }}
+      animate={{
+        opacity: 1,
+        x: 0,
+      }}
+      exit={{
+        opacity: 0,
+        x: 20,
+      }}
+      className="fixed inset-y-0 right-0 w-full max-w-lg bg-slate-900 border-l border-white/10 shadow-2xl z-50 overflow-y-auto"
+    >
       {/* Header */}
       <div className="sticky top-0 bg-slate-900/95 backdrop-blur-lg border-b border-white/10 p-4 flex items-center justify-between">
         <div>
@@ -243,9 +243,9 @@ export function ProviderDashboardPage() {
           <p className="text-sm text-slate-400">{job.id}</p>
         </div>
         <button
-        onClick={() => setSelectedJob(null)}
-        className="p-2 hover:bg-white/5 rounded-lg transition-colors">
-        
+          onClick={() => setSelectedJob(null)}
+          className="p-2 hover:bg-white/5 rounded-lg transition-colors"
+        >
           <X className="w-5 h-5 text-slate-400" />
         </button>
       </div>
@@ -254,15 +254,15 @@ export function ProviderDashboardPage() {
         {/* Status & Priority */}
         <div className="flex items-center gap-3">
           <span
-          className={`px-3 py-1 rounded-full text-xs font-bold border ${getStatusConfig(job.status).color}`}>
-          
+            className={`px-3 py-1 rounded-full text-xs font-bold border ${getStatusConfig(job.status).color}`}
+          >
             {getStatusConfig(job.status).label}
           </span>
-          {job.priority === 'high' &&
-        <span className="px-3 py-1 rounded-full text-xs font-bold bg-red-500/20 text-red-400 border border-red-500/30 flex items-center gap-1">
+          {job.priority === 'high' && (
+            <span className="px-3 py-1 rounded-full text-xs font-bold bg-red-500/20 text-red-400 border border-red-500/30 flex items-center gap-1">
               <Zap className="w-3 h-3" /> High Priority
             </span>
-        }
+          )}
         </div>
 
         {/* Customer Info */}
@@ -279,10 +279,10 @@ export function ProviderDashboardPage() {
               </p>
             </div>
             <Button
-            variant="secondary"
-            size="sm"
-            className="flex items-center gap-1">
-            
+              variant="secondary"
+              size="sm"
+              className="flex items-center gap-1"
+            >
               <MessageSquare className="w-4 h-4" /> Chat
             </Button>
           </div>
@@ -310,27 +310,27 @@ export function ProviderDashboardPage() {
                 ${job.reward.toFixed(2)}
               </span>
             </div>
-            {job.addons && job.addons.length > 0 &&
-          <div className="pt-2 border-t border-white/5">
+            {job.addons && job.addons.length > 0 && (
+              <div className="pt-2 border-t border-white/5">
                 <span className="text-slate-400 text-sm">Add-ons:</span>
                 <div className="flex flex-wrap gap-2 mt-2">
-                  {job.addons.map((addon) =>
-              <span
-                key={addon}
-                className="px-2 py-1 rounded bg-slate-800 text-xs text-slate-300">
-                
+                  {job.addons.map((addon) => (
+                    <span
+                      key={addon}
+                      className="px-2 py-1 rounded bg-slate-800 text-xs text-slate-300"
+                    >
                       {addon}
                     </span>
-              )}
+                  ))}
                 </div>
               </div>
-          }
+            )}
           </div>
         </GlassCard>
 
         {/* Customer Notes */}
-        {job.notes &&
-      <GlassCard className="p-4">
+        {job.notes && (
+          <GlassCard className="p-4">
             <h3 className="text-sm font-medium text-slate-400 mb-2">
               Customer Notes
             </h3>
@@ -338,7 +338,7 @@ export function ProviderDashboardPage() {
               "{job.notes}"
             </p>
           </GlassCard>
-      }
+        )}
 
         {/* Timeline */}
         <GlassCard className="p-4">
@@ -351,40 +351,40 @@ export function ProviderDashboardPage() {
               <p className="text-white text-sm font-medium">Order Received</p>
               <p className="text-xs text-slate-500">Today, 1:30 PM</p>
             </div>
-            {job.status !== 'new' &&
-          <div className="relative">
+            {job.status !== 'new' && (
+              <div className="relative">
                 <div className="absolute -left-[21px] w-4 h-4 rounded-full bg-blue-500 border-2 border-slate-900" />
                 <p className="text-white text-sm font-medium">Job Accepted</p>
                 <p className="text-xs text-slate-500">Today, 1:35 PM</p>
               </div>
-          }
-            {(job.status === 'in-progress' || job.status === 'completed') &&
-          <div className="relative">
+            )}
+            {(job.status === 'in-progress' || job.status === 'completed') && (
+              <div className="relative">
                 <div
-              className={`absolute -left-[21px] w-4 h-4 rounded-full border-2 border-slate-900 ${job.status === 'in-progress' ? 'bg-purple-500 animate-pulse' : 'bg-purple-500'}`} />
-            
+                  className={`absolute -left-[21px] w-4 h-4 rounded-full border-2 border-slate-900 ${job.status === 'in-progress' ? 'bg-purple-500 animate-pulse' : 'bg-purple-500'}`}
+                />
                 <p className="text-white text-sm font-medium">In Progress</p>
                 <p className="text-xs text-slate-500">
-                  {job.status === 'in-progress' ?
-              'Currently active' :
-              'Today, 1:45 PM'}
+                  {job.status === 'in-progress'
+                    ? 'Currently active'
+                    : 'Today, 1:45 PM'}
                 </p>
               </div>
-          }
-            {job.status === 'completed' &&
-          <div className="relative">
+            )}
+            {job.status === 'completed' && (
+              <div className="relative">
                 <div className="absolute -left-[21px] w-4 h-4 rounded-full bg-green-500 border-2 border-slate-900" />
                 <p className="text-white text-sm font-medium">Completed</p>
                 <p className="text-xs text-slate-500">Today, 2:30 PM</p>
               </div>
-          }
-            {job.status !== 'completed' &&
-          <div className="relative opacity-50">
+            )}
+            {job.status !== 'completed' && (
+              <div className="relative opacity-50">
                 <div className="absolute -left-[21px] w-4 h-4 rounded-full bg-slate-700 border-2 border-slate-900" />
                 <p className="text-white text-sm font-medium">Completion</p>
                 <p className="text-xs text-slate-500">Pending</p>
               </div>
-          }
+            )}
           </div>
         </GlassCard>
       </div>
@@ -393,19 +393,19 @@ export function ProviderDashboardPage() {
       <div className="sticky bottom-0 bg-slate-900/95 backdrop-blur-lg border-t border-white/10 p-4 flex items-center gap-3">
         {getActionButton(job)}
         <Button
-        variant="secondary"
-        className="flex-1 flex items-center justify-center gap-2">
-        
+          variant="secondary"
+          className="flex-1 flex items-center justify-center gap-2"
+        >
           <MessageSquare className="w-4 h-4" /> Contact Customer
         </Button>
-        {job.status === 'in-progress' &&
-      <Button variant="outline" className="flex items-center gap-2">
+        {job.status === 'in-progress' && (
+          <Button variant="outline" className="flex items-center gap-2">
             <Upload className="w-4 h-4" /> Upload Proof
           </Button>
-      }
+        )}
       </div>
-    </motion.div>;
-
+    </motion.div>
+  )
   if (providerStatus === 'pending') {
     return (
       <div className="min-h-screen bg-slate-900 pt-20 pb-12 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center">
@@ -414,8 +414,8 @@ export function ProviderDashboardPage() {
             variant="outline"
             size="sm"
             onClick={() => setProviderStatus('approved')}
-            className="text-xs border-purple-500/30 text-purple-400">
-            
+            className="text-xs border-purple-500/30 text-purple-400"
+          >
             Demo: Switch to Approved
           </Button>
         </div>
@@ -450,10 +450,10 @@ export function ProviderDashboardPage() {
             <Button
               className="w-full bg-purple-600 hover:bg-purple-500"
               onClick={() => {
-                const event = new CustomEvent('openChat');
-                window.dispatchEvent(event);
-              }}>
-              
+                const event = new CustomEvent('openChat')
+                window.dispatchEvent(event)
+              }}
+            >
               <MessageSquare className="w-4 h-4 mr-2" />
               Contact Support
             </Button>
@@ -465,8 +465,8 @@ export function ProviderDashboardPage() {
             </Link>
           </div>
         </GlassCard>
-      </div>);
-
+      </div>
+    )
   }
   return (
     <div className="min-h-screen bg-slate-900 pt-20 pb-12 px-4 sm:px-6 lg:px-8">
@@ -492,36 +492,36 @@ export function ProviderDashboardPage() {
               variant="outline"
               size="sm"
               onClick={() => setProviderStatus('pending')}
-              className="text-xs border-amber-500/30 text-amber-400">
-              
+              className="text-xs border-amber-500/30 text-amber-400"
+            >
               Demo: Switch to Pending
             </Button>
             {/* Availability Toggle */}
             <button
               onClick={() => {
-                setIsOnline(!isOnline);
+                setIsOnline(!isOnline)
                 toast.success(
-                  isOnline ? 'You are now offline' : 'You are now online'
-                );
+                  isOnline ? 'You are now offline' : 'You are now online',
+                )
               }}
-              className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all ${isOnline ? 'bg-green-500/10 border-green-500/30 text-green-400' : 'bg-slate-800 border-white/10 text-slate-400'}`}>
-              
-              {isOnline ?
-              <>
+              className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all ${isOnline ? 'bg-green-500/10 border-green-500/30 text-green-400' : 'bg-slate-800 border-white/10 text-slate-400'}`}
+            >
+              {isOnline ? (
+                <>
                   <span className="relative flex h-2 w-2">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
                   </span>
                   <span className="text-sm font-medium">Online</span>
                   <ToggleRight className="w-5 h-5" />
-                </> :
-
-              <>
+                </>
+              ) : (
+                <>
                   <span className="w-2 h-2 rounded-full bg-slate-500"></span>
                   <span className="text-sm font-medium">Offline</span>
                   <ToggleLeft className="w-5 h-5" />
                 </>
-              }
+              )}
             </button>
 
             {/* Profile */}
@@ -542,16 +542,16 @@ export function ProviderDashboardPage() {
           <motion.div
             initial={{
               opacity: 0,
-              y: 20
+              y: 20,
             }}
             animate={{
               opacity: 1,
-              y: 0
+              y: 0,
             }}
             transition={{
-              delay: 0
-            }}>
-            
+              delay: 0,
+            }}
+          >
             <GlassCard className="p-5 border-purple-500/20">
               <div className="flex items-start justify-between">
                 <div>
@@ -574,16 +574,16 @@ export function ProviderDashboardPage() {
           <motion.div
             initial={{
               opacity: 0,
-              y: 20
+              y: 20,
             }}
             animate={{
               opacity: 1,
-              y: 0
+              y: 0,
             }}
             transition={{
-              delay: 0.1
-            }}>
-            
+              delay: 0.1,
+            }}
+          >
             <GlassCard className="p-5 border-green-500/20">
               <div className="flex items-start justify-between">
                 <div>
@@ -606,16 +606,16 @@ export function ProviderDashboardPage() {
           <motion.div
             initial={{
               opacity: 0,
-              y: 20
+              y: 20,
             }}
             animate={{
               opacity: 1,
-              y: 0
+              y: 0,
             }}
             transition={{
-              delay: 0.2
-            }}>
-            
+              delay: 0.2,
+            }}
+          >
             <GlassCard className="p-5 border-emerald-500/20">
               <div className="flex items-start justify-between">
                 <div>
@@ -638,16 +638,16 @@ export function ProviderDashboardPage() {
           <motion.div
             initial={{
               opacity: 0,
-              y: 20
+              y: 20,
             }}
             animate={{
               opacity: 1,
-              y: 0
+              y: 0,
             }}
             transition={{
-              delay: 0.3
-            }}>
-            
+              delay: 0.3,
+            }}
+          >
             <GlassCard className="p-5 border-amber-500/20">
               <div className="flex items-start justify-between">
                 <div>
@@ -675,74 +675,74 @@ export function ProviderDashboardPage() {
               <h2 className="text-xl font-bold text-white">Jobs Queue</h2>
               <div className="flex items-center gap-1 bg-slate-800/50 rounded-lg p-1">
                 {(
-                ['new', 'accepted', 'in-progress', 'completed'] as JobStatus[]).
-                map((tab) =>
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${activeTab === tab ? 'bg-purple-500 text-white' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}>
-                  
-                    {tab === 'in-progress' ?
-                  'Active' :
-                  tab.charAt(0).toUpperCase() + tab.slice(1)}
-                    {tab === 'new' &&
-                  <span className="ml-1.5 px-1.5 py-0.5 rounded-full bg-amber-500 text-white text-xs">
+                  ['new', 'accepted', 'in-progress', 'completed'] as JobStatus[]
+                ).map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveTab(tab)}
+                    className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${activeTab === tab ? 'bg-purple-500 text-white' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
+                  >
+                    {tab === 'in-progress'
+                      ? 'Active'
+                      : tab.charAt(0).toUpperCase() + tab.slice(1)}
+                    {tab === 'new' && (
+                      <span className="ml-1.5 px-1.5 py-0.5 rounded-full bg-amber-500 text-white text-xs">
                         {jobs.filter((j) => j.status === 'new').length}
                       </span>
-                  }
+                    )}
                   </button>
-                )}
+                ))}
               </div>
             </div>
 
             <div className="space-y-3">
               <AnimatePresence mode="popLayout">
-                {filteredJobs.length === 0 ?
-                <motion.div
-                  initial={{
-                    opacity: 0
-                  }}
-                  animate={{
-                    opacity: 1
-                  }}
-                  className="text-center py-12">
-                  
+                {filteredJobs.length === 0 ? (
+                  <motion.div
+                    initial={{
+                      opacity: 0,
+                    }}
+                    animate={{
+                      opacity: 1,
+                    }}
+                    className="text-center py-12"
+                  >
                     <div className="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center mx-auto mb-4">
                       <Briefcase className="w-8 h-8 text-slate-600" />
                     </div>
                     <p className="text-slate-400">No {activeTab} jobs</p>
-                  </motion.div> :
-
-                filteredJobs.map((job, index) =>
-                <motion.div
-                  key={job.id}
-                  layout
-                  initial={{
-                    opacity: 0,
-                    y: 20
-                  }}
-                  animate={{
-                    opacity: 1,
-                    y: 0
-                  }}
-                  exit={{
-                    opacity: 0,
-                    scale: 0.95
-                  }}
-                  transition={{
-                    delay: index * 0.05
-                  }}>
-                  
+                  </motion.div>
+                ) : (
+                  filteredJobs.map((job, index) => (
+                    <motion.div
+                      key={job.id}
+                      layout
+                      initial={{
+                        opacity: 0,
+                        y: 20,
+                      }}
+                      animate={{
+                        opacity: 1,
+                        y: 0,
+                      }}
+                      exit={{
+                        opacity: 0,
+                        scale: 0.95,
+                      }}
+                      transition={{
+                        delay: index * 0.05,
+                      }}
+                    >
                       <GlassCard
-                    hoverEffect
-                    className={`p-5 cursor-pointer transition-all ${job.priority === 'high' ? 'border-l-4 border-l-red-500' : ''}`}
-                    onClick={() => setSelectedJob(job)}>
-                    
+                        hoverEffect
+                        className={`p-5 cursor-pointer transition-all ${job.priority === 'high' ? 'border-l-4 border-l-red-500' : ''}`}
+                        onClick={() => setSelectedJob(job)}
+                      >
                         <div className="flex items-start justify-between gap-4">
                           <div className="flex items-start gap-4 flex-1 min-w-0">
                             <div
-                          className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${job.status === 'new' ? 'bg-amber-500/10 text-amber-400' : job.status === 'accepted' ? 'bg-blue-500/10 text-blue-400' : job.status === 'in-progress' ? 'bg-purple-500/10 text-purple-400' : 'bg-green-500/10 text-green-400'}`}>
-                          
+                              className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${job.status === 'new' ? 'bg-amber-500/10 text-amber-400' : job.status === 'accepted' ? 'bg-blue-500/10 text-blue-400' : job.status === 'in-progress' ? 'bg-purple-500/10 text-purple-400' : 'bg-green-500/10 text-green-400'}`}
+                            >
                               <Briefcase className="w-6 h-6" />
                             </div>
                             <div className="flex-1 min-w-0">
@@ -750,11 +750,11 @@ export function ProviderDashboardPage() {
                                 <h3 className="font-bold text-white truncate">
                                   {job.service}
                                 </h3>
-                                {job.priority === 'high' &&
-                            <span className="shrink-0 px-1.5 py-0.5 rounded text-xs font-bold bg-red-500/20 text-red-400 flex items-center gap-0.5">
+                                {job.priority === 'high' && (
+                                  <span className="shrink-0 px-1.5 py-0.5 rounded text-xs font-bold bg-red-500/20 text-red-400 flex items-center gap-0.5">
                                     <Zap className="w-3 h-3" /> Priority
                                   </span>
-                            }
+                                )}
                               </div>
                               <div className="flex items-center gap-3 text-sm text-slate-400">
                                 <span className="flex items-center gap-1">
@@ -766,8 +766,8 @@ export function ProviderDashboardPage() {
                               </div>
                               <div className="flex items-center gap-2 mt-2">
                                 <span
-                              className={`px-2 py-0.5 rounded text-xs font-medium border ${getStatusConfig(job.status).color}`}>
-                              
+                                  className={`px-2 py-0.5 rounded text-xs font-medium border ${getStatusConfig(job.status).color}`}
+                                >
                                   {getStatusConfig(job.status).label}
                                 </span>
                               </div>
@@ -784,8 +784,8 @@ export function ProviderDashboardPage() {
                         </div>
                       </GlassCard>
                     </motion.div>
-                )
-                }
+                  ))
+                )}
               </AnimatePresence>
             </div>
           </div>
@@ -882,34 +882,34 @@ export function ProviderDashboardPage() {
               </h3>
               <div className="space-y-4">
                 {[
-                {
-                  name: 'Arthas',
-                  rating: 5,
-                  text: 'Incredible run! Super fast and friendly.'
-                },
-                {
-                  name: 'Jaina',
-                  rating: 5,
-                  text: "Best booster I've worked with. Highly recommend!"
-                }].
-                map((review, i) =>
-                <div
-                  key={i}
-                  className="pb-4 border-b border-white/5 last:border-0 last:pb-0">
-                  
+                  {
+                    name: 'Arthas',
+                    rating: 5,
+                    text: 'Incredible run! Super fast and friendly.',
+                  },
+                  {
+                    name: 'Jaina',
+                    rating: 5,
+                    text: "Best booster I've worked with. Highly recommend!",
+                  },
+                ].map((review, i) => (
+                  <div
+                    key={i}
+                    className="pb-4 border-b border-white/5 last:border-0 last:pb-0"
+                  >
                     <div className="flex items-center justify-between mb-2">
                       <span className="font-medium text-white text-sm">
                         {review.name}
                       </span>
                       <div className="flex text-amber-400">
-                        {[...Array(review.rating)].map((_, i) =>
-                      <Star key={i} className="w-3 h-3 fill-amber-400" />
-                      )}
+                        {[...Array(review.rating)].map((_, i) => (
+                          <Star key={i} className="w-3 h-3 fill-amber-400" />
+                        ))}
                       </div>
                     </div>
                     <p className="text-sm text-slate-400">"{review.text}"</p>
                   </div>
-                )}
+                ))}
               </div>
             </GlassCard>
           </div>
@@ -918,25 +918,25 @@ export function ProviderDashboardPage() {
 
       {/* Job Detail Slide-over */}
       <AnimatePresence>
-        {selectedJob &&
-        <>
+        {selectedJob && (
+          <>
             <motion.div
-            initial={{
-              opacity: 0
-            }}
-            animate={{
-              opacity: 1
-            }}
-            exit={{
-              opacity: 0
-            }}
-            className="fixed inset-0 bg-black/50 z-40"
-            onClick={() => setSelectedJob(null)} />
-          
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
+              className="fixed inset-0 bg-black/50 z-40"
+              onClick={() => setSelectedJob(null)}
+            />
             <JobDetailPanel job={selectedJob} />
           </>
-        }
+        )}
       </AnimatePresence>
-    </div>);
-
+    </div>
+  )
 }
