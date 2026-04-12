@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   Gamepad2,
   MessageCircle,
@@ -14,21 +14,21 @@ import {
   Lock,
   User,
   AlertCircle,
-  Loader2 } from
-'lucide-react';
-import { Button } from '../../components/ui/Button';
-import { GlassCard } from '../../components/ui/GlassCard';
-import { Toaster, toast } from 'sonner';
-type ViewState = 'auth' | 'role-selection' | 'provider-onboarding';
+  Loader2,
+} from 'lucide-react'
+import { Button } from '../../components/ui/Button'
+import { GlassCard } from '../../components/ui/GlassCard'
+import { Toaster, toast } from 'sonner'
+type ViewState = 'auth' | 'role-selection' | 'provider-onboarding'
 export function AuthPage() {
-  const navigate = useNavigate();
-  const [view, setView] = useState<ViewState>('auth');
-  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
-  const [onboardingStep, setOnboardingStep] = useState(1);
+  const navigate = useNavigate()
+  const [view, setView] = useState<ViewState>('auth')
+  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login')
+  const [onboardingStep, setOnboardingStep] = useState(1)
   // Mock provider status
   const [providerStatus, setProviderStatus] = useState<
-    'none' | 'pending' | 'approved' | 'rejected'>(
-    'none');
+    'none' | 'pending' | 'approved' | 'rejected'
+  >('none')
   // Form State
   const [formData, setFormData] = useState({
     displayName: '',
@@ -49,34 +49,34 @@ export function AuthPage() {
     weeklyHours: '10-20 hours',
     schedule: [] as string[],
     hourlyRate: '',
-    paymentMethod: 'PayPal'
-  });
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isSavingStep, setIsSavingStep] = useState(false);
-  const [saveError, setSaveError] = useState<string | null>(null);
+    paymentMethod: 'PayPal',
+  })
+  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [isSavingStep, setIsSavingStep] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
   // Mock form states
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false)
   const handleAuthSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
+    e.preventDefault()
+    setIsLoading(true)
     setTimeout(() => {
-      setIsLoading(false);
+      setIsLoading(false)
       if (authMode === 'login') {
-        navigate('/');
+        navigate('/')
       } else {
-        setView('role-selection');
+        setView('role-selection')
       }
-    }, 800);
-  };
+    }, 800)
+  }
   const handleSocialLogin = () => {
-    setIsLoading(true);
+    setIsLoading(true)
     setTimeout(() => {
-      setIsLoading(false);
-      navigate('/');
-    }, 800);
-  };
-  const renderAuthView = () =>
-  <div className="w-full max-w-md mx-auto">
+      setIsLoading(false)
+      navigate('/')
+    }, 800)
+  }
+  const renderAuthView = () => (
+    <div className="w-full max-w-md mx-auto">
       <div className="text-center mb-8">
         <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emperial-500 to-purple-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-emperial-500/20 mx-auto mb-4">
           E
@@ -85,9 +85,9 @@ export function AuthPage() {
           Welcome to Emperial
         </h1>
         <p className="text-slate-400">
-          {authMode === 'login' ?
-        'Log in to your account to continue' :
-        'Create an account to get started'}
+          {authMode === 'login'
+            ? 'Log in to your account to continue'
+            : 'Create an account to get started'}
         </p>
       </div>
 
@@ -95,69 +95,69 @@ export function AuthPage() {
         {/* Tabs */}
         <div className="flex relative mb-8 border-b border-white/10">
           <button
-          onClick={() => setAuthMode('login')}
-          className={`flex-1 pb-4 text-sm font-medium transition-colors ${authMode === 'login' ? 'text-white' : 'text-slate-400 hover:text-slate-300'}`}>
-          
+            onClick={() => setAuthMode('login')}
+            className={`flex-1 pb-4 text-sm font-medium transition-colors ${authMode === 'login' ? 'text-white' : 'text-slate-400 hover:text-slate-300'}`}
+          >
             Login
           </button>
           <button
-          onClick={() => setAuthMode('signup')}
-          className={`flex-1 pb-4 text-sm font-medium transition-colors ${authMode === 'signup' ? 'text-white' : 'text-slate-400 hover:text-slate-300'}`}>
-          
+            onClick={() => setAuthMode('signup')}
+            className={`flex-1 pb-4 text-sm font-medium transition-colors ${authMode === 'signup' ? 'text-white' : 'text-slate-400 hover:text-slate-300'}`}
+          >
             Sign Up
           </button>
           <motion.div
-          className="absolute bottom-0 h-0.5 bg-emperial-500"
-          initial={false}
-          animate={{
-            left: authMode === 'login' ? '0%' : '50%',
-            width: '50%'
-          }}
-          transition={{
-            type: 'spring',
-            stiffness: 300,
-            damping: 30
-          }} />
-        
+            className="absolute bottom-0 h-0.5 bg-emperial-500"
+            initial={false}
+            animate={{
+              left: authMode === 'login' ? '0%' : '50%',
+              width: '50%',
+            }}
+            transition={{
+              type: 'spring',
+              stiffness: 300,
+              damping: 30,
+            }}
+          />
         </div>
 
         <form onSubmit={handleAuthSubmit} className="space-y-4">
           <AnimatePresence mode="wait">
             <motion.div
-            key={authMode}
-            initial={{
-              opacity: 0,
-              x: authMode === 'login' ? -20 : 20
-            }}
-            animate={{
-              opacity: 1,
-              x: 0
-            }}
-            exit={{
-              opacity: 0,
-              x: authMode === 'login' ? 20 : -20
-            }}
-            transition={{
-              duration: 0.2
-            }}
-            className="space-y-4">
-            
-              {authMode === 'signup' &&
-            <div className="space-y-2">
+              key={authMode}
+              initial={{
+                opacity: 0,
+                x: authMode === 'login' ? -20 : 20,
+              }}
+              animate={{
+                opacity: 1,
+                x: 0,
+              }}
+              exit={{
+                opacity: 0,
+                x: authMode === 'login' ? 20 : -20,
+              }}
+              transition={{
+                duration: 0.2,
+              }}
+              className="space-y-4"
+            >
+              {authMode === 'signup' && (
+                <div className="space-y-2">
                   <label className="text-sm font-medium text-slate-400">
                     Username / Gamertag
                   </label>
                   <div className="relative">
                     <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
                     <input
-                  type="text"
-                  required
-                  className="w-full bg-slate-800 border border-white/10 rounded-lg pl-10 pr-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-emperial-500"
-                  placeholder="Champion123" />
-                
+                      type="text"
+                      required
+                      className="w-full bg-slate-800 border border-white/10 rounded-lg pl-10 pr-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-emperial-500"
+                      placeholder="Champion123"
+                    />
                   </div>
                 </div>
-            }
+              )}
 
               <div className="space-y-2">
                 <label className="text-sm font-medium text-slate-400">
@@ -166,11 +166,11 @@ export function AuthPage() {
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
                   <input
-                  type="email"
-                  required
-                  className="w-full bg-slate-800 border border-white/10 rounded-lg pl-10 pr-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-emperial-500"
-                  placeholder="you@example.com" />
-                
+                    type="email"
+                    required
+                    className="w-full bg-slate-800 border border-white/10 rounded-lg pl-10 pr-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-emperial-500"
+                    placeholder="you@example.com"
+                  />
                 </div>
               </div>
 
@@ -181,74 +181,74 @@ export function AuthPage() {
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
                   <input
-                  type="password"
-                  required
-                  className="w-full bg-slate-800 border border-white/10 rounded-lg pl-10 pr-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-emperial-500"
-                  placeholder="••••••••" />
-                
+                    type="password"
+                    required
+                    className="w-full bg-slate-800 border border-white/10 rounded-lg pl-10 pr-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-emperial-500"
+                    placeholder="••••••••"
+                  />
                 </div>
               </div>
 
-              {authMode === 'signup' &&
-            <div className="space-y-2">
+              {authMode === 'signup' && (
+                <div className="space-y-2">
                   <label className="text-sm font-medium text-slate-400">
                     Confirm Password
                   </label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
                     <input
-                  type="password"
-                  required
-                  className="w-full bg-slate-800 border border-white/10 rounded-lg pl-10 pr-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-emperial-500"
-                  placeholder="••••••••" />
-                
+                      type="password"
+                      required
+                      className="w-full bg-slate-800 border border-white/10 rounded-lg pl-10 pr-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-emperial-500"
+                      placeholder="••••••••"
+                    />
                   </div>
                 </div>
-            }
+              )}
 
-              {authMode === 'login' ?
-            <div className="flex items-center justify-between text-sm pt-2">
+              {authMode === 'login' ? (
+                <div className="flex items-center justify-between text-sm pt-2">
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
-                  type="checkbox"
-                  className="rounded border-slate-600 text-emperial-500 focus:ring-emperial-500 bg-slate-700" />
-                
+                      type="checkbox"
+                      className="rounded border-slate-600 text-emperial-500 focus:ring-emperial-500 bg-slate-700"
+                    />
                     <span className="text-slate-400">Remember me</span>
                   </label>
                   <a
-                href="#"
-                className="text-emperial-400 hover:text-emperial-300">
-                
+                    href="#"
+                    className="text-emperial-400 hover:text-emperial-300"
+                  >
                     Forgot password?
                   </a>
-                </div> :
-
-            <div className="pt-2">
+                </div>
+              ) : (
+                <div className="pt-2">
                   <label className="flex items-start gap-2 cursor-pointer text-sm">
                     <input
-                  type="checkbox"
-                  required
-                  className="mt-1 rounded border-slate-600 text-emperial-500 focus:ring-emperial-500 bg-slate-700" />
-                
+                      type="checkbox"
+                      required
+                      className="mt-1 rounded border-slate-600 text-emperial-500 focus:ring-emperial-500 bg-slate-700"
+                    />
                     <span className="text-slate-400 leading-tight">
                       I agree to the{' '}
                       <a
-                    href="/terms"
-                    className="text-emperial-400 hover:underline">
-                    
+                        href="/terms"
+                        className="text-emperial-400 hover:underline"
+                      >
                         Terms of Service
                       </a>{' '}
                       and{' '}
                       <a
-                    href="/privacy"
-                    className="text-emperial-400 hover:underline">
-                    
+                        href="/privacy"
+                        className="text-emperial-400 hover:underline"
+                      >
                         Privacy Policy
                       </a>
                     </span>
                   </label>
                 </div>
-            }
+              )}
 
               <Button className="w-full mt-6" size="lg" isLoading={isLoading}>
                 {authMode === 'login' ? 'Sign In' : 'Create Account'}
@@ -271,28 +271,28 @@ export function AuthPage() {
 
           <div className="mt-6 grid grid-cols-2 gap-4">
             <Button
-            variant="secondary"
-            onClick={handleSocialLogin}
-            className="flex items-center justify-center gap-2 bg-[#5865F2]/10 text-[#5865F2] border-[#5865F2]/20 hover:bg-[#5865F2]/20">
-            
+              variant="secondary"
+              onClick={handleSocialLogin}
+              className="flex items-center justify-center gap-2 bg-[#5865F2]/10 text-[#5865F2] border-[#5865F2]/20 hover:bg-[#5865F2]/20"
+            >
               <MessageCircle className="w-5 h-5" />
               Discord
             </Button>
             <Button
-            variant="secondary"
-            onClick={handleSocialLogin}
-            className="flex items-center justify-center gap-2 bg-[#00aeff]/10 text-[#00aeff] border-[#00aeff]/20 hover:bg-[#00aeff]/20">
-            
+              variant="secondary"
+              onClick={handleSocialLogin}
+              className="flex items-center justify-center gap-2 bg-[#00aeff]/10 text-[#00aeff] border-[#00aeff]/20 hover:bg-[#00aeff]/20"
+            >
               <Gamepad2 className="w-5 h-5" />
               Battle.net
             </Button>
           </div>
         </div>
       </GlassCard>
-    </div>;
-
-  const renderRoleSelection = () =>
-  <div className="w-full max-w-4xl mx-auto">
+    </div>
+  )
+  const renderRoleSelection = () => (
+    <div className="w-full max-w-4xl mx-auto">
       <div className="text-center mb-12">
         <h2 className="text-3xl font-bold text-white mb-4">
           How will you use Emperial Boosting?
@@ -305,10 +305,10 @@ export function AuthPage() {
 
       <div className="grid md:grid-cols-2 gap-6">
         <GlassCard
-        hoverEffect
-        className="p-8 cursor-pointer border-2 border-transparent hover:border-emperial-500/50 group"
-        onClick={() => navigate('/catalog')}>
-        
+          hoverEffect
+          className="p-8 cursor-pointer border-2 border-transparent hover:border-emperial-500/50 group"
+          onClick={() => navigate('/catalog')}
+        >
           <div className="w-16 h-16 rounded-2xl bg-emperial-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
             <ShoppingBag className="w-8 h-8 text-emperial-400" />
           </div>
@@ -319,16 +319,16 @@ export function AuthPage() {
           </p>
           <ul className="space-y-3 mb-8">
             {[
-          'Browse extensive marketplace',
-          'Track orders in real-time',
-          '24/7 premium support',
-          'Secure payments & guarantees'].
-          map((feature, i) =>
-          <li key={i} className="flex items-center gap-3 text-slate-300">
+              'Browse extensive marketplace',
+              'Track orders in real-time',
+              '24/7 premium support',
+              'Secure payments & guarantees',
+            ].map((feature, i) => (
+              <li key={i} className="flex items-center gap-3 text-slate-300">
                 <CheckCircle2 className="w-5 h-5 text-emperial-500" />
                 {feature}
               </li>
-          )}
+            ))}
           </ul>
           <Button className="w-full group-hover:bg-emperial-400">
             Continue as Customer
@@ -337,18 +337,18 @@ export function AuthPage() {
         </GlassCard>
 
         <GlassCard
-        hoverEffect
-        className="p-8 cursor-pointer border-2 border-transparent hover:border-purple-500/50 group"
-        onClick={() => {
-          if (providerStatus === 'pending') {
-            toast.error('Your application is already under review.');
-          } else if (providerStatus === 'approved') {
-            navigate('/provider/dashboard');
-          } else {
-            setView('provider-onboarding');
-          }
-        }}>
-        
+          hoverEffect
+          className="p-8 cursor-pointer border-2 border-transparent hover:border-purple-500/50 group"
+          onClick={() => {
+            if (providerStatus === 'pending') {
+              toast.error('Your application is already under review.')
+            } else if (providerStatus === 'approved') {
+              navigate('/provider/dashboard')
+            } else {
+              setView('provider-onboarding')
+            }
+          }}
+        >
           <div className="w-16 h-16 rounded-2xl bg-purple-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
             <Briefcase className="w-8 h-8 text-purple-400" />
           </div>
@@ -361,16 +361,16 @@ export function AuthPage() {
           </p>
           <ul className="space-y-3 mb-8">
             {[
-          'Set your own schedule',
-          'Competitive payouts & bonuses',
-          'Access to premium jobs',
-          'Dedicated provider support'].
-          map((feature, i) =>
-          <li key={i} className="flex items-center gap-3 text-slate-300">
+              'Set your own schedule',
+              'Competitive payouts & bonuses',
+              'Access to premium jobs',
+              'Dedicated provider support',
+            ].map((feature, i) => (
+              <li key={i} className="flex items-center gap-3 text-slate-300">
                 <CheckCircle2 className="w-5 h-5 text-purple-500" />
                 {feature}
               </li>
-          )}
+            ))}
           </ul>
           <Button className="w-full bg-purple-600 hover:bg-purple-500 shadow-[0_0_20px_-5px_rgba(147,51,234,0.5)] group-hover:shadow-[0_0_25px_-5px_rgba(147,51,234,0.7)]">
             Apply as Provider
@@ -378,142 +378,142 @@ export function AuthPage() {
           </Button>
         </GlassCard>
       </div>
-    </div>;
-
+    </div>
+  )
   const renderProviderOnboarding = () => {
     const validateStep = (step: number) => {
-      const newErrors: Record<string, string> = {};
-      let isValid = true;
+      const newErrors: Record<string, string> = {}
+      let isValid = true
       if (step === 1) {
         if (!formData.displayName || formData.displayName.length < 3) {
-          newErrors.displayName = 'Display name must be at least 3 characters';
-          isValid = false;
+          newErrors.displayName = 'Display name must be at least 3 characters'
+          isValid = false
         }
         if (!formData.country) {
-          newErrors.country = 'Country is required';
-          isValid = false;
+          newErrors.country = 'Country is required'
+          isValid = false
         }
         if (!formData.timezone) {
-          newErrors.timezone = 'Timezone is required';
-          isValid = false;
+          newErrors.timezone = 'Timezone is required'
+          isValid = false
         }
       } else if (step === 2) {
         if (!formData.battlenetId || !formData.battlenetId.includes('#')) {
           newErrors.battlenetId =
-          'Valid Battle.net ID required (e.g. Player#1234)';
-          isValid = false;
+            'Valid Battle.net ID required (e.g. Player#1234)'
+          isValid = false
         }
         if (!formData.characterName) {
-          newErrors.characterName = 'Character name is required';
-          isValid = false;
+          newErrors.characterName = 'Character name is required'
+          isValid = false
         }
         if (!formData.itemLevel || parseInt(formData.itemLevel) <= 0) {
-          newErrors.itemLevel = 'Valid item level is required';
-          isValid = false;
+          newErrors.itemLevel = 'Valid item level is required'
+          isValid = false
         }
       } else if (step === 3) {
         if (formData.services.length === 0) {
-          newErrors.services = 'Select at least one service';
-          isValid = false;
+          newErrors.services = 'Select at least one service'
+          isValid = false
         }
       } else if (step === 4) {
         if (formData.schedule.length === 0) {
-          newErrors.schedule = 'Select at least one schedule option';
-          isValid = false;
+          newErrors.schedule = 'Select at least one schedule option'
+          isValid = false
         }
         if (!formData.hourlyRate || parseInt(formData.hourlyRate) <= 0) {
-          newErrors.hourlyRate = 'Valid hourly rate is required';
-          isValid = false;
+          newErrors.hourlyRate = 'Valid hourly rate is required'
+          isValid = false
         }
       }
-      setErrors(newErrors);
-      return isValid;
-    };
+      setErrors(newErrors)
+      return isValid
+    }
     const handleNextStep = async () => {
-      if (!validateStep(onboardingStep)) return;
-      setIsSavingStep(true);
-      setSaveError(null);
+      if (!validateStep(onboardingStep)) return
+      setIsSavingStep(true)
+      setSaveError(null)
       try {
         // Simulate API call
         await new Promise((resolve, reject) => {
           setTimeout(() => {
             // Simulate 10% failure rate for realism
             if (Math.random() < 0.1) {
-              reject(new Error('Network error'));
+              reject(new Error('Network error'))
             } else {
-              resolve(true);
+              resolve(true)
             }
-          }, 800);
-        });
-        toast.success('Progress saved');
-        setOnboardingStep((s) => Math.min(5, s + 1));
+          }, 800)
+        })
+        toast.success('Progress saved')
+        setOnboardingStep((s) => Math.min(5, s + 1))
         if (onboardingStep === 4) {
-          setProviderStatus('pending');
+          setProviderStatus('pending')
         }
       } catch (err) {
-        setSaveError("We couldn't save your progress. Please try again.");
-        toast.error('Failed to save progress');
+        setSaveError("We couldn't save your progress. Please try again.")
+        toast.error('Failed to save progress')
       } finally {
-        setIsSavingStep(false);
+        setIsSavingStep(false)
       }
-    };
+    }
     const prevStep = () => {
-      setErrors({});
-      setSaveError(null);
-      setOnboardingStep((s) => Math.max(1, s - 1));
-    };
+      setErrors({})
+      setSaveError(null)
+      setOnboardingStep((s) => Math.max(1, s - 1))
+    }
     const handleInputChange = (field: string, value: any) => {
       setFormData((prev) => ({
         ...prev,
-        [field]: value
-      }));
+        [field]: value,
+      }))
       if (errors[field]) {
         setErrors((prev) => ({
           ...prev,
-          [field]: ''
-        }));
+          [field]: '',
+        }))
       }
-    };
+    }
     const toggleArrayItem = (field: 'services' | 'schedule', item: string) => {
       setFormData((prev) => {
-        const array = prev[field];
-        const newArray = array.includes(item) ?
-        array.filter((i) => i !== item) :
-        [...array, item];
+        const array = prev[field]
+        const newArray = array.includes(item)
+          ? array.filter((i) => i !== item)
+          : [...array, item]
         if (errors[field] && newArray.length > 0) {
           setErrors((e) => ({
             ...e,
-            [field]: ''
-          }));
+            [field]: '',
+          }))
         }
         return {
           ...prev,
-          [field]: newArray
-        };
-      });
-    };
+          [field]: newArray,
+        }
+      })
+    }
     const steps = [
-    {
-      id: 1,
-      name: 'Basic Info'
-    },
-    {
-      id: 2,
-      name: 'Gaming'
-    },
-    {
-      id: 3,
-      name: 'Experience'
-    },
-    {
-      id: 4,
-      name: 'Availability'
-    },
-    {
-      id: 5,
-      name: 'Success'
-    }];
-
+      {
+        id: 1,
+        name: 'Basic Info',
+      },
+      {
+        id: 2,
+        name: 'Gaming',
+      },
+      {
+        id: 3,
+        name: 'Experience',
+      },
+      {
+        id: 4,
+        name: 'Availability',
+      },
+      {
+        id: 5,
+        name: 'Success',
+      },
+    ]
     return (
       <div className="w-full max-w-3xl mx-auto">
         <div className="mb-8">
@@ -527,36 +527,36 @@ export function AuthPage() {
             <div
               className="absolute top-1/2 left-0 h-1 bg-purple-500 -translate-y-1/2 rounded-full transition-all duration-500"
               style={{
-                width: `${(onboardingStep - 1) / 4 * 100}%`
-              }} />
-            
+                width: `${((onboardingStep - 1) / 4) * 100}%`,
+              }}
+            />
 
             <div className="relative flex justify-between">
-              {steps.map((step) =>
-              <div key={step.id} className="flex flex-col items-center gap-2">
+              {steps.map((step) => (
+                <div key={step.id} className="flex flex-col items-center gap-2">
                   <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors duration-500 ${onboardingStep >= step.id ? 'bg-purple-500 text-white shadow-[0_0_15px_rgba(168,85,247,0.5)]' : 'bg-slate-800 text-slate-500 border border-white/10'}`}>
-                  
-                    {onboardingStep > step.id ?
-                  <CheckCircle2 className="w-5 h-5" /> :
-
-                  step.id
-                  }
+                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors duration-500 ${onboardingStep >= step.id ? 'bg-purple-500 text-white shadow-[0_0_15px_rgba(168,85,247,0.5)]' : 'bg-slate-800 text-slate-500 border border-white/10'}`}
+                  >
+                    {onboardingStep > step.id ? (
+                      <CheckCircle2 className="w-5 h-5" />
+                    ) : (
+                      step.id
+                    )}
                   </div>
                   <span
-                  className={`text-xs font-medium hidden sm:block ${onboardingStep >= step.id ? 'text-purple-400' : 'text-slate-500'}`}>
-                  
+                    className={`text-xs font-medium hidden sm:block ${onboardingStep >= step.id ? 'text-purple-400' : 'text-slate-500'}`}
+                  >
                     {step.name}
                   </span>
                 </div>
-              )}
+              ))}
             </div>
           </div>
         </div>
 
         <GlassCard className="p-6 sm:p-8 overflow-hidden">
-          {providerStatus === 'pending' && onboardingStep < 5 ?
-          <div className="text-center py-12">
+          {providerStatus === 'pending' && onboardingStep < 5 ? (
+            <div className="text-center py-12">
               <div className="w-16 h-16 rounded-full bg-amber-500/20 flex items-center justify-center mx-auto mb-4">
                 <AlertCircle className="w-8 h-8 text-amber-400" />
               </div>
@@ -568,30 +568,30 @@ export function AuthPage() {
                 team.
               </p>
               <Button onClick={() => navigate('/')}>Return Home</Button>
-            </div> :
-
-          <>
+            </div>
+          ) : (
+            <>
               <AnimatePresence mode="wait">
                 <motion.div
-                key={onboardingStep}
-                initial={{
-                  opacity: 0,
-                  x: 20
-                }}
-                animate={{
-                  opacity: 1,
-                  x: 0
-                }}
-                exit={{
-                  opacity: 0,
-                  x: -20
-                }}
-                transition={{
-                  duration: 0.3
-                }}>
-                
-                  {saveError &&
-                <div className="mb-6 p-4 rounded-lg bg-red-500/10 border border-red-500/20 flex items-start gap-3">
+                  key={onboardingStep}
+                  initial={{
+                    opacity: 0,
+                    x: 20,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    x: 0,
+                  }}
+                  exit={{
+                    opacity: 0,
+                    x: -20,
+                  }}
+                  transition={{
+                    duration: 0.3,
+                  }}
+                >
+                  {saveError && (
+                    <div className="mb-6 p-4 rounded-lg bg-red-500/10 border border-red-500/20 flex items-start gap-3">
                       <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
                       <div className="flex-1">
                         <p className="text-sm text-red-400 font-medium">
@@ -599,10 +599,10 @@ export function AuthPage() {
                         </p>
                       </div>
                     </div>
-                }
+                  )}
 
-                  {onboardingStep === 1 &&
-                <div className="space-y-6">
+                  {onboardingStep === 1 && (
+                    <div className="space-y-6">
                       <div>
                         <h3 className="text-xl font-bold text-white mb-1">
                           Basic Information
@@ -618,78 +618,78 @@ export function AuthPage() {
                             Display Name <span className="text-red-400">*</span>
                           </label>
                           <input
-                        type="text"
-                        value={formData.displayName}
-                        onChange={(e) =>
-                        handleInputChange('displayName', e.target.value)
-                        }
-                        className={`w-full bg-slate-800 border rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 ${errors.displayName ? 'border-red-500/50' : 'border-white/10'}`}
-                        placeholder="e.g. Shadowblade" />
-                      
-                          {errors.displayName &&
-                      <p className="text-xs text-red-400">
+                            type="text"
+                            value={formData.displayName}
+                            onChange={(e) =>
+                              handleInputChange('displayName', e.target.value)
+                            }
+                            className={`w-full bg-slate-800 border rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 ${errors.displayName ? 'border-red-500/50' : 'border-white/10'}`}
+                            placeholder="e.g. Shadowblade"
+                          />
+                          {errors.displayName && (
+                            <p className="text-xs text-red-400">
                               {errors.displayName}
                             </p>
-                      }
+                          )}
                         </div>
                         <div className="space-y-2">
                           <label className="text-sm font-medium text-slate-400">
                             Real Name (Optional)
                           </label>
                           <input
-                        type="text"
-                        value={formData.realName}
-                        onChange={(e) =>
-                        handleInputChange('realName', e.target.value)
-                        }
-                        className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-                        placeholder="John Doe" />
-                      
+                            type="text"
+                            value={formData.realName}
+                            onChange={(e) =>
+                              handleInputChange('realName', e.target.value)
+                            }
+                            className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                            placeholder="John Doe"
+                          />
                         </div>
                         <div className="space-y-2">
                           <label className="text-sm font-medium text-slate-400">
                             Country <span className="text-red-400">*</span>
                           </label>
                           <select
-                        value={formData.country}
-                        onChange={(e) =>
-                        handleInputChange('country', e.target.value)
-                        }
-                        className={`w-full bg-slate-800 border rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none ${errors.country ? 'border-red-500/50' : 'border-white/10'}`}>
-                        
+                            value={formData.country}
+                            onChange={(e) =>
+                              handleInputChange('country', e.target.value)
+                            }
+                            className={`w-full bg-slate-800 border rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none ${errors.country ? 'border-red-500/50' : 'border-white/10'}`}
+                          >
                             <option>United States</option>
                             <option>United Kingdom</option>
                             <option>Germany</option>
                             <option>France</option>
                             <option>Canada</option>
                           </select>
-                          {errors.country &&
-                      <p className="text-xs text-red-400">
+                          {errors.country && (
+                            <p className="text-xs text-red-400">
                               {errors.country}
                             </p>
-                      }
+                          )}
                         </div>
                         <div className="space-y-2">
                           <label className="text-sm font-medium text-slate-400">
                             Timezone <span className="text-red-400">*</span>
                           </label>
                           <select
-                        value={formData.timezone}
-                        onChange={(e) =>
-                        handleInputChange('timezone', e.target.value)
-                        }
-                        className={`w-full bg-slate-800 border rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none ${errors.timezone ? 'border-red-500/50' : 'border-white/10'}`}>
-                        
+                            value={formData.timezone}
+                            onChange={(e) =>
+                              handleInputChange('timezone', e.target.value)
+                            }
+                            className={`w-full bg-slate-800 border rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none ${errors.timezone ? 'border-red-500/50' : 'border-white/10'}`}
+                          >
                             <option>PST (UTC-8)</option>
                             <option>EST (UTC-5)</option>
                             <option>GMT (UTC+0)</option>
                             <option>CET (UTC+1)</option>
                           </select>
-                          {errors.timezone &&
-                      <p className="text-xs text-red-400">
+                          {errors.timezone && (
+                            <p className="text-xs text-red-400">
                               {errors.timezone}
                             </p>
-                      }
+                          )}
                         </div>
                       </div>
                       <div className="space-y-2">
@@ -697,20 +697,20 @@ export function AuthPage() {
                           Profile Bio
                         </label>
                         <textarea
-                      rows={4}
-                      value={formData.bio}
-                      onChange={(e) =>
-                      handleInputChange('bio', e.target.value)
-                      }
-                      className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
-                      placeholder="Briefly describe your gaming background and what makes you a great booster...">
-                    </textarea>
+                          rows={4}
+                          value={formData.bio}
+                          onChange={(e) =>
+                            handleInputChange('bio', e.target.value)
+                          }
+                          className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
+                          placeholder="Briefly describe your gaming background and what makes you a great booster..."
+                        ></textarea>
                       </div>
                     </div>
-                }
+                  )}
 
-                  {onboardingStep === 2 &&
-                <div className="space-y-6">
+                  {onboardingStep === 2 && (
+                    <div className="space-y-6">
                       <div>
                         <h3 className="text-xl font-bold text-white mb-1">
                           Gaming Credentials
@@ -726,12 +726,12 @@ export function AuthPage() {
                             Primary Game
                           </label>
                           <select
-                        value={formData.primaryGame}
-                        onChange={(e) =>
-                        handleInputChange('primaryGame', e.target.value)
-                        }
-                        className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none">
-                        
+                            value={formData.primaryGame}
+                            onChange={(e) =>
+                              handleInputChange('primaryGame', e.target.value)
+                            }
+                            className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none"
+                          >
                             <option>World of Warcraft</option>
                             <option>Destiny 2</option>
                             <option>Final Fantasy XIV</option>
@@ -744,31 +744,31 @@ export function AuthPage() {
                             <span className="text-red-400">*</span>
                           </label>
                           <input
-                        type="text"
-                        value={formData.battlenetId}
-                        onChange={(e) =>
-                        handleInputChange('battlenetId', e.target.value)
-                        }
-                        className={`w-full bg-slate-800 border rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 ${errors.battlenetId ? 'border-red-500/50' : 'border-white/10'}`}
-                        placeholder="Player#1234" />
-                      
-                          {errors.battlenetId &&
-                      <p className="text-xs text-red-400">
+                            type="text"
+                            value={formData.battlenetId}
+                            onChange={(e) =>
+                              handleInputChange('battlenetId', e.target.value)
+                            }
+                            className={`w-full bg-slate-800 border rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 ${errors.battlenetId ? 'border-red-500/50' : 'border-white/10'}`}
+                            placeholder="Player#1234"
+                          />
+                          {errors.battlenetId && (
+                            <p className="text-xs text-red-400">
                               {errors.battlenetId}
                             </p>
-                      }
+                          )}
                         </div>
                         <div className="space-y-2">
                           <label className="text-sm font-medium text-slate-400">
                             Server / Region
                           </label>
                           <select
-                        value={formData.server}
-                        onChange={(e) =>
-                        handleInputChange('server', e.target.value)
-                        }
-                        className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none">
-                        
+                            value={formData.server}
+                            onChange={(e) =>
+                              handleInputChange('server', e.target.value)
+                            }
+                            className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none"
+                          >
                             <option>US - Illidan</option>
                             <option>US - Area 52</option>
                             <option>EU - Tarren Mill</option>
@@ -781,34 +781,34 @@ export function AuthPage() {
                             <span className="text-red-400">*</span>
                           </label>
                           <input
-                        type="text"
-                        value={formData.characterName}
-                        onChange={(e) =>
-                        handleInputChange('characterName', e.target.value)
-                        }
-                        className={`w-full bg-slate-800 border rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 ${errors.characterName ? 'border-red-500/50' : 'border-white/10'}`}
-                        placeholder="e.g. Thrall" />
-                      
-                          {errors.characterName &&
-                      <p className="text-xs text-red-400">
+                            type="text"
+                            value={formData.characterName}
+                            onChange={(e) =>
+                              handleInputChange('characterName', e.target.value)
+                            }
+                            className={`w-full bg-slate-800 border rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 ${errors.characterName ? 'border-red-500/50' : 'border-white/10'}`}
+                            placeholder="e.g. Thrall"
+                          />
+                          {errors.characterName && (
+                            <p className="text-xs text-red-400">
                               {errors.characterName}
                             </p>
-                      }
+                          )}
                         </div>
                         <div className="space-y-2">
                           <label className="text-sm font-medium text-slate-400">
                             Character Class
                           </label>
                           <select
-                        value={formData.characterClass}
-                        onChange={(e) =>
-                        handleInputChange(
-                          'characterClass',
-                          e.target.value
-                        )
-                        }
-                        className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none">
-                        
+                            value={formData.characterClass}
+                            onChange={(e) =>
+                              handleInputChange(
+                                'characterClass',
+                                e.target.value,
+                              )
+                            }
+                            className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none"
+                          >
                             <option>Warrior</option>
                             <option>Paladin</option>
                             <option>Hunter</option>
@@ -830,26 +830,26 @@ export function AuthPage() {
                             <span className="text-red-400">*</span>
                           </label>
                           <input
-                        type="number"
-                        value={formData.itemLevel}
-                        onChange={(e) =>
-                        handleInputChange('itemLevel', e.target.value)
-                        }
-                        className={`w-full bg-slate-800 border rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 ${errors.itemLevel ? 'border-red-500/50' : 'border-white/10'}`}
-                        placeholder="e.g. 489" />
-                      
-                          {errors.itemLevel &&
-                      <p className="text-xs text-red-400">
+                            type="number"
+                            value={formData.itemLevel}
+                            onChange={(e) =>
+                              handleInputChange('itemLevel', e.target.value)
+                            }
+                            className={`w-full bg-slate-800 border rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 ${errors.itemLevel ? 'border-red-500/50' : 'border-white/10'}`}
+                            placeholder="e.g. 489"
+                          />
+                          {errors.itemLevel && (
+                            <p className="text-xs text-red-400">
                               {errors.itemLevel}
                             </p>
-                      }
+                          )}
                         </div>
                       </div>
                     </div>
-                }
+                  )}
 
-                  {onboardingStep === 3 &&
-                <div className="space-y-6">
+                  {onboardingStep === 3 && (
+                    <div className="space-y-6">
                       <div>
                         <h3 className="text-xl font-bold text-white mb-1">
                           Experience & Services
@@ -864,12 +864,12 @@ export function AuthPage() {
                           Years of Boosting Experience
                         </label>
                         <select
-                      value={formData.experience}
-                      onChange={(e) =>
-                      handleInputChange('experience', e.target.value)
-                      }
-                      className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none">
-                      
+                          value={formData.experience}
+                          onChange={(e) =>
+                            handleInputChange('experience', e.target.value)
+                          }
+                          className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none"
+                        >
                           <option>Less than 1 year</option>
                           <option>1-2 years</option>
                           <option>3-5 years</option>
@@ -884,36 +884,36 @@ export function AuthPage() {
                         </label>
                         <div className="grid sm:grid-cols-2 gap-3">
                           {[
-                      'Mythic+ Dungeons',
-                      'Raid Carries',
-                      'PvP Boosting',
-                      'Leveling',
-                      'Gold Farming',
-                      'Achievements'].
-                      map((service) =>
-                      <label
-                        key={service}
-                        className={`flex items-center gap-3 p-3 rounded-lg border bg-slate-800/50 cursor-pointer hover:bg-slate-800 transition-colors ${errors.services ? 'border-red-500/50' : 'border-white/10'}`}>
-                        
+                            'Mythic+ Dungeons',
+                            'Raid Carries',
+                            'PvP Boosting',
+                            'Leveling',
+                            'Gold Farming',
+                            'Achievements',
+                          ].map((service) => (
+                            <label
+                              key={service}
+                              className={`flex items-center gap-3 p-3 rounded-lg border bg-slate-800/50 cursor-pointer hover:bg-slate-800 transition-colors ${errors.services ? 'border-red-500/50' : 'border-white/10'}`}
+                            >
                               <input
-                          type="checkbox"
-                          checked={formData.services.includes(service)}
-                          onChange={() =>
-                          toggleArrayItem('services', service)
-                          }
-                          className="rounded border-slate-600 text-purple-500 focus:ring-purple-500 bg-slate-700" />
-                        
+                                type="checkbox"
+                                checked={formData.services.includes(service)}
+                                onChange={() =>
+                                  toggleArrayItem('services', service)
+                                }
+                                className="rounded border-slate-600 text-purple-500 focus:ring-purple-500 bg-slate-700"
+                              />
                               <span className="text-sm text-slate-300">
                                 {service}
                               </span>
                             </label>
-                      )}
+                          ))}
                         </div>
-                        {errors.services &&
-                    <p className="text-xs text-red-400">
+                        {errors.services && (
+                          <p className="text-xs text-red-400">
                             {errors.services}
                           </p>
-                    }
+                        )}
                       </div>
 
                       <div className="space-y-2">
@@ -921,17 +921,17 @@ export function AuthPage() {
                           Highest Achievement
                         </label>
                         <input
-                      type="text"
-                      value={formData.highestAchievement}
-                      onChange={(e) =>
-                      handleInputChange(
-                        'highestAchievement',
-                        e.target.value
-                      )
-                      }
-                      className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-                      placeholder="e.g. Cutting Edge: Fyrakk, Rank 1 Gladiator" />
-                    
+                          type="text"
+                          value={formData.highestAchievement}
+                          onChange={(e) =>
+                            handleInputChange(
+                              'highestAchievement',
+                              e.target.value,
+                            )
+                          }
+                          className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                          placeholder="e.g. Cutting Edge: Fyrakk, Rank 1 Gladiator"
+                        />
                       </div>
 
                       <div className="space-y-2">
@@ -939,20 +939,20 @@ export function AuthPage() {
                           Link to Raider.io / Armory (Optional)
                         </label>
                         <input
-                      type="url"
-                      value={formData.raiderioLink}
-                      onChange={(e) =>
-                      handleInputChange('raiderioLink', e.target.value)
-                      }
-                      className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-                      placeholder="https://raider.io/characters/..." />
-                    
+                          type="url"
+                          value={formData.raiderioLink}
+                          onChange={(e) =>
+                            handleInputChange('raiderioLink', e.target.value)
+                          }
+                          className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                          placeholder="https://raider.io/characters/..."
+                        />
                       </div>
                     </div>
-                }
+                  )}
 
-                  {onboardingStep === 4 &&
-                <div className="space-y-6">
+                  {onboardingStep === 4 && (
+                    <div className="space-y-6">
                       <div>
                         <h3 className="text-xl font-bold text-white mb-1">
                           Availability & Rates
@@ -967,12 +967,12 @@ export function AuthPage() {
                           Weekly Availability (Hours)
                         </label>
                         <select
-                      value={formData.weeklyHours}
-                      onChange={(e) =>
-                      handleInputChange('weeklyHours', e.target.value)
-                      }
-                      className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none">
-                      
+                          value={formData.weeklyHours}
+                          onChange={(e) =>
+                            handleInputChange('weeklyHours', e.target.value)
+                          }
+                          className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none"
+                        >
                           <option>10-20 hours</option>
                           <option>20-30 hours</option>
                           <option>30-40 hours</option>
@@ -987,34 +987,34 @@ export function AuthPage() {
                         </label>
                         <div className="grid sm:grid-cols-2 gap-3">
                           {[
-                      'Weekday mornings',
-                      'Weekday evenings',
-                      'Weekends',
-                      'Flexible'].
-                      map((schedule) =>
-                      <label
-                        key={schedule}
-                        className={`flex items-center gap-3 p-3 rounded-lg border bg-slate-800/50 cursor-pointer hover:bg-slate-800 transition-colors ${errors.schedule ? 'border-red-500/50' : 'border-white/10'}`}>
-                        
+                            'Weekday mornings',
+                            'Weekday evenings',
+                            'Weekends',
+                            'Flexible',
+                          ].map((schedule) => (
+                            <label
+                              key={schedule}
+                              className={`flex items-center gap-3 p-3 rounded-lg border bg-slate-800/50 cursor-pointer hover:bg-slate-800 transition-colors ${errors.schedule ? 'border-red-500/50' : 'border-white/10'}`}
+                            >
                               <input
-                          type="checkbox"
-                          checked={formData.schedule.includes(schedule)}
-                          onChange={() =>
-                          toggleArrayItem('schedule', schedule)
-                          }
-                          className="rounded border-slate-600 text-purple-500 focus:ring-purple-500 bg-slate-700" />
-                        
+                                type="checkbox"
+                                checked={formData.schedule.includes(schedule)}
+                                onChange={() =>
+                                  toggleArrayItem('schedule', schedule)
+                                }
+                                className="rounded border-slate-600 text-purple-500 focus:ring-purple-500 bg-slate-700"
+                              />
                               <span className="text-sm text-slate-300">
                                 {schedule}
                               </span>
                             </label>
-                      )}
+                          ))}
                         </div>
-                        {errors.schedule &&
-                    <p className="text-xs text-red-400">
+                        {errors.schedule && (
+                          <p className="text-xs text-red-400">
                             {errors.schedule}
                           </p>
-                    }
+                        )}
                       </div>
 
                       <div className="grid sm:grid-cols-2 gap-4">
@@ -1028,32 +1028,32 @@ export function AuthPage() {
                               $
                             </span>
                             <input
-                          type="number"
-                          value={formData.hourlyRate}
-                          onChange={(e) =>
-                          handleInputChange('hourlyRate', e.target.value)
-                          }
-                          className={`w-full bg-slate-800 border rounded-lg pl-8 pr-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 ${errors.hourlyRate ? 'border-red-500/50' : 'border-white/10'}`}
-                          placeholder="15" />
-                        
+                              type="number"
+                              value={formData.hourlyRate}
+                              onChange={(e) =>
+                                handleInputChange('hourlyRate', e.target.value)
+                              }
+                              className={`w-full bg-slate-800 border rounded-lg pl-8 pr-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 ${errors.hourlyRate ? 'border-red-500/50' : 'border-white/10'}`}
+                              placeholder="15"
+                            />
                           </div>
-                          {errors.hourlyRate &&
-                      <p className="text-xs text-red-400">
+                          {errors.hourlyRate && (
+                            <p className="text-xs text-red-400">
                               {errors.hourlyRate}
                             </p>
-                      }
+                          )}
                         </div>
                         <div className="space-y-2">
                           <label className="text-sm font-medium text-slate-400">
                             Payment Method
                           </label>
                           <select
-                        value={formData.paymentMethod}
-                        onChange={(e) =>
-                        handleInputChange('paymentMethod', e.target.value)
-                        }
-                        className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none">
-                        
+                            value={formData.paymentMethod}
+                            onChange={(e) =>
+                              handleInputChange('paymentMethod', e.target.value)
+                            }
+                            className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none"
+                          >
                             <option>PayPal</option>
                             <option>Bank Transfer</option>
                             <option>Crypto (USDT/USDC)</option>
@@ -1061,24 +1061,24 @@ export function AuthPage() {
                         </div>
                       </div>
                     </div>
-                }
+                  )}
 
-                  {onboardingStep === 5 &&
-                <div className="py-8 text-center space-y-6">
+                  {onboardingStep === 5 && (
+                    <div className="py-8 text-center space-y-6">
                       <motion.div
-                    initial={{
-                      scale: 0
-                    }}
-                    animate={{
-                      scale: 1
-                    }}
-                    transition={{
-                      type: 'spring',
-                      damping: 15,
-                      delay: 0.2
-                    }}
-                    className="w-24 h-24 rounded-full bg-green-500/20 flex items-center justify-center mx-auto">
-                    
+                        initial={{
+                          scale: 0,
+                        }}
+                        animate={{
+                          scale: 1,
+                        }}
+                        transition={{
+                          type: 'spring',
+                          damping: 15,
+                          delay: 0.2,
+                        }}
+                        className="w-24 h-24 rounded-full bg-green-500/20 flex items-center justify-center mx-auto"
+                      >
                         <CheckCircle2 className="w-12 h-12 text-green-400" />
                       </motion.div>
 
@@ -1132,70 +1132,70 @@ export function AuthPage() {
                         </ul>
                       </div>
                     </div>
-                }
+                  )}
                 </motion.div>
               </AnimatePresence>
 
               {/* Navigation Buttons */}
               <div className="mt-8 pt-6 border-t border-white/10 flex items-center justify-between">
-                {onboardingStep > 1 && onboardingStep < 5 ?
-              <Button
-                variant="ghost"
-                onClick={prevStep}
-                disabled={isSavingStep}>
-                
+                {onboardingStep > 1 && onboardingStep < 5 ? (
+                  <Button
+                    variant="ghost"
+                    onClick={prevStep}
+                    disabled={isSavingStep}
+                  >
                     <ChevronLeft className="w-4 h-4 mr-2" />
                     Back
-                  </Button> :
+                  </Button>
+                ) : (
+                  <div></div>
+                )}
 
-              <div></div>
-              }
-
-                {onboardingStep < 5 ?
-              <Button
-                onClick={handleNextStep}
-                disabled={isSavingStep}
-                className="bg-purple-600 hover:bg-purple-500 shadow-[0_0_20px_-5px_rgba(147,51,234,0.5)]">
-                
-                    {isSavingStep ?
-                <>
+                {onboardingStep < 5 ? (
+                  <Button
+                    onClick={handleNextStep}
+                    disabled={isSavingStep}
+                    className="bg-purple-600 hover:bg-purple-500 shadow-[0_0_20px_-5px_rgba(147,51,234,0.5)]"
+                  >
+                    {isSavingStep ? (
+                      <>
                         <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                         Saving...
-                      </> :
-
-                <>
-                        {onboardingStep === 4 ?
-                  'Submit Application' :
-                  'Next Step'}
+                      </>
+                    ) : (
+                      <>
+                        {onboardingStep === 4
+                          ? 'Submit Application'
+                          : 'Next Step'}
                         <ChevronRight className="w-4 h-4 ml-2" />
                       </>
-                }
-                  </Button> :
-
-              <Button
-                onClick={() => navigate('/')}
-                className="w-full sm:w-auto bg-purple-600 hover:bg-purple-500 shadow-[0_0_20px_-5px_rgba(147,51,234,0.5)]">
-                
+                    )}
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={() => navigate('/')}
+                    className="w-full sm:w-auto bg-purple-600 hover:bg-purple-500 shadow-[0_0_20px_-5px_rgba(147,51,234,0.5)]"
+                  >
                     Go to Home
                     <ChevronRight className="w-4 h-4 ml-2" />
                   </Button>
-              }
+                )}
               </div>
             </>
-          }
+          )}
         </GlassCard>
-      </div>);
-
-  };
+      </div>
+    )
+  }
   return (
     <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4 relative overflow-hidden pt-20">
       <Toaster theme="dark" position="top-center" />
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-emperial-500/10 rounded-full blur-[120px] opacity-30" />
-        {view === 'provider-onboarding' &&
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-purple-500/10 rounded-full blur-[120px] opacity-30 transition-opacity duration-1000" />
-        }
+        {view === 'provider-onboarding' && (
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-purple-500/10 rounded-full blur-[120px] opacity-30 transition-opacity duration-1000" />
+        )}
       </div>
 
       <div className="relative z-10 w-full">
@@ -1204,26 +1204,26 @@ export function AuthPage() {
             key={view}
             initial={{
               opacity: 0,
-              y: 20
+              y: 20,
             }}
             animate={{
               opacity: 1,
-              y: 0
+              y: 0,
             }}
             exit={{
               opacity: 0,
-              y: -20
+              y: -20,
             }}
             transition={{
-              duration: 0.3
-            }}>
-            
+              duration: 0.3,
+            }}
+          >
             {view === 'auth' && renderAuthView()}
             {view === 'role-selection' && renderRoleSelection()}
             {view === 'provider-onboarding' && renderProviderOnboarding()}
           </motion.div>
         </AnimatePresence>
       </div>
-    </div>);
-
+    </div>
+  )
 }
