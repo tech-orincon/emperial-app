@@ -24,6 +24,8 @@ import { TermsPage } from './pages/legal/TermsPage';
 import { PrivacyPage } from './pages/legal/PrivacyPage';
 import { RefundPolicyPage } from './pages/legal/RefundPolicyPage';
 import { ChatCenter } from './components/ChatCenter';
+import { AuthPage } from './pages/auth/AuthPage';
+import { Navigate } from 'react-router-dom';
 function HomePage() {
   return (
     <div className="min-h-screen bg-slate-900 text-slate-50 selection:bg-emperial-500/30 selection:text-white">
@@ -54,7 +56,11 @@ export function App() {
         <Route path="/account/profile" element={<ProfilePage />} />
         <Route path="/account/orders" element={<OrdersPage />} />
         <Route path="/account/orders/:id" element={<OrderDetailPage />} />
-        <Route path="/provider/login" element={<ProviderLoginPage />} />
+        <Route path="/auth" element={<AuthPage />} />
+        <Route
+          path="/provider/login"
+          element={<Navigate to="/auth" replace />} />
+        
         <Route path="/provider/dashboard" element={<ProviderDashboardPage />} />
         <Route path="/provider/:id" element={<ProviderProfilePage />} />
         <Route path="/terms" element={<TermsPage />} />
