@@ -1,0 +1,130 @@
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from 'react';
+import { onAuthStateChanged, type User as FirebaseUser } from 'firebase/auth';
+import { auth } from '../lib/firebase';
+import {
+  logout as firebaseLogout,
+  fetchBackendProfile,
+  type BackendProfile,
+} from '../services/auth.service';
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+export type UserRole = 'guest' | 'customer' | 'provider';
+
+export interface AuthUser extends BackendProfile {}
+
+export interface AuthContextType {
+  /** Merged Firebase + backend user. null while loading or unauthenticated. */
+  user: AuthUser | null;
+  /** Firebase raw user — use for getIdToken(), uid, etc. */
+  firebaseUser: FirebaseUser | null;
+  role: UserRole;
+  /** true once the initial Firebase session check has resolved */
+  isLoading: boolean;
+  isAuthenticated: boolean;
+  /**
+   * Called by AuthPage after a successful Firebase login/register
+   * so we can immediately fetch the backend profile without waiting
+   * for the onAuthStateChanged delay.
+   */
+  refreshProfile: () => Promise<void>;
+  setRole: (role: UserRole) => void;
+  logout: () => Promise<void>;
+}
+
+// ─── Context ──────────────────────────────────────────────────────────────────
+
+const AuthContext = createContext<AuthContextType>({
+  user: null,
+  firebaseUser: null,
+  role: 'guest',
+  isLoading: true,
+  isAuthenticated: false,
+  refreshProfile: async () => {},
+  setRole: () => {},
+  logout: async () => {},
+});
+
+// ─── Provider ─────────────────────────────────────────────────────────────────
+
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [role, setRole] = useState<UserRole>('guest');
+  // Starts true — we don't know if there's a session until Firebase resolves
+  const [isLoading, setIsLoading] = useState(true);
+
+  // ── Backend profile fetch ─────────────────────────────────────────────────
+  const loadBackendProfile = useCallback(async () => {
+    try {
+      const profile = await fetchBackendProfile();
+      setUser(profile);
+      setRole(profile.role);
+    } catch {
+      // Backend unreachable or profile not created yet.
+      // Keep firebaseUser set so the session still exists; user is null.
+      setUser(null);
+    }
+  }, []);
+
+  // ── Firebase session listener ─────────────────────────────────────────────
+  // onAuthStateChanged fires:
+  //   • On app load if a persisted session exists (localStorage)
+  //   • After login / register / logout
+  // Firebase handles token refresh silently — getIdToken() always returns fresh tokens.
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
+      setFirebaseUser(fbUser);
+
+      if (fbUser) {
+        await loadBackendProfile();
+      } else {
+        setUser(null);
+        setRole('guest');
+      }
+
+      setIsLoading(false);
+    });
+
+    return unsubscribe; // clean up listener on unmount
+  }, [loadBackendProfile]);
+
+  // ── Exposed helpers ───────────────────────────────────────────────────────
+
+  const refreshProfile = useCallback(async () => {
+    if (!auth.currentUser) return;
+    await loadBackendProfile();
+  }, [loadBackendProfile]);
+
+  const handleLogout = useCallback(async () => {
+    await firebaseLogout();
+    // onAuthStateChanged will fire and clear state automatically
+  }, []);
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        firebaseUser,
+        role,
+        isLoading,
+        isAuthenticated: !!user,
+        refreshProfile,
+        setRole,
+        logout: handleLogout,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+// ─── Hook ─────────────────────────────────────────────────────────────────────
+
+export const useAuth = () => useContext(AuthContext);
