@@ -9,7 +9,6 @@ import {
   CheckCircle2,
   ChevronRight,
   ChevronLeft,
-  Shield,
   Mail,
   Lock,
   User,
@@ -22,11 +21,60 @@ import { Toaster, toast } from 'sonner'
 import { FirebaseError } from 'firebase/app'
 import { sendPasswordResetEmail } from 'firebase/auth'
 import { auth } from '../../lib/firebase'
-import { loginWithEmail, registerWithEmail } from '../../services/auth.service'
+import {
+  loginWithEmail,
+  registerWithEmail,
+  registerUser,
+  startOnboarding,
+  updateGamingProfile,
+  saveSkills,
+  saveAvailability,
+  type ScheduleEnum,
+} from '../../services/auth.service'
 import { getFirebaseErrorMessage } from '../../lib/firebaseErrors'
 import { useAuth } from '../../context/AuthContext'
 
 type ViewState = 'auth' | 'role-selection' | 'provider-onboarding'
+
+// ─── Backend mapping tables ───────────────────────────────────────────────────
+// These map form label values to API-expected IDs / enums.
+// Update numeric IDs once the backend provides a reference endpoint.
+
+const COUNTRY_IDS: Record<string, number> = {
+  'United States': 1,
+  'United Kingdom': 2,
+  Germany: 3,
+  France: 4,
+  Canada: 5,
+}
+
+const GAME_IDS: Record<string, number> = {
+  'World of Warcraft': 1,
+  'Destiny 2': 2,
+  'Final Fantasy XIV': 3,
+  'League of Legends': 4,
+}
+
+const EXPERIENCE_YEARS: Record<string, number> = {
+  'Less than 1 year': 0,
+  '1-2 years': 1,
+  '3-5 years': 3,
+  '5+ years': 5,
+}
+
+const WEEKLY_HOURS: Record<string, number> = {
+  '10-20 hours': 15,
+  '20-30 hours': 25,
+  '30-40 hours': 35,
+  '40+ hours': 45,
+}
+
+const SCHEDULE_ENUM: Record<string, ScheduleEnum> = {
+  'Weekday mornings': 'WEEKDAY_MORNING',
+  'Weekday evenings': 'WEEKDAY_EVENING',
+  Weekends: 'WEEKEND',
+  Flexible: 'FLEXIBLE',
+}
 
 export function AuthPage() {
   const navigate = useNavigate()
@@ -93,9 +141,9 @@ export function AuthPage() {
         await refreshProfile()
         navigate('/')
       } else {
-        await registerWithEmail(email, password)
-        // After registration, ask the user what role they want before
-        // creating their backend profile.
+        const fbUser = await registerWithEmail(email, password)
+        // Create the backend user record (BUYER role by default)
+        await registerUser({ email: fbUser.email ?? email, username })
         setView('role-selection')
       }
     } catch (err) {
@@ -485,18 +533,44 @@ export function AuthPage() {
       setIsSavingStep(true)
       setSaveError(null)
       try {
-        // TODO: replace with real API call to save onboarding step
-        await new Promise((resolve, reject) => {
-          setTimeout(() => {
-            if (Math.random() < 0.1) reject(new Error('Network error'))
-            else resolve(true)
-          }, 800)
-        })
-        toast.success('Progress saved')
-        setOnboardingStep((s) => Math.min(5, s + 1))
-        if (onboardingStep === 4) {
+        if (onboardingStep === 1) {
+          await startOnboarding({
+            displayName: formData.displayName,
+            realName: formData.realName || undefined,
+            countryId: COUNTRY_IDS[formData.country] ?? 1,
+            timezone: formData.timezone,
+          })
+        } else if (onboardingStep === 2) {
+          await updateGamingProfile({
+            gameId: GAME_IDS[formData.primaryGame] ?? 1,
+            slug: formData.battlenetId,
+            data: {
+              battlenetId: formData.battlenetId,
+              server: formData.server,
+              characterName: formData.characterName,
+              characterClass: formData.characterClass,
+              itemLevel: parseInt(formData.itemLevel, 10),
+            },
+          })
+        } else if (onboardingStep === 3) {
+          await saveSkills({
+            yearExperience: EXPERIENCE_YEARS[formData.experience] ?? 0,
+            highestAchievement: formData.highestAchievement || undefined,
+            providerGameSkill: formData.services,
+          })
+        } else if (onboardingStep === 4) {
+          await saveAvailability({
+            weeklyHours: WEEKLY_HOURS[formData.weeklyHours] ?? 15,
+            schedules: formData.schedule
+              .map((s) => SCHEDULE_ENUM[s])
+              .filter(Boolean) as ScheduleEnum[],
+            hourlyRate: parseInt(formData.hourlyRate, 10),
+            paymentMethod: formData.paymentMethod,
+          })
           setProviderStatus('pending')
         }
+        toast.success('Progress saved')
+        setOnboardingStep((s) => Math.min(5, s + 1))
       } catch {
         setSaveError("We couldn't save your progress. Please try again.")
         toast.error('Failed to save progress')

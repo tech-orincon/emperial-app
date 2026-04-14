@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, ShieldCheck, Star, Sword } from 'lucide-react';
+import { ShieldCheck, Star, Sword } from 'lucide-react';
 import { Button } from '../../../components/ui/Button';
 export function Hero() {
   return (

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Navbar } from '../../components/layout/Navbar';
 import { Footer } from '../../components/layout/Footer';
 import { Breadcrumb } from './components/Breadcrumb';
@@ -17,7 +16,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Toaster, toast } from 'sonner';
 type LoadingState = 'loading' | 'success' | 'error' | 'empty';
 export function CatalogPage() {
-  const navigate = useNavigate();
   const [selectedGame, setSelectedGame] = useState('wow');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [loadingState, setLoadingState] = useState<LoadingState>('loading');

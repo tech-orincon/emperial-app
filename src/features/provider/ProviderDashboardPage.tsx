@@ -10,7 +10,6 @@ import {
   Clock,
   CheckCircle2,
   AlertCircle,
-  ChevronRight,
   MessageSquare,
   Upload,
   Play,
@@ -18,18 +17,16 @@ import {
   Shield,
   TrendingUp,
   Award,
-  Calendar,
   MapPin,
   ToggleLeft,
   ToggleRight,
   X,
-  FileCheck,
   Zap,
   Crown,
   Target,
   Timer,
 } from 'lucide-react'
-import { Toaster, toast } from 'sonner'
+import { toast } from 'sonner'
 type JobStatus = 'new' | 'accepted' | 'in-progress' | 'completed'
 type JobPriority = 'high' | 'normal'
 interface Job {

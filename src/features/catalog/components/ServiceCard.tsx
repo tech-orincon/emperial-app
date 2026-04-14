@@ -1,8 +1,7 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { GlassCard } from '../../../components/ui/GlassCard';
 import { Button } from '../../../components/ui/Button';
-import { Star, Clock, ShieldCheck, Zap } from 'lucide-react';
+import { Star, Clock, Zap } from 'lucide-react';
 export interface ServiceProps {
   id: string;
   title: string;

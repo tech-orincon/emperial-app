@@ -30,9 +30,11 @@ interface AuthContextType {
 }
 const AuthContext = createContext<AuthContextType>({
   role: 'guest',
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setRole: () => {},
   cartCount: 0
 });
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => useContext(AuthContext);
 // Export provider for App.tsx usage
 export function AuthProvider({ children }: {children: React.ReactNode;}) {
@@ -70,7 +72,7 @@ export function Navbar() {
   }, []);
   // Close dropdown when clicking outside
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
+    const handleClickOutside = () => {
       if (isUserMenuOpen) {
         setIsUserMenuOpen(false);
       }

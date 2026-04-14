@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Star, Clock, Zap } from 'lucide-react';
+import { Star, Zap } from 'lucide-react';
 import { Button } from '../../../components/ui/Button';
 const deals = [
 {

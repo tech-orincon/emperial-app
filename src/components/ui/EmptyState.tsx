@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Search, Package, ShoppingCart, Scroll, Compass } from 'lucide-react';
+import { Search, ShoppingCart, Scroll, Compass } from 'lucide-react';
 import { Button } from './Button';
 interface EmptyStateProps {
   icon?: React.ElementType;

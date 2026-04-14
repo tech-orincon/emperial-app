@@ -11,13 +11,21 @@ import {
   logout as firebaseLogout,
   fetchBackendProfile,
   type BackendProfile,
+  type BackendRole,
 } from '../services/auth.service';
+
+// ─── Role Mapping ─────────────────────────────────────────────────────────────
+
+function mapRole(backendRole: BackendRole): UserRole {
+  if (backendRole === 'PROVIDER') return 'provider';
+  return 'customer'; // BUYER and ADMIN both map to customer for now
+}
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export type UserRole = 'guest' | 'customer' | 'provider';
 
-export interface AuthUser extends BackendProfile {}
+export type AuthUser = BackendProfile;
 
 export interface AuthContextType {
   /** Merged Firebase + backend user. null while loading or unauthenticated. */
@@ -46,8 +54,11 @@ const AuthContext = createContext<AuthContextType>({
   role: 'guest',
   isLoading: true,
   isAuthenticated: false,
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   refreshProfile: async () => {},
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setRole: () => {},
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   logout: async () => {},
 });
 
@@ -65,7 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const profile = await fetchBackendProfile();
       setUser(profile);
-      setRole(profile.role);
+      setRole(mapRole(profile.role));
     } catch {
       // Backend unreachable or profile not created yet.
       // Keep firebaseUser set so the session still exists; user is null.
@@ -127,4 +138,5 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => useContext(AuthContext);

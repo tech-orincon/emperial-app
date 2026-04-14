@@ -7,15 +7,25 @@ import {
 } from 'firebase/auth';
 import { auth } from '../lib/firebase';
 import { apiClient } from './api/client';
-import type { UserRole } from '../context/AuthContext';
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// ─── Backend Role & Schedule Types ────────────────────────────────────────────
+
+export type BackendRole = 'BUYER' | 'PROVIDER' | 'ADMIN';
+
+export type ScheduleEnum =
+  | 'WEEKDAY_MORNING'
+  | 'WEEKDAY_EVENING'
+  | 'WEEKEND'
+  | 'FLEXIBLE';
+
+// ─── Backend Profile DTO ──────────────────────────────────────────────────────
 
 export interface BackendProfile {
   id: string;
   username: string;
   email: string;
-  role: UserRole;
+  role: BackendRole;
+  uid?: string;
   avatarUrl?: string;
 }
 
@@ -49,8 +59,7 @@ export async function sendPasswordReset(email: string): Promise<void> {
 
 /**
  * Returns a fresh Firebase ID token for the current user.
- * Firebase automatically refreshes it when it's about to expire (every hour).
- * Pass forceRefresh=true to always get a new token regardless.
+ * Pass forceRefresh=true to always get a new token regardless of expiry.
  */
 export async function getIdToken(forceRefresh = false): Promise<string | null> {
   const user = auth.currentUser;
@@ -58,27 +67,80 @@ export async function getIdToken(forceRefresh = false): Promise<string | null> {
   return user.getIdToken(forceRefresh);
 }
 
-// ─── Backend Profile ──────────────────────────────────────────────────────────
+// ─── Backend Auth Endpoints ───────────────────────────────────────────────────
 
 /**
- * After Firebase auth succeeds, call the backend with the Firebase token
- * to retrieve or create the user's application profile (role, username, etc.).
- *
- * The token is automatically injected by the axios interceptor in api/client.ts.
+ * GET /auth/login
+ * Returns the backend user profile for the authenticated Firebase user.
+ * The Authorization + uid headers are injected by the axios interceptor.
  */
 export async function fetchBackendProfile(): Promise<BackendProfile> {
-  const { data } = await apiClient.get<BackendProfile>('/auth/me');
+  const { data } = await apiClient.get<BackendProfile>('/auth/login');
   return data;
 }
 
 /**
- * Called once after a new user registers.
- * Creates the user profile in the backend linked to their Firebase UID.
+ * POST /auth/user
+ * Creates the backend user record after Firebase registration.
+ * User is created with BUYER role by default.
+ * The uid header is injected automatically by the axios interceptor.
  */
-export async function createBackendProfile(payload: {
+export async function registerUser(payload: {
+  email: string;
   username: string;
-  role: UserRole;
 }): Promise<BackendProfile> {
-  const { data } = await apiClient.post<BackendProfile>('/auth/profile', payload);
+  const { data } = await apiClient.post<BackendProfile>('/auth/user', payload);
   return data;
+}
+
+// ─── Provider Onboarding ──────────────────────────────────────────────────────
+
+/**
+ * POST /auth/onboarding/start
+ * Step 1: Basic provider information (display name, location, timezone).
+ */
+export async function startOnboarding(payload: {
+  displayName: string;
+  realName?: string;
+  countryId: number;
+  timezone: string;
+}): Promise<void> {
+  await apiClient.post('/auth/onboarding/start', payload);
+}
+
+/**
+ * PATCH /auth/onboarding/gaming-profile
+ * Step 2: Link the provider's primary game account.
+ */
+export async function updateGamingProfile(payload: {
+  gameId: number;
+  data: Record<string, unknown>;
+  slug: string;
+}): Promise<void> {
+  await apiClient.patch('/auth/onboarding/gaming-profile', payload);
+}
+
+/**
+ * POST /auth/onboarding/skills
+ * Step 3: Experience level, highest achievement, and offered services.
+ */
+export async function saveSkills(payload: {
+  yearExperience: number;
+  highestAchievement?: string;
+  providerGameSkill: string[];
+}): Promise<void> {
+  await apiClient.post('/auth/onboarding/skills', payload);
+}
+
+/**
+ * PUT /auth/onboarding/availability
+ * Step 4: Weekly hours, schedule preferences, rate, and payment method.
+ */
+export async function saveAvailability(payload: {
+  weeklyHours: number;
+  schedules: ScheduleEnum[];
+  hourlyRate: number;
+  paymentMethod: string;
+}): Promise<void> {
+  await apiClient.put('/auth/onboarding/availability', payload);
 }

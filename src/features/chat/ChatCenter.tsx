@@ -3,8 +3,7 @@ import React, {
   useState,
   useRef,
   createContext,
-  useContext,
-  Component } from
+  useContext } from
 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -20,7 +19,6 @@ import {
   Search,
   MoreVertical } from
 'lucide-react';
-import { Toaster, toast } from 'sonner';
 // Types
 interface Message {
   id: string;
@@ -51,10 +49,13 @@ interface ChatContextType {
   isOpen: boolean;
 }
 const ChatContext = createContext<ChatContextType>({
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   openChat: () => {},
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   openProviderChat: () => {},
   isOpen: false
 });
+// eslint-disable-next-line react-refresh/only-export-components
 export const useChat = () => useContext(ChatContext);
 // Mock conversations data
 const initialConversations: Conversation[] = [

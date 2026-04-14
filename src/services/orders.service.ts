@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // ─── Orders Service ───────────────────────────────────────────────────────────
 //
 // Backend integration points for order lifecycle management.

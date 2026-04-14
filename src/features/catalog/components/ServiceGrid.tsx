@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ServiceCard, ServiceProps } from './ServiceCard';
-import { Filter, SlidersHorizontal, ArrowDownUp } from 'lucide-react';
+import { Filter, ArrowDownUp } from 'lucide-react';
 interface ServiceGridProps {
-  category: string;
+  category?: string;
 }
 // Mock data generator
-const getMockServices = (category: string): ServiceProps[] => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const getMockServices = (_category: string): ServiceProps[] => {
   const baseServices = [
   {
     id: '1',

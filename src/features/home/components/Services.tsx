@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Check, Crown, Sword, Coins, Skull, Shield } from 'lucide-react';
+import { Check, Crown, Coins, Skull } from 'lucide-react';
 import { Button } from '../../../components/ui/Button';
 import { GlassCard } from '../../../components/ui/GlassCard';
 const services = [

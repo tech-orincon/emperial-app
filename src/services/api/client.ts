@@ -21,6 +21,7 @@ apiClient.interceptors.request.use(
     if (user) {
       const token = await user.getIdToken(); // auto-refreshes if expired
       config.headers.Authorization = `Bearer ${token}`;
+      config.headers['uid'] = user.uid;
     }
     return config;
   },
@@ -46,6 +47,7 @@ apiClient.interceptors.response.use(
       if (user) {
         const freshToken = await user.getIdToken(true); // force refresh
         originalRequest.headers.Authorization = `Bearer ${freshToken}`;
+        originalRequest.headers['uid'] = user.uid;
         return apiClient(originalRequest);
       }
     }

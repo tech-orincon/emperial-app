@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // ─── Catalog Service ──────────────────────────────────────────────────────────
 //
 // Backend integration points for games, categories and services.

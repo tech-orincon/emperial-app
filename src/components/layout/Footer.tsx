@@ -6,7 +6,6 @@ import {
   Twitter,
   Disc,
   Instagram,
-  X,
   Send,
   CheckCircle2 } from
 'lucide-react';

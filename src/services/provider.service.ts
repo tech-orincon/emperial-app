@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // ─── Provider Service ─────────────────────────────────────────────────────────
 //
 // Backend integration points for booster/provider operations.

@@ -14,7 +14,7 @@ type PageState = 'loading' | 'success' | 'error' | 'empty';
 export function OrdersPage() {
   const navigate = useNavigate();
   const [pageState, setPageState] = useState<PageState>('loading');
-  const [showEmpty, setShowEmpty] = useState(false);
+  const [showEmpty] = useState(false);
   const orders = [
   {
     id: 'EMP-12345',

@@ -7,10 +7,8 @@ import {
   Package,
   HelpCircle,
   CreditCard,
-  User,
-  Circle } from
+  User } from
 'lucide-react';
-import { Button } from './ui/Button';
 interface Message {
   id: number;
   text: string;

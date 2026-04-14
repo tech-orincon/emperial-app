@@ -1,8 +1,7 @@
 import React from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '../../components/ui/Button';
 import { GlassCard } from '../../components/ui/GlassCard';
-import { Shield } from 'lucide-react';
 export function ProviderLoginPage() {
   const navigate = useNavigate();
   return (

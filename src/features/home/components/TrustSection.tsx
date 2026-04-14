@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Zap, DollarSign, Lock } from 'lucide-react';
+import { Zap, DollarSign, Lock } from 'lucide-react';
 import { GlassCard } from '../../../components/ui/GlassCard';
 const stats = [
 {
