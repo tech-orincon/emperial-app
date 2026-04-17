@@ -26,69 +26,138 @@ Marketplace de servicios de gaming (boosting). El sistema publica los servicios 
 
 ---
 
+## Principios AI-First (Obligatorios)
+
+Este proyecto usa arquitectura **AI-First**: cada archivo debe ser comprensible y editable de forma aislada, sin necesidad de leer el proyecto completo.
+
+### Reglas de tamaño
+- **Máximo ~200 líneas por archivo** (enforced con ESLint `max-lines: warn`)
+- Si un archivo supera 150 líneas, evalúa si tiene más de una responsabilidad
+- Si un componente supera 200 líneas, extrae sub-componentes o un hook
+
+### Capas de un feature (orden de data flow)
+```
+views/       ← Orquesta el layout, llama hooks, sin lógica de negocio
+hooks/       ← Estado + lógica de UI, llama services
+components/  ← Piezas visuales reutilizables dentro del feature
+services/    ← Llamadas al backend (apiClient), sin estado
+types/       ← Interfaces y tipos, sin lógica
+```
+
+### Convenciones de nombres
+- Componentes: **PascalCase** (`ServiceCard.tsx`)
+- Hooks: **camelCase** con prefijo `use` (`useOnboarding.ts`)
+- Servicios: **camelCase** con sufijo `.service.ts` (`auth.service.ts`)
+- Tipos: **PascalCase** en archivos `.types.ts` (`reference.types.ts`)
+- **Solo exportaciones nombradas** (nunca `export default`)
+- Tailwind CSS para estilos; no crear CSS custom salvo en `index.css`
+
+### Qué NO hacer
+- No mezclar lógica de negocio con JSX en el mismo archivo
+- No crear componentes inline dentro de otros componentes
+- No duplicar tipos — definirlos una vez en `types/` o junto a su hook
+- No agregar comentarios obvios ni docstrings innecesarios
+- No crear abstracciones para uso único
+
+---
+
 ## Estructura de Directorios
 
 ```
 src/
 ├── components/
-│   ├── ui/                    # Componentes base reutilizables (átomos)
+│   ├── ui/                    # Átomos reutilizables sin lógica de negocio
 │   │   ├── Button.tsx
 │   │   ├── GlassCard.tsx
 │   │   ├── Modal.tsx
 │   │   ├── Skeleton.tsx
 │   │   ├── EmptyState.tsx
 │   │   └── ErrorState.tsx
-│   └── layout/                # Componentes de layout global
-│       ├── Navbar.tsx          # Navegación + manejo de rol (guest/customer/provider)
-│       └── Footer.tsx
+│   └── layout/                # Layout global
+│       ├── Navbar.tsx          # Orquesta GuestNav / CustomerNav / ProviderNav
+│       ├── Footer.tsx
+│       └── nav/               # Sub-componentes del Navbar
+│           ├── GuestNav.tsx
+│           ├── CustomerNav.tsx
+│           ├── ProviderNav.tsx
+│           └── MobileMenuContent.tsx
 │
 ├── context/                   # React Context providers (estado global)
-│   ├── AuthContext.tsx         # Auth state: rol de usuario, sesión
+│   ├── AuthContext.tsx         # Auth state: user, role, refreshProfile
 │   └── ChatContext.tsx         # Chat state: conversaciones, notificaciones
 │
-├── features/                  # Módulos por feature (estructura principal)
+├── features/                  # Módulos por feature
 │   ├── home/
 │   │   ├── components/         # Secciones de la landing page
-│   │   │   ├── Hero.tsx
-│   │   │   ├── GameShowcase.tsx
-│   │   │   ├── FeaturedDeals.tsx
-│   │   │   ├── KeyFeatures.tsx
-│   │   │   ├── HowItWorks.tsx
-│   │   │   ├── BoosterRecruitment.tsx
-│   │   │   ├── Testimonials.tsx
-│   │   │   ├── TrustSection.tsx
-│   │   │   └── Services.tsx
 │   │   └── HomePage.tsx
 │   │
 │   ├── auth/
-│   │   └── AuthPage.tsx        # Login / Signup / Onboarding de Provider
+│   │   ├── AuthPage.tsx        # Router: auth → role-selection → onboarding
+│   │   ├── hooks/
+│   │   │   ├── useOnboarding.ts
+│   │   │   └── useReferenceData.ts
+│   │   ├── views/
+│   │   │   ├── LoginView.tsx
+│   │   │   ├── RoleSelectionView.tsx
+│   │   │   └── ProviderOnboardingView.tsx
+│   │   └── onboarding/
+│   │       ├── Step1BasicInfo.tsx
+│   │       ├── Step2GamingProfile.tsx
+│   │       ├── Step3Skills.tsx
+│   │       ├── Step4Availability.tsx
+│   │       └── Step5Success.tsx
 │   │
 │   ├── catalog/
-│   │   ├── components/         # Piezas del catálogo
+│   │   ├── components/
 │   │   │   ├── Breadcrumb.tsx
 │   │   │   ├── GameSelector.tsx
 │   │   │   ├── CategoryGrid.tsx
 │   │   │   ├── ServiceCard.tsx
-│   │   │   └── ServiceGrid.tsx
-│   │   ├── CatalogPage.tsx     # Listado de servicios por juego/categoría
+│   │   │   ├── ServiceGrid.tsx
+│   │   │   ├── ServiceLoadingSkeleton.tsx
+│   │   │   ├── ServiceUnavailableView.tsx
+│   │   │   ├── ServiceTabs.tsx
+│   │   │   └── ServiceSidebar.tsx
+│   │   ├── CatalogPage.tsx
 │   │   └── ServiceDetailPage.tsx
 │   │
 │   ├── checkout/
-│   │   └── CheckoutPage.tsx    # Flujo de pago multi-paso
+│   │   ├── hooks/
+│   │   │   └── useCheckout.ts
+│   │   ├── views/
+│   │   │   ├── CheckoutSuccessView.tsx
+│   │   │   └── CheckoutFailedView.tsx
+│   │   ├── components/
+│   │   │   ├── ProcessingOverlay.tsx
+│   │   │   ├── CharacterDetailsForm.tsx
+│   │   │   ├── PaymentForm.tsx
+│   │   │   └── OrderSummary.tsx
+│   │   └── CheckoutPage.tsx
 │   │
-│   ├── account/               # Área del Customer
+│   ├── account/
 │   │   ├── ProfilePage.tsx
 │   │   ├── OrdersPage.tsx
 │   │   └── OrderDetailPage.tsx
 │   │
-│   ├── provider/              # Área del Booster
+│   ├── provider/
+│   │   ├── hooks/
+│   │   │   └── useProviderDashboard.tsx
+│   │   ├── components/
+│   │   │   ├── JobDetailPanel.tsx
+│   │   │   ├── KpiCards.tsx
+│   │   │   ├── JobsQueue.tsx
+│   │   │   ├── ProviderSidebar.tsx
+│   │   │   └── PendingApprovalView.tsx
+│   │   ├── types/
+│   │   │   └── provider.dashboard.types.ts
 │   │   ├── ProviderDashboardPage.tsx
-│   │   ├── ProviderLoginPage.tsx
 │   │   └── ProviderProfilePage.tsx
 │   │
-│   ├── chat/                  # Sistema de chat (soporte + provider-customer)
+│   ├── chat/
 │   │   ├── components/
-│   │   │   └── FloatingSupportChat.tsx
+│   │   │   ├── ConversationList.tsx
+│   │   │   ├── ChatWindow.tsx
+│   │   │   └── FloatingSupportChat.tsx  # re-export de ChatCenter
 │   │   └── ChatCenter.tsx
 │   │
 │   └── legal/
@@ -96,19 +165,21 @@ src/
 │       ├── PrivacyPage.tsx
 │       └── RefundPolicyPage.tsx
 │
-├── services/                  # Capa de integración con el backend (API)
+├── services/                  # Capa de integración con el backend
 │   ├── api/
-│   │   └── client.ts           # Cliente HTTP base (axios/fetch configurado)
-│   ├── auth.service.ts         # Endpoints: login, signup, logout, session
-│   ├── catalog.service.ts      # Endpoints: servicios, categorías, juegos
-│   ├── orders.service.ts       # Endpoints: órdenes, historial, estado
-│   └── provider.service.ts     # Endpoints: dashboard booster, jobs, earnings
+│   │   └── client.ts           # Axios + interceptors (Bearer token + uid header)
+│   ├── auth.service.ts         # Endpoints de auth y onboarding
+│   ├── reference.service.ts    # Endpoints de referencia (países, zonas, juegos)
+│   ├── catalog.service.ts
+│   ├── orders.service.ts
+│   └── provider.service.ts
 │
 ├── types/                     # Tipos TypeScript centralizados
-│   ├── auth.types.ts           # UserRole, User, Session
-│   ├── catalog.types.ts        # Service, Category, Game, Tier
-│   ├── orders.types.ts         # Order, OrderStatus, OrderDetail
-│   └── provider.types.ts       # Provider, Job, Earnings
+│   ├── auth.types.ts           # UserRole, AuthUser, Session
+│   ├── reference.types.ts      # CountryDto, TimezoneDto, GameDto, GameAttributeDto
+│   ├── catalog.types.ts
+│   ├── orders.types.ts
+│   └── provider.types.ts
 │
 ├── App.tsx                    # Definición de rutas (React Router)
 └── index.tsx                  # Entry point
@@ -145,7 +216,7 @@ src/
 4. **Cuenta** → historial de órdenes → detalle + chat con provider
 
 ### Provider (Booster)
-1. **Auth** → registro/login → onboarding (skills, disponibilidad, tarifas)
+1. **Auth** → registro/login → onboarding de 4 pasos (info, gaming, skills, disponibilidad)
 2. **Dashboard** → cola de jobs disponibles → acepta/rechaza
 3. **Ejecución** → chat con customer → marca como completado
 
@@ -155,30 +226,16 @@ src/
 
 ---
 
-## Patrones de Arquitectura
-
-- **Feature-based** – Cada feature es un módulo autocontenido bajo `features/`
-- **Atomic UI** – `components/ui/` contiene componentes base sin lógica de negocio
-- **Layout separado** – `components/layout/` contiene Navbar y Footer globales
-- **Contextos** – Estado global vía React Context API (Auth, Chat)
-- **Capa de servicios** – `services/` abstrae todas las llamadas al backend
-- **Tipos centralizados** – `types/` evita duplicar interfaces entre features
-
----
-
-## Integración con Backend (Pendiente)
-
-La app actualmente usa **mock data** y `setTimeout` para simular respuestas. La integración real debe hacerse en `services/`:
+## Integración con Backend
 
 ```
-services/api/client.ts     ← configurar baseURL, headers, interceptors (auth token)
-services/auth.service.ts   ← reemplazar mock login/signup
-services/catalog.service.ts ← reemplazar arrays hardcodeados
-services/orders.service.ts  ← reemplazar datos de órdenes
-services/provider.service.ts ← reemplazar dashboard mock
+services/api/client.ts       ← Axios con Bearer token + uid header (Firebase UID)
+services/auth.service.ts     ← GET /auth/login, POST /auth/user, onboarding steps
+services/reference.service.ts ← GET /reference/countries, /timezones, /catalog/games
+services/catalog.service.ts  ← GET /catalog/services, /categories
+services/orders.service.ts   ← GET /orders
+services/provider.service.ts ← GET /provider/jobs
 ```
-
-El `AuthContext` debe gestionar el token de sesión y adjuntarlo a cada request via el cliente HTTP.
 
 ---
 
@@ -186,20 +243,10 @@ El `AuthContext` debe gestionar el token de sesión y adjuntarlo a cada request 
 
 | Feature | Estado actual | Pendiente |
 |---------|--------------|-----------|
-| Auth | Mock (simula login) | JWT / OAuth real |
+| Auth | Firebase + backend real | — |
+| Onboarding | API real (4 endpoints) | — |
 | Catálogo | Datos hardcodeados | API GET /services |
 | Checkout | Simula pago | Stripe / procesador real |
 | Órdenes | Datos hardcodeados | API GET /orders |
 | Chat | UI mockeada | WebSockets / real-time |
 | Provider Dashboard | Datos hardcodeados | API GET /jobs |
-
----
-
-## Convenciones de Código
-
-- Componentes en **PascalCase** (`ServiceCard.tsx`)
-- Hooks en **camelCase** con prefijo `use` (`useAuth`)
-- Servicios en **camelCase** con sufijo `.service.ts`
-- Tipos en **PascalCase** en archivos `.types.ts`
-- Exportaciones nombradas (no default exports)
-- Tailwind CSS para estilos; no crear CSS custom salvo en `index.css`
