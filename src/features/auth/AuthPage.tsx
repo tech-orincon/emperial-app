@@ -33,27 +33,14 @@ import {
 } from '../../services/auth.service'
 import { getFirebaseErrorMessage } from '../../lib/firebaseErrors'
 import { useAuth } from '../../context/AuthContext'
+import { useReferenceData } from './hooks/useReferenceData'
+import type { GameAttributeDto } from '../../types/reference.types'
 
 type ViewState = 'auth' | 'role-selection' | 'provider-onboarding'
 
 // ─── Backend mapping tables ───────────────────────────────────────────────────
 // These map form label values to API-expected IDs / enums.
 // Update numeric IDs once the backend provides a reference endpoint.
-
-const COUNTRY_IDS: Record<string, number> = {
-  'United States': 1,
-  'United Kingdom': 2,
-  Germany: 3,
-  France: 4,
-  Canada: 5,
-}
-
-const GAME_IDS: Record<string, number> = {
-  'World of Warcraft': 1,
-  'Destiny 2': 2,
-  'Final Fantasy XIV': 3,
-  'League of Legends': 4,
-}
 
 const EXPERIENCE_YEARS: Record<string, number> = {
   'Less than 1 year': 0,
@@ -101,17 +88,11 @@ export function AuthPage() {
   const [formData, setFormData] = useState({
     displayName: '',
     realName: '',
-    country: 'United States',
-    timezone: 'PST (UTC-8)',
+    countryId: 0,
+    timezone: '',       // timezone.name — value sent to backend
     bio: '',
-    primaryGame: 'World of Warcraft',
-    battlenetId: '',
-    server: 'US - Illidan',
-    characterName: '',
-    characterClass: 'Warrior',
-    itemLevel: '',
+    gameId: 0,          // game.id
     experience: 'Less than 1 year',
-    services: [] as string[],
     highestAchievement: '',
     raiderioLink: '',
     weeklyHours: '10-20 hours',
@@ -119,9 +100,26 @@ export function AuthPage() {
     hourlyRate: '',
     paymentMethod: 'PayPal',
   })
+  // Dynamic game profile fields (keyed by GameAttributeDto.key)
+  const [gameProfileData, setGameProfileData] = useState<Record<string, string | string[]>>({})
+  // ID returned by step 2 — needed as providerGameProfileId in step 3
+  const [providerGameProfileId, setProviderGameProfileId] = useState<number>(0)
+  // Selected service category IDs (step 3) — from GameCategoryDto.id
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState<number[]>([])
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isSavingStep, setIsSavingStep] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
+
+  // ── Reference / catalog data ──────────────────────────────────────────────
+  const {
+    countries,
+    timezones,
+    games,
+    gameAttributes,
+    gameCategories,
+    isLoadingStatic,
+    isLoadingGame,
+  } = useReferenceData(formData.gameId || null)
 
   // ── Auth submit ───────────────────────────────────────────────────────────
   const handleAuthSubmit = async (e: React.FormEvent) => {
@@ -488,8 +486,8 @@ export function AuthPage() {
           newErrors.displayName = 'Display name must be at least 3 characters'
           isValid = false
         }
-        if (!formData.country) {
-          newErrors.country = 'Country is required'
+        if (!formData.countryId) {
+          newErrors.countryId = 'Country is required'
           isValid = false
         }
         if (!formData.timezone) {
@@ -497,20 +495,19 @@ export function AuthPage() {
           isValid = false
         }
       } else if (step === 2) {
-        if (!formData.battlenetId || !formData.battlenetId.includes('#')) {
-          newErrors.battlenetId = 'Valid Battle.net ID required (e.g. Player#1234)'
+        if (!formData.gameId) {
+          newErrors.gameId = 'Please select a game'
           isValid = false
         }
-        if (!formData.characterName) {
-          newErrors.characterName = 'Character name is required'
-          isValid = false
-        }
-        if (!formData.itemLevel || parseInt(formData.itemLevel) <= 0) {
-          newErrors.itemLevel = 'Valid item level is required'
-          isValid = false
+        for (const attr of gameAttributes.filter((a) => a.isRequired)) {
+          const val = gameProfileData[attr.key]
+          if (!val || (Array.isArray(val) && val.length === 0)) {
+            newErrors[attr.key] = `${attr.label} is required`
+            isValid = false
+          }
         }
       } else if (step === 3) {
-        if (formData.services.length === 0) {
+        if (selectedCategoryIds.length === 0) {
           newErrors.services = 'Select at least one service'
           isValid = false
         }
@@ -537,26 +534,43 @@ export function AuthPage() {
           await startOnboarding({
             displayName: formData.displayName,
             realName: formData.realName || undefined,
-            countryId: COUNTRY_IDS[formData.country] ?? 1,
+            countryId: formData.countryId,
             timezone: formData.timezone,
           })
         } else if (onboardingStep === 2) {
-          await updateGamingProfile({
-            gameId: GAME_IDS[formData.primaryGame] ?? 1,
-            slug: formData.battlenetId,
-            data: {
-              battlenetId: formData.battlenetId,
-              server: formData.server,
-              characterName: formData.characterName,
-              characterClass: formData.characterClass,
-              itemLevel: parseInt(formData.itemLevel, 10),
-            },
-          })
+          // Derive slug from the first TEXT identifier attribute (battletag, username, etc.)
+          const slugAttr = gameAttributes.find(
+            (a: GameAttributeDto) =>
+              a.inputType === 'TEXT' &&
+              ['name', 'tag', 'id', 'username', 'gamertag'].some((k) =>
+                a.key.toLowerCase().includes(k),
+              ),
+          )
+          const slug = slugAttr
+            ? ((gameProfileData[slugAttr.key] as string) ?? formData.displayName)
+            : formData.displayName
+
+          // Convert NUMBER attribute values to actual numbers
+          const data: Record<string, unknown> = {}
+          for (const attr of gameAttributes) {
+            const val = gameProfileData[attr.key]
+            if (val !== undefined && val !== '') {
+              data[attr.key] = attr.inputType === 'NUMBER' ? Number(val) : val
+            }
+          }
+
+          const profile = await updateGamingProfile({ gameId: formData.gameId, slug, data })
+          setProviderGameProfileId(profile.id)
         } else if (onboardingStep === 3) {
           await saveSkills({
-            yearExperience: EXPERIENCE_YEARS[formData.experience] ?? 0,
-            highestAchievement: formData.highestAchievement || undefined,
-            providerGameSkill: formData.services,
+            providerProfileExperience: {
+              yearExperience: String(EXPERIENCE_YEARS[formData.experience] ?? 0),
+              highestAchievement: formData.highestAchievement,
+            },
+            providerGameSkill: selectedCategoryIds.map((gameCategoryId) => ({
+              providerGameProfileId,
+              gameCategoryId,
+            })),
           })
         } else if (onboardingStep === 4) {
           await saveAvailability({
@@ -587,22 +601,45 @@ export function AuthPage() {
 
     const handleInputChange = (field: string, value: unknown) => {
       setFormData((prev) => ({ ...prev, [field]: value }))
+      // Reset game-specific profile data whenever the game changes
+      if (field === 'gameId') {
+        setGameProfileData({})
+        setSelectedCategoryIds([])
+      }
       if (errors[field]) {
         setErrors((prev) => ({ ...prev, [field]: '' }))
       }
     }
 
-    const toggleArrayItem = (field: 'services' | 'schedule', item: string) => {
+    const toggleSchedule = (item: string) => {
       setFormData((prev) => {
-        const array = prev[field]
-        const newArray = array.includes(item)
-          ? array.filter((i) => i !== item)
-          : [...array, item]
-        if (errors[field] && newArray.length > 0) {
-          setErrors((e) => ({ ...e, [field]: '' }))
+        const newArr = prev.schedule.includes(item)
+          ? prev.schedule.filter((i) => i !== item)
+          : [...prev.schedule, item]
+        if (errors.schedule && newArr.length > 0) {
+          setErrors((e) => ({ ...e, schedule: '' }))
         }
-        return { ...prev, [field]: newArray }
+        return { ...prev, schedule: newArr }
       })
+    }
+
+    const toggleCategory = (id: number) => {
+      setSelectedCategoryIds((prev: number[]) => {
+        const newArr = prev.includes(id)
+          ? prev.filter((c: number) => c !== id)
+          : [...prev, id]
+        if (errors.services && newArr.length > 0) {
+          setErrors((e) => ({ ...e, services: '' }))
+        }
+        return newArr
+      })
+    }
+
+    const handleGameFieldChange = (key: string, value: string | string[]) => {
+      setGameProfileData((prev) => ({ ...prev, [key]: value }))
+      if (errors[key]) {
+        setErrors((prev) => ({ ...prev, [key]: '' }))
+      }
     }
 
     const steps = [
@@ -725,18 +762,20 @@ export function AuthPage() {
                             Country <span className="text-red-400">*</span>
                           </label>
                           <select
-                            value={formData.country}
-                            onChange={(e) => handleInputChange('country', e.target.value)}
-                            className={`w-full bg-slate-800 border rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none ${errors.country ? 'border-red-500/50' : 'border-white/10'}`}
+                            value={formData.countryId || ''}
+                            onChange={(e) => handleInputChange('countryId', Number(e.target.value))}
+                            disabled={isLoadingStatic}
+                            className={`w-full bg-slate-800 border rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none disabled:opacity-50 ${errors.countryId ? 'border-red-500/50' : 'border-white/10'}`}
                           >
-                            <option>United States</option>
-                            <option>United Kingdom</option>
-                            <option>Germany</option>
-                            <option>France</option>
-                            <option>Canada</option>
+                            <option value="">
+                              {isLoadingStatic ? 'Loading...' : 'Select a country'}
+                            </option>
+                            {countries.map((c) => (
+                              <option key={c.id} value={c.id}>{c.name}</option>
+                            ))}
                           </select>
-                          {errors.country && (
-                            <p className="text-xs text-red-400">{errors.country}</p>
+                          {errors.countryId && (
+                            <p className="text-xs text-red-400">{errors.countryId}</p>
                           )}
                         </div>
                         <div className="space-y-2">
@@ -746,12 +785,15 @@ export function AuthPage() {
                           <select
                             value={formData.timezone}
                             onChange={(e) => handleInputChange('timezone', e.target.value)}
-                            className={`w-full bg-slate-800 border rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none ${errors.timezone ? 'border-red-500/50' : 'border-white/10'}`}
+                            disabled={isLoadingStatic}
+                            className={`w-full bg-slate-800 border rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none disabled:opacity-50 ${errors.timezone ? 'border-red-500/50' : 'border-white/10'}`}
                           >
-                            <option>PST (UTC-8)</option>
-                            <option>EST (UTC-5)</option>
-                            <option>GMT (UTC+0)</option>
-                            <option>CET (UTC+1)</option>
+                            <option value="">
+                              {isLoadingStatic ? 'Loading...' : 'Select a timezone'}
+                            </option>
+                            {timezones.map((tz) => (
+                              <option key={tz.id} value={tz.name}>{tz.label}</option>
+                            ))}
                           </select>
                           {errors.timezone && (
                             <p className="text-xs text-red-400">{errors.timezone}</p>
@@ -781,101 +823,125 @@ export function AuthPage() {
                           Gaming Credentials
                         </h3>
                         <p className="text-sm text-slate-400">
-                          Link your primary gaming accounts.
+                          Select your primary game and fill in your profile.
                         </p>
                       </div>
 
-                      <div className="grid sm:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium text-slate-400">
-                            Primary Game
-                          </label>
-                          <select
-                            value={formData.primaryGame}
-                            onChange={(e) => handleInputChange('primaryGame', e.target.value)}
-                            className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none"
-                          >
-                            <option>World of Warcraft</option>
-                            <option>Destiny 2</option>
-                            <option>Final Fantasy XIV</option>
-                            <option>League of Legends</option>
-                          </select>
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium text-slate-400">
-                            Battle.net ID <span className="text-red-400">*</span>
-                          </label>
-                          <input
-                            type="text"
-                            value={formData.battlenetId}
-                            onChange={(e) => handleInputChange('battlenetId', e.target.value)}
-                            className={`w-full bg-slate-800 border rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 ${errors.battlenetId ? 'border-red-500/50' : 'border-white/10'}`}
-                            placeholder="Player#1234"
-                          />
-                          {errors.battlenetId && (
-                            <p className="text-xs text-red-400">{errors.battlenetId}</p>
-                          )}
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium text-slate-400">
-                            Server / Region
-                          </label>
-                          <select
-                            value={formData.server}
-                            onChange={(e) => handleInputChange('server', e.target.value)}
-                            className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none"
-                          >
-                            <option>US - Illidan</option>
-                            <option>US - Area 52</option>
-                            <option>EU - Tarren Mill</option>
-                            <option>EU - Kazzak</option>
-                          </select>
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium text-slate-400">
-                            Main Character Name <span className="text-red-400">*</span>
-                          </label>
-                          <input
-                            type="text"
-                            value={formData.characterName}
-                            onChange={(e) => handleInputChange('characterName', e.target.value)}
-                            className={`w-full bg-slate-800 border rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 ${errors.characterName ? 'border-red-500/50' : 'border-white/10'}`}
-                            placeholder="e.g. Thrall"
-                          />
-                          {errors.characterName && (
-                            <p className="text-xs text-red-400">{errors.characterName}</p>
-                          )}
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium text-slate-400">
-                            Character Class
-                          </label>
-                          <select
-                            value={formData.characterClass}
-                            onChange={(e) => handleInputChange('characterClass', e.target.value)}
-                            className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none"
-                          >
-                            {['Warrior','Paladin','Hunter','Rogue','Priest','Death Knight','Shaman','Mage','Warlock','Monk','Druid','Demon Hunter','Evoker'].map((c) => (
-                              <option key={c}>{c}</option>
-                            ))}
-                          </select>
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium text-slate-400">
-                            Current Item Level <span className="text-red-400">*</span>
-                          </label>
-                          <input
-                            type="number"
-                            value={formData.itemLevel}
-                            onChange={(e) => handleInputChange('itemLevel', e.target.value)}
-                            className={`w-full bg-slate-800 border rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 ${errors.itemLevel ? 'border-red-500/50' : 'border-white/10'}`}
-                            placeholder="e.g. 489"
-                          />
-                          {errors.itemLevel && (
-                            <p className="text-xs text-red-400">{errors.itemLevel}</p>
-                          )}
-                        </div>
+                      {/* Game selector */}
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-slate-400">
+                          Primary Game <span className="text-red-400">*</span>
+                        </label>
+                        <select
+                          value={formData.gameId || ''}
+                          onChange={(e) => handleInputChange('gameId', Number(e.target.value))}
+                          disabled={isLoadingStatic}
+                          className={`w-full bg-slate-800 border rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none disabled:opacity-50 ${errors.gameId ? 'border-red-500/50' : 'border-white/10'}`}
+                        >
+                          <option value="">
+                            {isLoadingStatic ? 'Loading...' : 'Select a game'}
+                          </option>
+                          {games.map((g) => (
+                            <option key={g.id} value={g.id}>{g.name}</option>
+                          ))}
+                        </select>
+                        {errors.gameId && (
+                          <p className="text-xs text-red-400">{errors.gameId}</p>
+                        )}
                       </div>
+
+                      {/* Dynamic game attributes */}
+                      {formData.gameId > 0 && (
+                        isLoadingGame ? (
+                          <div className="flex items-center gap-3 py-4 text-slate-400 text-sm">
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            Loading game fields...
+                          </div>
+                        ) : (
+                          <div className="grid sm:grid-cols-2 gap-4">
+                            {gameAttributes.map((attr) => {
+                              const val = gameProfileData[attr.key] ?? (attr.inputType === 'MULTI_SELECT' ? [] : '')
+                              const borderCls = errors[attr.key] ? 'border-red-500/50' : 'border-white/10'
+
+                              if (attr.inputType === 'TEXT' || attr.inputType === 'NUMBER') {
+                                return (
+                                  <div key={attr.id} className="space-y-2">
+                                    <label className="text-sm font-medium text-slate-400">
+                                      {attr.label}{attr.isRequired && <span className="text-red-400"> *</span>}
+                                    </label>
+                                    <input
+                                      type={attr.inputType === 'NUMBER' ? 'number' : 'text'}
+                                      value={val as string}
+                                      onChange={(e) => handleGameFieldChange(attr.key, e.target.value)}
+                                      className={`w-full bg-slate-800 border rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 ${borderCls}`}
+                                    />
+                                    {errors[attr.key] && (
+                                      <p className="text-xs text-red-400">{errors[attr.key]}</p>
+                                    )}
+                                  </div>
+                                )
+                              }
+
+                              if (attr.inputType === 'SELECT') {
+                                return (
+                                  <div key={attr.id} className="space-y-2">
+                                    <label className="text-sm font-medium text-slate-400">
+                                      {attr.label}{attr.isRequired && <span className="text-red-400"> *</span>}
+                                    </label>
+                                    <select
+                                      value={val as string}
+                                      onChange={(e) => handleGameFieldChange(attr.key, e.target.value)}
+                                      className={`w-full bg-slate-800 border rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none ${borderCls}`}
+                                    >
+                                      <option value="">Select {attr.label}</option>
+                                      {attr.options.map((opt) => (
+                                        <option key={opt.id} value={opt.value}>{opt.label}</option>
+                                      ))}
+                                    </select>
+                                    {errors[attr.key] && (
+                                      <p className="text-xs text-red-400">{errors[attr.key]}</p>
+                                    )}
+                                  </div>
+                                )
+                              }
+
+                              if (attr.inputType === 'MULTI_SELECT') {
+                                const multiVal = (Array.isArray(val) ? val : []) as string[]
+                                return (
+                                  <div key={attr.id} className="space-y-3 sm:col-span-2">
+                                    <label className="text-sm font-medium text-slate-400">
+                                      {attr.label}{attr.isRequired && <span className="text-red-400"> *</span>}
+                                    </label>
+                                    <div className="grid sm:grid-cols-2 gap-3">
+                                      {attr.options.map((opt) => (
+                                        <label key={opt.id} className={`flex items-center gap-3 p-3 rounded-lg border bg-slate-800/50 cursor-pointer hover:bg-slate-800 transition-colors ${borderCls}`}>
+                                          <input
+                                            type="checkbox"
+                                            checked={multiVal.includes(opt.value)}
+                                            onChange={() => {
+                                              const next = multiVal.includes(opt.value)
+                                                ? multiVal.filter((v) => v !== opt.value)
+                                                : [...multiVal, opt.value]
+                                              handleGameFieldChange(attr.key, next)
+                                            }}
+                                            className="rounded border-slate-600 text-purple-500 focus:ring-purple-500 bg-slate-700"
+                                          />
+                                          <span className="text-sm text-slate-300">{opt.label}</span>
+                                        </label>
+                                      ))}
+                                    </div>
+                                    {errors[attr.key] && (
+                                      <p className="text-xs text-red-400">{errors[attr.key]}</p>
+                                    )}
+                                  </div>
+                                )
+                              }
+
+                              return null
+                            })}
+                          </div>
+                        )
+                      )}
                     </div>
                   )}
 
@@ -911,22 +977,30 @@ export function AuthPage() {
                           Services you can provide (Select all that apply){' '}
                           <span className="text-red-400">*</span>
                         </label>
-                        <div className="grid sm:grid-cols-2 gap-3">
-                          {['Mythic+ Dungeons','Raid Carries','PvP Boosting','Leveling','Gold Farming','Achievements'].map((service) => (
-                            <label
-                              key={service}
-                              className={`flex items-center gap-3 p-3 rounded-lg border bg-slate-800/50 cursor-pointer hover:bg-slate-800 transition-colors ${errors.services ? 'border-red-500/50' : 'border-white/10'}`}
-                            >
-                              <input
-                                type="checkbox"
-                                checked={formData.services.includes(service)}
-                                onChange={() => toggleArrayItem('services', service)}
-                                className="rounded border-slate-600 text-purple-500 focus:ring-purple-500 bg-slate-700"
-                              />
-                              <span className="text-sm text-slate-300">{service}</span>
-                            </label>
-                          ))}
-                        </div>
+                        {gameCategories.length === 0 ? (
+                          <p className="text-sm text-slate-500 italic">
+                            {formData.gameId
+                              ? 'No categories available for this game.'
+                              : 'Select a game in the previous step to see available services.'}
+                          </p>
+                        ) : (
+                          <div className="grid sm:grid-cols-2 gap-3">
+                            {gameCategories.map((cat) => (
+                              <label
+                                key={cat.id}
+                                className={`flex items-center gap-3 p-3 rounded-lg border bg-slate-800/50 cursor-pointer hover:bg-slate-800 transition-colors ${errors.services ? 'border-red-500/50' : 'border-white/10'}`}
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={selectedCategoryIds.includes(cat.id)}
+                                  onChange={() => toggleCategory(cat.id)}
+                                  className="rounded border-slate-600 text-purple-500 focus:ring-purple-500 bg-slate-700"
+                                />
+                                <span className="text-sm text-slate-300">{cat.name}</span>
+                              </label>
+                            ))}
+                          </div>
+                        )}
                         {errors.services && (
                           <p className="text-xs text-red-400">{errors.services}</p>
                         )}
@@ -1000,7 +1074,7 @@ export function AuthPage() {
                               <input
                                 type="checkbox"
                                 checked={formData.schedule.includes(schedule)}
-                                onChange={() => toggleArrayItem('schedule', schedule)}
+                                onChange={() => toggleSchedule(schedule)}
                                 className="rounded border-slate-600 text-purple-500 focus:ring-purple-500 bg-slate-700"
                               />
                               <span className="text-sm text-slate-300">{schedule}</span>

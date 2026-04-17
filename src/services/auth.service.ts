@@ -108,26 +108,46 @@ export async function startOnboarding(payload: {
   await apiClient.post('/auth/onboarding/start', payload);
 }
 
+export interface GamingProfileResponse {
+  /** ID used as providerGameProfileId in the skills step */
+  id: number;
+  gameId: number;
+  slug: string;
+}
+
 /**
  * PATCH /auth/onboarding/gaming-profile
  * Step 2: Link the provider's primary game account.
+ * Returns the created profile — its id is required in the next step.
  */
 export async function updateGamingProfile(payload: {
   gameId: number;
   data: Record<string, unknown>;
   slug: string;
-}): Promise<void> {
-  await apiClient.patch('/auth/onboarding/gaming-profile', payload);
+}): Promise<GamingProfileResponse> {
+  const { data } = await apiClient.patch<GamingProfileResponse>(
+    '/auth/onboarding/gaming-profile',
+    payload,
+  );
+  return data;
 }
 
 /**
  * POST /auth/onboarding/skills
- * Step 3: Experience level, highest achievement, and offered services.
+ * Step 3: Experience and per-category skills.
+ *
+ * providerGameProfileId — id returned by updateGamingProfile (step 2)
+ * gameCategoryId        — id from GET /catalog/games/{gameId}/categories
  */
 export async function saveSkills(payload: {
-  yearExperience: number;
-  highestAchievement?: string;
-  providerGameSkill: string[];
+  providerProfileExperience: {
+    yearExperience: string;
+    highestAchievement: string;
+  };
+  providerGameSkill: Array<{
+    providerGameProfileId: number;
+    gameCategoryId: number;
+  }>;
 }): Promise<void> {
   await apiClient.post('/auth/onboarding/skills', payload);
 }
