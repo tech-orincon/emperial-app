@@ -1,6 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Toaster } from 'sonner'
+import { useAuth } from '../../context/AuthContext'
 import { LoginView } from './views/LoginView'
 import { RoleSelectionView } from './views/RoleSelectionView'
 import { ProviderOnboardingView } from './views/ProviderOnboardingView'
@@ -8,7 +10,25 @@ import { ProviderOnboardingView } from './views/ProviderOnboardingView'
 type View = 'auth' | 'role-selection' | 'provider-onboarding'
 
 export function AuthPage() {
+  const { isAuthenticated, role, isLoading } = useAuth()
+  const navigate = useNavigate()
   const [view, setView] = useState<View>('auth')
+
+  useEffect(() => {
+    if (isLoading) return
+    // Providers have no business here — send them to their dashboard
+    if (isAuthenticated && role === 'provider') {
+      navigate('/provider/dashboard', { replace: true })
+      return
+    }
+    // Authenticated customers skip login and go straight to role selection
+    // (entry point for "Become a Provider" from the header)
+    if (isAuthenticated && role === 'customer') {
+      setView('role-selection')
+    }
+  }, [isAuthenticated, role, isLoading, navigate])
+
+  if (isLoading) return null
 
   return (
     <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4 relative overflow-hidden pt-20">

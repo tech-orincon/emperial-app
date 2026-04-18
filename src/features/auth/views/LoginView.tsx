@@ -44,6 +44,7 @@ export function LoginView({ onRegisterSuccess }: LoginViewProps) {
       } else {
         const fbUser = await registerWithEmail(email, password)
         await registerUser({ email: fbUser.email ?? email, username })
+        await refreshProfile()
         onRegisterSuccess()
       }
     } catch (err) {

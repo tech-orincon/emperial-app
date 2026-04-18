@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, Home, Store, Package, Briefcase, ClipboardList, DollarSign } from 'lucide-react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext'
 import type { UserRole } from '../../types/auth.types'
 import { GuestNav } from './nav/GuestNav'
 import { CustomerNav } from './nav/CustomerNav'
@@ -32,14 +33,14 @@ function getNavLinks(role: UserRole) {
 }
 
 export function Navbar() {
+  const { user, role, logout } = useAuth()
   const [isOpen, setIsOpen] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [isOnline, setIsOnline] = useState(true)
-  const [role, setRole] = useState<UserRole>('customer')
   const location = useLocation()
   const navigate = useNavigate()
-  const cartCount = 2
+  const cartCount = 2 // TODO: replace with cart context when implemented
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20)
@@ -55,11 +56,12 @@ export function Navbar() {
 
   const navLinks = getNavLinks(role)
 
-  const handleLogout = () => { setRole('guest'); setIsUserMenuOpen(false); navigate('/') }
-  const handleLogin = (asRole: 'customer' | 'provider') => {
-    setRole(asRole)
-    setIsOpen(false)
-    if (asRole === 'provider') navigate('/provider/dashboard')
+  const handleLogout = async () => {
+    setIsUserMenuOpen(false)
+    await logout()
+    // onAuthStateChanged fires → role becomes 'guest' → Navbar re-renders automatically
+    // If on a protected page, the route guard will redirect
+    navigate('/')
   }
 
   return (
@@ -106,21 +108,21 @@ export function Navbar() {
           {role === 'guest' && <GuestNav />}
           {role === 'customer' && (
             <CustomerNav
+              user={user}
               cartCount={cartCount}
               isUserMenuOpen={isUserMenuOpen}
               setIsUserMenuOpen={setIsUserMenuOpen}
               handleLogout={handleLogout}
-              handleLogin={handleLogin}
             />
           )}
           {role === 'provider' && (
             <ProviderNav
+              user={user}
               isOnline={isOnline}
               setIsOnline={setIsOnline}
               isUserMenuOpen={isUserMenuOpen}
               setIsUserMenuOpen={setIsUserMenuOpen}
               handleLogout={handleLogout}
-              handleLogin={handleLogin}
             />
           )}
 
@@ -140,7 +142,6 @@ export function Navbar() {
           >
             <MobileMenuContent
               role={role}
-              setRole={setRole}
               navLinks={navLinks}
               cartCount={cartCount}
               isOnline={isOnline}

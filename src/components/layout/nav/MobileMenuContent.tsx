@@ -12,7 +12,6 @@ interface NavLink {
 
 interface Props {
   role: UserRole
-  setRole: (role: UserRole) => void
   navLinks: NavLink[]
   cartCount: number
   isOnline: boolean
@@ -21,25 +20,11 @@ interface Props {
   onClose: () => void
 }
 
-export function MobileMenuContent({ role, setRole, navLinks, cartCount, isOnline, setIsOnline, handleLogout, onClose }: Props) {
+export function MobileMenuContent({ role, navLinks, cartCount, isOnline, setIsOnline, handleLogout, onClose }: Props) {
   const location = useLocation()
 
   return (
     <div className="px-4 py-4 space-y-4">
-      {/* Role Switcher for Demo */}
-      <div className="flex items-center gap-2 p-2 rounded-lg bg-slate-800/50 border border-white/5">
-        <span className="text-xs text-slate-500 mr-2">Demo:</span>
-        {(['guest', 'customer', 'provider'] as UserRole[]).map((r) => (
-          <button
-            key={r}
-            onClick={() => setRole(r)}
-            className={`px-2 py-1 rounded text-xs font-medium transition-colors ${role === r ? 'bg-emperial-500 text-white' : 'text-slate-400 hover:text-white'}`}
-          >
-            {r.charAt(0).toUpperCase() + r.slice(1)}
-          </button>
-        ))}
-      </div>
-
       {/* Nav Links */}
       {navLinks.map((link) => (
         <Link
@@ -53,7 +38,7 @@ export function MobileMenuContent({ role, setRole, navLinks, cartCount, isOnline
         </Link>
       ))}
 
-      {/* Role-specific mobile actions */}
+      {/* Role-specific actions */}
       <div className="pt-4 border-t border-white/5 space-y-3">
         {role === 'guest' && (
           <>

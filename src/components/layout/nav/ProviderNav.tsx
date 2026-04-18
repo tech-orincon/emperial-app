@@ -1,18 +1,22 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { Briefcase, ChevronDown, ToggleLeft, ToggleRight, Settings, User, LogOut } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '../../ui/Button'
+import type { AuthUser } from '../../../context/AuthContext'
 
 interface Props {
+  user: AuthUser | null
   isOnline: boolean
   setIsOnline: (online: boolean) => void
   isUserMenuOpen: boolean
   setIsUserMenuOpen: (open: boolean) => void
   handleLogout: () => void
-  handleLogin: (role: 'customer' | 'provider') => void
 }
 
-export function ProviderNav({ isOnline, setIsOnline, isUserMenuOpen, setIsUserMenuOpen, handleLogout, handleLogin }: Props) {
+export function ProviderNav({ user, isOnline, setIsOnline, isUserMenuOpen, setIsUserMenuOpen, handleLogout }: Props) {
+  const navigate = useNavigate()
+  const initials = user?.username?.slice(0, 2).toUpperCase() ?? 'PR'
+
   return (
     <div className="hidden md:flex items-center gap-4">
       <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800 border border-white/10">
@@ -46,7 +50,7 @@ export function ProviderNav({ isOnline, setIsOnline, isUserMenuOpen, setIsUserMe
           <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center">
             <Briefcase className="w-3.5 h-3.5 text-purple-400" />
           </div>
-          <span className="text-purple-300">Provider</span>
+          <span className="text-purple-300">{user?.username ?? 'Provider'}</span>
           <ChevronDown className={`w-3 h-3 text-purple-400 transition-transform ${isUserMenuOpen ? 'rotate-180' : ''}`} />
         </Button>
 
@@ -63,11 +67,11 @@ export function ProviderNav({ isOnline, setIsOnline, isUserMenuOpen, setIsUserMe
               <div className="px-4 py-3 border-b border-white/5 bg-purple-500/5">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 font-bold">
-                    SB
+                    {initials}
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-white">Shadowblade</p>
-                    <p className="text-xs text-purple-400">Top 500 Provider</p>
+                    <p className="text-sm font-medium text-white">{user?.username ?? '—'}</p>
+                    <p className="text-xs text-purple-400">Provider</p>
                   </div>
                 </div>
               </div>
@@ -80,18 +84,14 @@ export function ProviderNav({ isOnline, setIsOnline, isUserMenuOpen, setIsUserMe
                 >
                   <Settings className="w-4 h-4" /> Provider Profile
                 </Link>
-                <div className="flex items-center justify-between px-4 py-2.5">
-                  <span className="text-sm text-slate-400">This Week</span>
-                  <span className="text-sm font-bold text-green-400">$1,240</span>
-                </div>
               </div>
 
               <div className="border-t border-white/5 py-1">
                 <button
-                  onClick={() => handleLogin('customer')}
+                  onClick={() => { setIsUserMenuOpen(false); navigate('/') }}
                   className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-slate-400 hover:bg-white/5 hover:text-white transition-colors"
                 >
-                  <User className="w-4 h-4" /> Switch to Customer
+                  <User className="w-4 h-4" /> Browse as Customer
                 </button>
               </div>
 

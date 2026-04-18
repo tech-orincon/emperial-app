@@ -1,17 +1,20 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { ShoppingCart, User, ChevronDown, Settings, Package, Briefcase, LogOut } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '../../ui/Button'
+import type { AuthUser } from '../../../context/AuthContext'
 
 interface Props {
+  user: AuthUser | null
   cartCount: number
   isUserMenuOpen: boolean
   setIsUserMenuOpen: (open: boolean) => void
   handleLogout: () => void
-  handleLogin: (role: 'customer' | 'provider') => void
 }
 
-export function CustomerNav({ cartCount, isUserMenuOpen, setIsUserMenuOpen, handleLogout, handleLogin }: Props) {
+export function CustomerNav({ user, cartCount, isUserMenuOpen, setIsUserMenuOpen, handleLogout }: Props) {
+  const navigate = useNavigate()
+
   return (
     <div className="hidden md:flex items-center gap-4">
       <Link to="/checkout" className="relative p-2 text-slate-400 hover:text-white transition-colors">
@@ -37,7 +40,7 @@ export function CustomerNav({ cartCount, isUserMenuOpen, setIsUserMenuOpen, hand
           <div className="w-6 h-6 rounded-full bg-emperial-500/20 flex items-center justify-center">
             <User className="w-3.5 h-3.5 text-emperial-400" />
           </div>
-          <span>Account</span>
+          <span>{user?.username ?? 'Account'}</span>
           <ChevronDown className={`w-3 h-3 transition-transform ${isUserMenuOpen ? 'rotate-180' : ''}`} />
         </Button>
 
@@ -52,8 +55,8 @@ export function CustomerNav({ cartCount, isUserMenuOpen, setIsUserMenuOpen, hand
               onClick={(e) => e.stopPropagation()}
             >
               <div className="px-4 py-3 border-b border-white/5 bg-slate-800/50">
-                <p className="text-sm font-medium text-white">Champion123</p>
-                <p className="text-xs text-slate-400">champion@example.com</p>
+                <p className="text-sm font-medium text-white">{user?.username ?? '—'}</p>
+                <p className="text-xs text-slate-400">{user?.email ?? '—'}</p>
               </div>
 
               <div className="py-1">
@@ -75,10 +78,10 @@ export function CustomerNav({ cartCount, isUserMenuOpen, setIsUserMenuOpen, hand
 
               <div className="border-t border-white/5 py-1">
                 <button
-                  onClick={() => handleLogin('provider')}
+                  onClick={() => { setIsUserMenuOpen(false); navigate('/auth') }}
                   className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-slate-400 hover:bg-white/5 hover:text-white transition-colors"
                 >
-                  <Briefcase className="w-4 h-4" /> Switch to Provider
+                  <Briefcase className="w-4 h-4" /> Become a Provider
                 </button>
               </div>
 
