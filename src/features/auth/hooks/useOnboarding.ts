@@ -37,12 +37,6 @@ const EXPERIENCE_YEARS: Record<string, number> = {
   '5+ years': 5,
 }
 
-const WEEKLY_HOURS: Record<string, number> = {
-  '10-20 hours': 15,
-  '20-30 hours': 25,
-  '30-40 hours': 35,
-  '40+ hours': 45,
-}
 
 const SCHEDULE_ENUM: Record<string, ScheduleEnum> = {
   'Weekday mornings': 'WEEKDAY_MORNING',
@@ -193,7 +187,7 @@ export function useOnboarding() {
         })
       } else if (step === 4) {
         await saveAvailability({
-          weeklyHours: WEEKLY_HOURS[formData.weeklyHours] ?? 15,
+          weeklyHours: formData.weeklyHours,
           schedules: formData.schedule.map((s) => SCHEDULE_ENUM[s]).filter(Boolean) as ScheduleEnum[],
           hourlyRate: parseInt(formData.hourlyRate, 10),
           paymentMethod: formData.paymentMethod,

@@ -157,7 +157,7 @@ export async function saveSkills(payload: {
  * Step 4: Weekly hours, schedule preferences, rate, and payment method.
  */
 export async function saveAvailability(payload: {
-  weeklyHours: number;
+  weeklyHours: string;
   schedules: ScheduleEnum[];
   hourlyRate: number;
   paymentMethod: string;
