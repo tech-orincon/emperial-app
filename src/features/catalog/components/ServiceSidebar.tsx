@@ -20,12 +20,15 @@ export function ServiceSidebar({
   selectedAddonIds, toggleAddon, onBuyNow,
 }: Props) {
   const selectedPkg = packages.find((p) => p.id === selectedPackageId) ?? packages[0] ?? null
-  const basePrice = selectedPkg ? parseFloat(activeOffer?.finalPrice ?? selectedPkg.price) : 0
+  const pkgPrice = selectedPkg ? parseFloat(selectedPkg.price) : 0
+  const discountedPrice = activeOffer?.discountPct
+    ? pkgPrice * (1 - activeOffer.discountPct / 100)
+    : pkgPrice
   const addonsTotal = selectedAddonIds.reduce((sum, addonId) => {
     const addon = addons.find((a) => a.id === addonId)
     return sum + (addon ? parseFloat(addon.price) : 0)
   }, 0)
-  const totalPrice = basePrice + addonsTotal
+  const totalPrice = discountedPrice + addonsTotal
 
   return (
     <GlassCard className="p-6 sticky top-24">
@@ -92,14 +95,11 @@ export function ServiceSidebar({
         </div>
       )}
 
-      {activeOffer && (
-        <div className="mb-4 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-sm">
-          <span className="text-emerald-400 font-medium">
-            {activeOffer.discountPct ? `${activeOffer.discountPct}% off applied` : 'Offer applied'}
-          </span>
-          {activeOffer.originalPrice && (
-            <span className="text-slate-500 line-through ml-2">${activeOffer.originalPrice}</span>
-          )}
+      {activeOffer?.discountPct && (
+        <div className="mb-4 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-sm flex items-center gap-2">
+          <span className="text-emerald-400 font-medium">{activeOffer.discountPct}% off applied</span>
+          <span className="text-slate-500 line-through">${pkgPrice.toFixed(2)}</span>
+          <span className="text-white font-bold">${discountedPrice.toFixed(2)}</span>
         </div>
       )}
 

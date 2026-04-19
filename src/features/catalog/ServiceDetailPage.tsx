@@ -67,7 +67,10 @@ export function ServiceDetailPage() {
   const handleBuyNow = () => {
     if (!service || selectedPackageId === null) return
     const pkg = service.packages.find((p) => p.id === selectedPackageId) ?? service.packages[0]
-    const basePrice = parseFloat(service.activeOffer?.finalPrice ?? pkg.price)
+    const pkgPrice = parseFloat(pkg.price)
+    const basePrice = service.activeOffer?.discountPct
+      ? pkgPrice * (1 - service.activeOffer.discountPct / 100)
+      : pkgPrice
     const addonsTotal = selectedAddonIds.reduce((sum, addonId) => {
       const addon = service.addons.find((a) => a.id === addonId)
       return sum + (addon ? parseFloat(addon.price) : 0)
