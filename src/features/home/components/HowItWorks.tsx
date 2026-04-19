@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { Search, CreditCard, Trophy, ChevronRight } from 'lucide-react';
 const steps = [
@@ -117,7 +116,7 @@ export function HowItWorks() {
                   <div className="w-32 h-32 rounded-3xl bg-slate-900 border border-white/10 flex items-center justify-center relative z-10 group-hover:border-emperial-500/30 transition-colors duration-300">
                     <step.icon className="w-12 h-12 text-emperial-400" />
                   </div>
-                  <div className="absolute -top-3 -right-3 w-10 h-10 rounded-xl bg-emperial-500 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-emperial-500/30">
+                  <div className="absolute -top-3 -right-3 w-10 h-10 rounded-xl bg-emperial-500 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-emperial-500/30 z-10">
                     {step.number}
                   </div>
                 </div>

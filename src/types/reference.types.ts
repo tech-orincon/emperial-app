@@ -24,6 +24,7 @@ export interface GameDto {
   imageUrl?: string;
   icon?: string;
   tags: string[];
+  isComingSoon?: boolean;
 }
 
 export interface GameAttributeOptionDto {
