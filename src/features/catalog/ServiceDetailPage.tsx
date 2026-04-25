@@ -12,7 +12,7 @@ import { ServiceTabs } from './components/ServiceTabs'
 import { ServiceSidebar } from './components/ServiceSidebar'
 import { useServiceDetail } from './hooks/useServiceDetail'
 import { useServiceReviews } from './hooks/useServiceReviews'
-import type { CreateOrderPayload } from '../../types/catalog.types'
+import { useCart } from '../../context/CartContext'
 
 type PageState = 'loading' | 'success' | 'error' | 'unavailable'
 
@@ -34,6 +34,7 @@ export function ServiceDetailPage() {
   const [selectedAddonIds, setSelectedAddonIds] = useState<number[]>([])
   const [reviewPage] = useState(1)
 
+  const { addItem } = useCart()
   const { data: service, isLoading, error } = useServiceDetail(id)
   const { data: reviews, isLoading: isLoadingReviews } = useServiceReviews(
     activeTab === 'reviews' ? id : undefined,
@@ -68,7 +69,7 @@ export function ServiceDetailPage() {
     if (!service || selectedPackageId === null) return
     const pkg = service.packages.find((p) => p.id === selectedPackageId) ?? service.packages[0]
     const pkgPrice = parseFloat(pkg.price)
-    const basePrice = service.activeOffer?.discountPct
+    const discountedBase = service.activeOffer?.discountPct
       ? pkgPrice * (1 - service.activeOffer.discountPct / 100)
       : pkgPrice
     const addonsTotal = selectedAddonIds.reduce((sum, addonId) => {
@@ -76,13 +77,22 @@ export function ServiceDetailPage() {
       return sum + (addon ? parseFloat(addon.price) : 0)
     }, 0)
 
-    const payload: CreateOrderPayload = {
+    addItem({
       serviceId: service.id,
+      serviceTitle: service.title,
+      imageUrl: service.imageUrl,
       packageId: pkg.id,
-      addons: selectedAddonIds,
-      totalPrice: basePrice + addonsTotal,
-    }
-    console.log('[CreateOrder]', payload)
+      packageName: pkg.name,
+      packagePrice: pkg.price,
+      addonIds: selectedAddonIds,
+      addonDetails: selectedAddonIds.map((addonId) => {
+        const a = service.addons.find((x) => x.id === addonId)!
+        return { id: a.id, name: a.name, price: a.price }
+      }),
+      discountPct: service.activeOffer?.discountPct ?? null,
+      totalPrice: discountedBase + addonsTotal,
+      quantity: 1,
+    })
     navigate('/checkout')
   }
 

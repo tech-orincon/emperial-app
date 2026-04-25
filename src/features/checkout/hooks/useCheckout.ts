@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { useCart } from '../../../context/CartContext';
 
 export type PaymentState = 'idle' | 'processing' | 'pending' | 'success' | 'failed';
 
@@ -17,6 +18,7 @@ export interface CheckoutFormData {
 
 export function useCheckout() {
   const navigate = useNavigate();
+  const { items, clearCart } = useCart();
   const [paymentState, setPaymentState] = useState<PaymentState>('idle');
   const [countdown, setCountdown] = useState(10);
   const [orderId] = useState(`EMP-${Math.floor(10000 + Math.random() * 90000)}`);
@@ -42,6 +44,16 @@ export function useCheckout() {
 
   const simulatePayment = () => {
     if (paymentState === 'processing' || paymentState === 'pending') return;
+
+    const payload = items.map((item) => ({
+      serviceId: item.serviceId,
+      packageId: item.packageId,
+      addons: item.addonIds,
+      totalPrice: item.totalPrice,
+      quantity: item.quantity,
+    }));
+    console.log('[CreateOrder]', { items: payload, characterDetails: formData });
+
     setPaymentState('processing');
     toast.loading('Processing your payment...', { id: 'payment' });
 
@@ -52,6 +64,7 @@ export function useCheckout() {
       setTimeout(() => {
         const success = Math.random() > 0.3;
         if (success) {
+          clearCart();
           setPaymentState('success');
           toast.success('Payment successful! Order confirmed.', { id: 'payment' });
         } else {

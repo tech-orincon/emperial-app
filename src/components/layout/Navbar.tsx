@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, Home, Store, Package, Briefcase, ClipboardList, DollarSign } from 'lucide-react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { useCart } from '../../context/CartContext'
 import type { UserRole } from '../../types/auth.types'
 import { GuestNav } from './nav/GuestNav'
 import { CustomerNav } from './nav/CustomerNav'
@@ -34,13 +35,14 @@ function getNavLinks(role: UserRole) {
 
 export function Navbar() {
   const { user, role, logout } = useAuth()
+  const { items } = useCart()
   const [isOpen, setIsOpen] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [isOnline, setIsOnline] = useState(true)
   const location = useLocation()
   const navigate = useNavigate()
-  const cartCount = 2 // TODO: replace with cart context when implemented
+  const cartCount = items.reduce((sum, i) => sum + i.quantity, 0)
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20)
