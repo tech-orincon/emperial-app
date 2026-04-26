@@ -24,9 +24,10 @@ export function ServiceSidebar({
   const discountedPrice = activeOffer?.discountPct
     ? pkgPrice * (1 - activeOffer.discountPct / 100)
     : pkgPrice
+  const discountMultiplier = activeOffer?.discountPct ? (1 - activeOffer.discountPct / 100) : 1
   const addonsTotal = selectedAddonIds.reduce((sum, addonId) => {
     const addon = addons.find((a) => a.id === addonId)
-    return sum + (addon ? parseFloat(addon.price) : 0)
+    return sum + (addon ? parseFloat(addon.price) * discountMultiplier : 0)
   }, 0)
   const totalPrice = discountedPrice + addonsTotal
 
@@ -89,17 +90,24 @@ export function ServiceSidebar({
                   {addon.description && <p className="text-xs text-slate-500">{addon.description}</p>}
                 </div>
               </div>
-              <span className="text-sm font-medium text-white shrink-0 ml-2">+${addon.price}</span>
+              <span className="text-sm font-medium text-white shrink-0 ml-2">
+                {activeOffer?.discountPct
+                  ? <><span className="line-through text-slate-500 mr-1">${addon.price}</span>${(parseFloat(addon.price) * discountMultiplier).toFixed(2)}</>
+                  : `+$${addon.price}`
+                }
+              </span>
             </label>
           ))}
         </div>
       )}
 
       {activeOffer?.discountPct && (
-        <div className="mb-4 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-sm flex items-center gap-2">
+        <div className="mb-4 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-sm flex items-center justify-between">
           <span className="text-emerald-400 font-medium">{activeOffer.discountPct}% off applied</span>
-          <span className="text-slate-500 line-through">${pkgPrice.toFixed(2)}</span>
-          <span className="text-white font-bold">${discountedPrice.toFixed(2)}</span>
+          <div className="flex items-center gap-2">
+            <span className="text-slate-500 line-through">${(pkgPrice + addonsTotal / discountMultiplier).toFixed(2)}</span>
+            <span className="text-white font-bold">${totalPrice.toFixed(2)}</span>
+          </div>
         </div>
       )}
 

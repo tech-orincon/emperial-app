@@ -72,9 +72,12 @@ export function ServiceDetailPage() {
     const discountedBase = service.activeOffer?.discountPct
       ? pkgPrice * (1 - service.activeOffer.discountPct / 100)
       : pkgPrice
+    const discountMultiplier = service.activeOffer?.discountPct
+      ? (1 - service.activeOffer.discountPct / 100)
+      : 1
     const addonsTotal = selectedAddonIds.reduce((sum, addonId) => {
       const addon = service.addons.find((a) => a.id === addonId)
-      return sum + (addon ? parseFloat(addon.price) : 0)
+      return sum + (addon ? parseFloat(addon.price) * discountMultiplier : 0)
     }, 0)
 
     addItem({

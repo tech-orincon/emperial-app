@@ -1,29 +1,52 @@
-export type OrderStatus = 'queued' | 'in_progress' | 'completed' | 'cancelled' | 'refunded';
+// ─── Orders DTOs (backend snapshots) ─────────────────────────────────────────
 
-export interface Order {
-  id: string;
-  serviceId: string;
-  serviceTitle: string;
+export type OrderStatus = 'QUEUED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED' | 'REFUNDED';
+
+export interface OrderServiceSnapshot {
+  id: number;
+  title: string;
+  imageUrl?: string | null;
+}
+
+export interface OrderPackageSnapshot {
+  id: number;
+  name: string;
+  price: string;
+}
+
+export interface OrderAddonSnapshot {
+  id: number;
+  name: string;
+  price: string;
+}
+
+export interface OrderProviderSnapshot {
+  id: number;
+  username: string;
+  avatarUrl?: string | null;
+}
+
+export interface OrderDto {
+  id: number;
   status: OrderStatus;
-  price: number;
+  totalPrice: string;
   createdAt: string;
   updatedAt: string;
-  providerId?: string;
-  providerName?: string;
+  service: OrderServiceSnapshot;
+  package: OrderPackageSnapshot;
+  addons: OrderAddonSnapshot[];
+  provider?: OrderProviderSnapshot | null;
 }
 
-export interface OrderDetail extends Order {
-  tierId: string;
-  tierName: string;
-  addons: string[];
-  characterDetails: Record<string, string>;
-  timeline: OrderEvent[];
+export interface OrdersResponse {
+  data: OrderDto[];
+  total: number;
+  page: number;
+  limit: number;
 }
 
-export interface OrderEvent {
-  id: string;
-  label: string;
-  description: string;
-  timestamp: string;
-  type: 'info' | 'success' | 'warning';
+export interface CreateOrderRequest {
+  serviceId: number;
+  packageId: number;
+  addonIds: number[];
 }

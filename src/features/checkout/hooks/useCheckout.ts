@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useCart } from '../../../context/CartContext';
+import { createOrder } from '../../../services/orders.service';
 
-export type PaymentState = 'idle' | 'processing' | 'pending' | 'success' | 'failed';
+export type PaymentState = 'idle' | 'processing' | 'success' | 'failed';
 
 export interface CheckoutFormData {
   characterName: string;
@@ -21,7 +22,7 @@ export function useCheckout() {
   const { items, clearCart } = useCart();
   const [paymentState, setPaymentState] = useState<PaymentState>('idle');
   const [countdown, setCountdown] = useState(10);
-  const [orderId] = useState(`EMP-${Math.floor(10000 + Math.random() * 90000)}`);
+  const [orderId, setOrderId] = useState('');
   const [formData, setFormData] = useState<CheckoutFormData>({
     characterName: '',
     realm: '',
@@ -38,45 +39,38 @@ export function useCheckout() {
       const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
       return () => clearTimeout(timer);
     } else if (paymentState === 'success' && countdown === 0) {
-      navigate(`/account/orders/${orderId}`);
+      navigate('/account/orders');
     }
-  }, [paymentState, countdown, navigate, orderId]);
+  }, [paymentState, countdown, navigate]);
 
-  const simulatePayment = () => {
-    if (paymentState === 'processing' || paymentState === 'pending') return;
-
-    const payload = items.map((item) => ({
-      serviceId: item.serviceId,
-      packageId: item.packageId,
-      addons: item.addonIds,
-      totalPrice: item.totalPrice,
-      quantity: item.quantity,
-    }));
-    console.log('[CreateOrder]', { items: payload, characterDetails: formData });
-
+  const simulatePayment = async () => {
+    if (paymentState === 'processing' || items.length === 0) return;
     setPaymentState('processing');
-    toast.loading('Processing your payment...', { id: 'payment' });
+    toast.loading('Processing your order...', { id: 'payment' });
 
-    setTimeout(() => {
-      setPaymentState('pending');
-      toast.loading('Verifying payment...', { id: 'payment' });
-
-      setTimeout(() => {
-        const success = Math.random() > 0.3;
-        if (success) {
-          clearCart();
-          setPaymentState('success');
-          toast.success('Payment successful! Order confirmed.', { id: 'payment' });
-        } else {
-          setPaymentState('failed');
-          toast.error('Payment failed. Please try again.', { id: 'payment' });
-        }
-      }, 2000);
-    }, 2000);
+    try {
+      const results = await Promise.all(
+        items.map((item) =>
+          createOrder({
+            serviceId: item.serviceId,
+            packageId: item.packageId,
+            addonIds: item.addonIds,
+          }),
+        ),
+      );
+      clearCart();
+      setOrderId(`#${results[0].id}`);
+      setPaymentState('success');
+      toast.success('Order confirmed!', { id: 'payment' });
+    } catch {
+      setPaymentState('failed');
+      toast.error('Failed to place order. Please try again.', { id: 'payment' });
+    }
   };
 
   const handleRetry = () => {
     setPaymentState('idle');
+    setCountdown(10);
     toast.dismiss();
   };
 

@@ -1,32 +1,22 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 // ─── Orders Service ───────────────────────────────────────────────────────────
-//
-// Backend integration points for order lifecycle management.
-// Replace mock implementations with real API calls.
 
-import type { Order, OrderDetail } from '../types/orders.types';
+import { apiClient } from './api/client';
+import type { OrderDto, OrdersResponse, CreateOrderRequest } from '../types/orders.types';
 
-// TODO: Replace with real API call → GET /orders
-export async function getOrders(): Promise<Order[]> {
-  throw new Error('orders.service.getOrders: not implemented');
+/** GET /orders — paginated list of the authenticated user's orders */
+export async function getOrders(page = 1, limit = 20): Promise<OrdersResponse> {
+  const { data } = await apiClient.get<OrdersResponse>('/orders', { params: { page, limit } });
+  return data;
 }
 
-// TODO: Replace with real API call → GET /orders/:id
-export async function getOrderById(_id: string): Promise<OrderDetail> {
-  throw new Error('orders.service.getOrderById: not implemented');
+/** POST /orders — create a single order */
+export async function createOrder(payload: CreateOrderRequest): Promise<OrderDto> {
+  const { data } = await apiClient.post<OrderDto>('/orders', payload);
+  return data;
 }
 
-// TODO: Replace with real API call → POST /orders
-export async function createOrder(_payload: {
-  serviceId: string;
-  tierId: string;
-  addons: string[];
-  characterDetails: Record<string, string>;
-}): Promise<Order> {
-  throw new Error('orders.service.createOrder: not implemented');
-}
-
-// TODO: Replace with real API call → POST /orders/:id/refund
-export async function requestRefund(_orderId: string, _reason: string): Promise<void> {
-  throw new Error('orders.service.requestRefund: not implemented');
+/** GET /orders/:id — single order detail */
+export async function getOrderById(id: string): Promise<OrderDto> {
+  const { data } = await apiClient.get<OrderDto>(`/orders/${id}`);
+  return data;
 }

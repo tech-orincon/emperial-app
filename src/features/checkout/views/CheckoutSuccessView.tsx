@@ -52,7 +52,7 @@ export function CheckoutSuccessView({ orderId, countdown }: CheckoutSuccessViewP
             </motion.div>
 
             <div className="space-y-3">
-              <Button className="w-full group" onClick={() => navigate(`/account/orders/${orderId}`)}>
+              <Button className="w-full group" onClick={() => navigate('/account/orders')}>
                 View My Orders
                 <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
