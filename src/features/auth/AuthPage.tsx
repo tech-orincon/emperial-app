@@ -17,13 +17,13 @@ export function AuthPage() {
   useEffect(() => {
     if (isLoading) return
     // Providers have no business here — send them to their dashboard
-    if (isAuthenticated && role === 'provider') {
+    if (isAuthenticated && role === 'PROVIDER') {
       navigate('/provider/dashboard', { replace: true })
       return
     }
-    // Authenticated customers skip login and go straight to role selection
+    // Authenticated buyers skip login and go straight to role selection
     // (entry point for "Become a Provider" from the header)
-    if (isAuthenticated && role === 'customer') {
+    if (isAuthenticated && role === 'BUYER') {
       setView('role-selection')
     }
   }, [isAuthenticated, role, isLoading, navigate])

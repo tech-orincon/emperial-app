@@ -20,6 +20,8 @@ export type ScheduleEnum =
 
 // ─── Backend Profile DTO ──────────────────────────────────────────────────────
 
+export type ProviderStatus = 'PENDING' | 'APPROVED' | 'REJECTED' | 'SUSPENDED'
+
 export interface BackendProfile {
   id: string;
   username: string;
@@ -27,6 +29,8 @@ export interface BackendProfile {
   role: BackendRole;
   uid?: string;
   avatarUrl?: string;
+  providerStatus?: ProviderStatus;
+  isOnline?: boolean;
 }
 
 // ─── Firebase Auth Operations ─────────────────────────────────────────────────

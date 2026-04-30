@@ -22,7 +22,7 @@ import type { ReactNode } from 'react';
 function RequireProvider({ children }: { children: ReactNode }) {
   const { role, isLoading } = useAuth();
   if (isLoading) return null;
-  if (role !== 'provider') return <Navigate to="/" replace />;
+  if (role !== 'PROVIDER') return <Navigate to="/" replace />;
   return <>{children}</>;
 }
 

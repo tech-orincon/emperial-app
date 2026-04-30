@@ -11,19 +11,11 @@ import {
   logout as firebaseLogout,
   fetchBackendProfile,
   type BackendProfile,
-  type BackendRole,
 } from '../services/auth.service';
-
-// ─── Role Mapping ─────────────────────────────────────────────────────────────
-
-function mapRole(backendRole: BackendRole): UserRole {
-  if (backendRole === 'PROVIDER') return 'provider';
-  return 'customer'; // BUYER and ADMIN both map to customer for now
-}
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-export type UserRole = 'guest' | 'customer' | 'provider';
+export type UserRole = 'guest' | 'BUYER' | 'PROVIDER' | 'ADMIN';
 
 export type AuthUser = BackendProfile;
 
@@ -75,8 +67,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const loadBackendProfile = useCallback(async () => {
     try {
       const profile = await fetchBackendProfile();
+      console.log('profile ====>', profile);
       setUser(profile);
-      setRole(mapRole(profile.role));
+      setRole(profile.role as UserRole);
     } catch {
       // Backend unreachable or profile not created yet.
       // Keep firebaseUser set so the session still exists; user is null.
@@ -85,10 +78,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   // ── Firebase session listener ─────────────────────────────────────────────
-  // onAuthStateChanged fires:
-  //   • On app load if a persisted session exists (localStorage)
-  //   • After login / register / logout
-  // Firebase handles token refresh silently — getIdToken() always returns fresh tokens.
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
       setFirebaseUser(fbUser);
@@ -103,7 +92,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(false);
     });
 
-    return unsubscribe; // clean up listener on unmount
+    return unsubscribe;
   }, [loadBackendProfile]);
 
   // ── Exposed helpers ───────────────────────────────────────────────────────

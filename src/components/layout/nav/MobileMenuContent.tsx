@@ -55,7 +55,7 @@ export function MobileMenuContent({ role, navLinks, cartCount, isOnline, setIsOn
           </>
         )}
 
-        {role === 'customer' && (
+        {(role === 'BUYER' || role === 'ADMIN') && (
           <>
             <Link to="/checkout" onClick={onClose}>
               <Button className="w-full justify-start">
@@ -73,7 +73,7 @@ export function MobileMenuContent({ role, navLinks, cartCount, isOnline, setIsOn
           </>
         )}
 
-        {role === 'provider' && (
+        {role === 'PROVIDER' && (
           <>
             <div className="flex items-center justify-between p-3 rounded-lg bg-slate-800/50">
               <span className="text-sm text-slate-400">Availability</span>

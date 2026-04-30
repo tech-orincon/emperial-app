@@ -1,7 +1,7 @@
 import React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ToggleLeft, ToggleRight } from 'lucide-react'
-import { toast } from 'sonner'
+import { Toaster } from 'sonner'
 import { useProviderDashboard } from './hooks/useProviderDashboard'
 import { PendingApprovalView } from './components/PendingApprovalView'
 import { KpiCards } from './components/KpiCards'
@@ -11,26 +11,25 @@ import { JobDetailPanel } from './components/JobDetailPanel'
 
 export function ProviderDashboardPage() {
   const {
-    providerStatus,
-    setProviderStatus,
-    activeTab,
-    setActiveTab,
-    isOnline,
-    selectedJob,
-    setSelectedJob,
-    jobs,
-    stats,
+    verificationStatus,
+    activeTab, setActiveTab,
+    isOnline, toggleOnline,
+    selectedJob, setSelectedJob,
+    jobs, stats, profile,
     filteredJobs,
-    getStatusConfig,
-    getActionButton,
+    getStatusConfig, getActionButton,
   } = useProviderDashboard()
 
-  if (providerStatus === 'pending') {
-    return <PendingApprovalView onSwitchToApproved={() => setProviderStatus('approved')} />
+  const BLOCKED_STATUSES = ['PENDING', 'REJECTED', 'SUSPENDED']
+  if (verificationStatus && BLOCKED_STATUSES.includes(verificationStatus)) {
+    return <PendingApprovalView />
   }
+
+  const initials = profile?.displayName ? profile.displayName.slice(0, 2).toUpperCase() : '??'
 
   return (
     <div className="min-h-screen bg-slate-900 pt-20 pb-12 px-4 sm:px-6 lg:px-8">
+      <Toaster theme="dark" position="top-right" richColors />
       <div className="max-w-7xl mx-auto">
         {/* Header & Controls */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
@@ -43,11 +42,8 @@ export function ProviderDashboardPage() {
           </div>
 
           <div className="flex items-center gap-4">
-            <button onClick={() => setProviderStatus('pending')} className="text-xs px-3 py-1.5 rounded border border-amber-500/30 text-amber-400">
-              Demo: Switch to Pending
-            </button>
             <button
-              onClick={() => toast.success(isOnline ? 'You are now offline' : 'You are now online')}
+              onClick={toggleOnline}
               className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all ${isOnline ? 'bg-green-500/10 border-green-500/30 text-green-400' : 'bg-slate-800 border-white/10 text-slate-400'}`}
             >
               {isOnline ? (
@@ -58,10 +54,14 @@ export function ProviderDashboardPage() {
             </button>
             <div className="flex items-center gap-3">
               <div className="hidden sm:block text-right">
-                <p className="text-sm font-medium text-white">Shadowblade</p>
-                <p className="text-xs text-purple-400">Master Provider</p>
+                <p className="text-sm font-medium text-white">{profile?.displayName ?? '—'}</p>
+                <p className="text-xs text-purple-400">Provider</p>
               </div>
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white font-bold">SB</div>
+              {profile?.avatarUrl ? (
+                <img src={profile.avatarUrl} alt={profile.displayName} className="w-10 h-10 rounded-full object-cover" />
+              ) : (
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white font-bold">{initials}</div>
+              )}
             </div>
           </div>
         </div>
@@ -78,7 +78,7 @@ export function ProviderDashboardPage() {
             getStatusConfig={getStatusConfig}
             getActionButton={getActionButton}
           />
-          <ProviderSidebar />
+          <ProviderSidebar profile={profile} />
         </div>
       </div>
 

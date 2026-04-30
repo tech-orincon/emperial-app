@@ -24,7 +24,7 @@ export function KpiCards({ stats }: KpiCardsProps) {
           </div>
           <div className="mt-3 flex items-center gap-1 text-xs text-purple-400">
             <TrendingUp className="w-3 h-3" />
-            <span>2 new today</span>
+            <span>Currently in progress or accepted</span>
           </div>
         </GlassCard>
       </motion.div>
@@ -42,7 +42,7 @@ export function KpiCards({ stats }: KpiCardsProps) {
           </div>
           <div className="mt-3 flex items-center gap-1 text-xs text-green-400">
             <Target className="w-3 h-3" />
-            <span>On track for daily goal</span>
+            <span>{stats.totalOrdersCompleted?.toLocaleString() ?? 0} total completed</span>
           </div>
         </GlassCard>
       </motion.div>
@@ -52,7 +52,7 @@ export function KpiCards({ stats }: KpiCardsProps) {
           <div className="flex items-start justify-between">
             <div>
               <p className="text-sm text-slate-400 mb-1">Earnings Today</p>
-              <p className="text-3xl font-bold text-white">${stats.earningsToday}</p>
+              <p className="text-3xl font-bold text-white">${stats.earningsToday ? parseFloat(stats.earningsToday).toFixed(0) : '0'}</p>
             </div>
             <div className="p-2 rounded-lg bg-emerald-500/10">
               <DollarSign className="w-5 h-5 text-emerald-400" />
@@ -60,7 +60,7 @@ export function KpiCards({ stats }: KpiCardsProps) {
           </div>
           <div className="mt-3 flex items-center gap-1 text-xs text-emerald-400">
             <TrendingUp className="w-3 h-3" />
-            <span>+18% vs yesterday</span>
+            <span>${stats.totalEarnings ? parseFloat(stats.totalEarnings).toLocaleString() : '0'} total earned</span>
           </div>
         </GlassCard>
       </motion.div>
@@ -71,7 +71,7 @@ export function KpiCards({ stats }: KpiCardsProps) {
             <div>
               <p className="text-sm text-slate-400 mb-1">Rating</p>
               <p className="text-3xl font-bold text-white flex items-center gap-1">
-                {stats.rating}
+                {stats.ratingAvg != null ? stats.ratingAvg.toFixed(1) : '—'}
                 <Star className="w-5 h-5 text-amber-400 fill-amber-400" />
               </p>
             </div>
@@ -79,7 +79,7 @@ export function KpiCards({ stats }: KpiCardsProps) {
               <Award className="w-5 h-5 text-amber-400" />
             </div>
           </div>
-          <div className="mt-3 text-xs text-slate-400">{stats.totalReviews.toLocaleString()} reviews</div>
+          <div className="mt-3 text-xs text-slate-400">{stats.totalOrdersCompleted?.toLocaleString() ?? 0} reviews</div>
         </GlassCard>
       </motion.div>
     </div>

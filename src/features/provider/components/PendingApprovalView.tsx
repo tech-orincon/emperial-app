@@ -4,24 +4,9 @@ import { Button } from '../../../components/ui/Button'
 import { GlassCard } from '../../../components/ui/GlassCard'
 import { AlertCircle, Shield, MessageSquare } from 'lucide-react'
 
-interface PendingApprovalViewProps {
-  onSwitchToApproved: () => void
-}
-
-export function PendingApprovalView({ onSwitchToApproved }: PendingApprovalViewProps) {
+export function PendingApprovalView() {
   return (
     <div className="min-h-screen bg-slate-900 pt-20 pb-12 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center">
-      <div className="absolute top-24 right-8">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={onSwitchToApproved}
-          className="text-xs border-purple-500/30 text-purple-400"
-        >
-          Demo: Switch to Approved
-        </Button>
-      </div>
-
       <GlassCard className="max-w-md w-full p-8 text-center">
         <div className="w-20 h-20 rounded-full bg-amber-500/20 flex items-center justify-center mx-auto mb-6">
           <AlertCircle className="w-10 h-10 text-amber-400" />

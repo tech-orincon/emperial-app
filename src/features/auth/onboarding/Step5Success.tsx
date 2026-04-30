@@ -1,7 +1,9 @@
 import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { CheckCircle2, ChevronRight } from 'lucide-react'
+import { CheckCircle2, ChevronRight, Loader2 } from 'lucide-react'
 import { Button } from '../../../components/ui/Button'
+import { useAuth } from '../../../context/AuthContext'
 
 const NEXT_STEPS = [
   'Our team will review your application within 24-48 hours.',
@@ -11,6 +13,17 @@ const NEXT_STEPS = [
 
 export function Step5Success() {
   const navigate = useNavigate()
+  const { refreshProfile } = useAuth()
+  const [isLoading, setIsLoading] = useState(false)
+
+  const handleGoToDashboard = async () => {
+    setIsLoading(true)
+    try {
+      await refreshProfile()
+    } finally {
+      navigate('/provider/dashboard', { replace: true })
+    }
+  }
 
   return (
     <div className="py-8 text-center space-y-6">
@@ -45,10 +58,15 @@ export function Step5Success() {
       </div>
 
       <Button
-        onClick={() => navigate('/')}
+        onClick={handleGoToDashboard}
+        disabled={isLoading}
         className="w-full sm:w-auto bg-purple-600 hover:bg-purple-500 shadow-[0_0_20px_-5px_rgba(147,51,234,0.5)]"
       >
-        Go to Home <ChevronRight className="w-4 h-4 ml-2" />
+        {isLoading ? (
+          <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Loading...</>
+        ) : (
+          <>Go to Dashboard <ChevronRight className="w-4 h-4 ml-2" /></>
+        )}
       </Button>
     </div>
   )

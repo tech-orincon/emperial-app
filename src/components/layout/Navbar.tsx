@@ -18,13 +18,14 @@ function getNavLinks(role: UserRole) {
         { name: 'Services', href: '/catalog', icon: Store },
         { name: 'Track Order', href: '/account/orders', icon: ClipboardList },
       ]
-    case 'customer':
+    case 'BUYER':
+    case 'ADMIN':
       return [
         { name: 'Home', href: '/', icon: Home },
         { name: 'Services', href: '/catalog', icon: Store },
         { name: 'My Orders', href: '/account/orders', icon: Package },
       ]
-    case 'provider':
+    case 'PROVIDER':
       return [
         { name: 'Dashboard', href: '/provider/dashboard', icon: Briefcase },
         { name: 'Jobs', href: '/provider/dashboard', icon: ClipboardList },
@@ -76,13 +77,13 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <Link to="/" className="flex items-center gap-2 group">
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg transition-all ${role === 'provider' ? 'bg-gradient-to-br from-purple-500 to-pink-600 shadow-purple-500/20 group-hover:shadow-purple-500/40' : 'bg-gradient-to-br from-emperial-500 to-purple-600 shadow-emperial-500/20 group-hover:shadow-emperial-500/40'}`}>
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg transition-all ${role === 'PROVIDER' ? 'bg-gradient-to-br from-purple-500 to-pink-600 shadow-purple-500/20 group-hover:shadow-purple-500/40' : 'bg-gradient-to-br from-emperial-500 to-purple-600 shadow-emperial-500/20 group-hover:shadow-emperial-500/40'}`}>
               E
             </div>
             <span className="text-xl font-bold text-white tracking-tight">
-              Emperial<span className={role === 'provider' ? 'text-purple-400' : 'text-emperial-400'}>Boosting</span>
+              Emperial<span className={role === 'PROVIDER' ? 'text-purple-400' : 'text-emperial-400'}>Boosting</span>
             </span>
-            {role === 'provider' && (
+            {role === 'PROVIDER' && (
               <span className="hidden sm:inline-flex ml-2 px-2 py-0.5 rounded text-xs font-bold bg-purple-500/20 text-purple-400 border border-purple-500/20">
                 PROVIDER
               </span>
@@ -100,7 +101,7 @@ export function Navbar() {
                 {location.pathname === link.href && (
                   <motion.div
                     layoutId="navIndicator"
-                    className={`absolute -bottom-1 left-0 right-0 h-0.5 rounded-full ${role === 'provider' ? 'bg-purple-500' : 'bg-emperial-500'}`}
+                    className={`absolute -bottom-1 left-0 right-0 h-0.5 rounded-full ${role === 'PROVIDER' ? 'bg-purple-500' : 'bg-emperial-500'}`}
                   />
                 )}
               </Link>
@@ -108,7 +109,7 @@ export function Navbar() {
           </div>
 
           {role === 'guest' && <GuestNav />}
-          {role === 'customer' && (
+          {(role === 'BUYER' || role === 'ADMIN') && (
             <CustomerNav
               user={user}
               cartCount={cartCount}
@@ -117,7 +118,7 @@ export function Navbar() {
               handleLogout={handleLogout}
             />
           )}
-          {role === 'provider' && (
+          {role === 'PROVIDER' && (
             <ProviderNav
               user={user}
               isOnline={isOnline}

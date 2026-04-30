@@ -1,37 +1,61 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-// ─── Provider Service ─────────────────────────────────────────────────────────
-//
-// Backend integration points for booster/provider operations.
-// Replace mock implementations with real API calls.
+import { apiClient } from './api/client'
+import type {
+  ProviderJobsResponseDto,
+  ProviderJobDetailResponseDto,
+  AcceptJobResponseDto,
+  RejectJobResponseDto,
+  StartJobResponseDto,
+  CompleteJobResponseDto,
+  ProviderStatsResponseDto,
+  ProviderProfileResponseDto,
+  UpdateAvailabilityResponseDto,
+} from '../types/provider.types'
 
-import type { ProviderJob, ProviderStats } from '../types/provider.types';
-
-// TODO: Replace with real API call → GET /provider/jobs
-export async function getAvailableJobs(): Promise<ProviderJob[]> {
-  throw new Error('provider.service.getAvailableJobs: not implemented');
+export async function getProviderJobs(page = 1, limit = 20): Promise<ProviderJobsResponseDto> {
+  const { data } = await apiClient.get<ProviderJobsResponseDto>('/provider/jobs', {
+    params: { page, limit },
+  })
+  return data
 }
 
-// TODO: Replace with real API call → POST /provider/jobs/:id/accept
-export async function acceptJob(_jobId: string): Promise<void> {
-  throw new Error('provider.service.acceptJob: not implemented');
+export async function getProviderJobById(id: number): Promise<ProviderJobDetailResponseDto> {
+  const { data } = await apiClient.get<ProviderJobDetailResponseDto>(`/provider/jobs/${id}`)
+  return data
 }
 
-// TODO: Replace with real API call → POST /provider/jobs/:id/reject
-export async function rejectJob(_jobId: string): Promise<void> {
-  throw new Error('provider.service.rejectJob: not implemented');
+export async function acceptJob(id: number): Promise<AcceptJobResponseDto> {
+  const { data } = await apiClient.post<AcceptJobResponseDto>(`/provider/jobs/${id}/accept`)
+  return data
 }
 
-// TODO: Replace with real API call → POST /provider/jobs/:id/complete
-export async function completeJob(_jobId: string): Promise<void> {
-  throw new Error('provider.service.completeJob: not implemented');
+export async function rejectJob(id: number): Promise<RejectJobResponseDto> {
+  const { data } = await apiClient.post<RejectJobResponseDto>(`/provider/jobs/${id}/reject`)
+  return data
 }
 
-// TODO: Replace with real API call → GET /provider/stats
-export async function getProviderStats(): Promise<ProviderStats> {
-  throw new Error('provider.service.getProviderStats: not implemented');
+export async function startJob(id: number): Promise<StartJobResponseDto> {
+  const { data } = await apiClient.post<StartJobResponseDto>(`/provider/jobs/${id}/start`)
+  return data
 }
 
-// TODO: Replace with real API call → PATCH /provider/availability
-export async function setAvailability(_isOnline: boolean): Promise<void> {
-  throw new Error('provider.service.setAvailability: not implemented');
+export async function completeJob(id: number): Promise<CompleteJobResponseDto> {
+  const { data } = await apiClient.post<CompleteJobResponseDto>(`/provider/jobs/${id}/complete`)
+  return data
+}
+
+export async function getProviderStats(): Promise<ProviderStatsResponseDto> {
+  const { data } = await apiClient.get<ProviderStatsResponseDto>('/provider/stats')
+  return data
+}
+
+export async function getProviderProfile(): Promise<ProviderProfileResponseDto> {
+  const { data } = await apiClient.get<ProviderProfileResponseDto>('/provider/profile')
+  return data
+}
+
+export async function setAvailability(isOnline: boolean): Promise<UpdateAvailabilityResponseDto> {
+  const { data } = await apiClient.patch<UpdateAvailabilityResponseDto>('/provider/availability', {
+    isOnline,
+  })
+  return data
 }
