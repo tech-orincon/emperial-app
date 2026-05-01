@@ -29,6 +29,9 @@ export interface BackendProfile {
   role: BackendRole;
   uid?: string;
   avatarUrl?: string;
+  countryId?: number;
+  status?: string;
+  emailVerified?: boolean;
   providerStatus?: ProviderStatus;
   isOnline?: boolean;
 }
@@ -94,6 +97,21 @@ export async function registerUser(payload: {
   username: string;
 }): Promise<BackendProfile> {
   const { data } = await apiClient.post<BackendProfile>('/auth/user', payload);
+  return data;
+}
+
+// ─── Account ──────────────────────────────────────────────────────────────────
+
+/**
+ * PATCH /account/profile
+ * Updates the authenticated user's username and/or countryId.
+ * At least one field is required.
+ */
+export async function updateProfile(payload: {
+  username?: string;
+  countryId?: number;
+}): Promise<{ success: boolean }> {
+  const { data } = await apiClient.patch<{ success: boolean }>('/account/profile', payload);
   return data;
 }
 
