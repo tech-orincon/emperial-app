@@ -109,15 +109,21 @@ export interface ProviderStatsResponseDto {
 
 export interface ProviderProfileResponseDto {
   id: number
-  displayName: string
-  avatarUrl?: string
+  username: string
+  avatarUrl: string | null
+  specialization: string
   tier: string
-  ratingAvg: number
-  totalOrdersCompleted: number
+  isVerified: boolean
   isOnline: boolean
-  isActive: boolean
-  verificationStatus: string
-  completionRate?: number
+  completedJobs: number
+  rating: number
+  totalReviews: number
+  yearsExperience: number
+  completionRate: number
+  avgResponseMinutes: number
+  earningsWeek: string
+  badges: string[]
+  recentReviews: unknown[]
 }
 
 // ─── PATCH /provider/availability ─────────────────────────────────────────────

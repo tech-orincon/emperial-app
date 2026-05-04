@@ -25,7 +25,7 @@ export function ProviderDashboardPage() {
     return <PendingApprovalView />
   }
 
-  const initials = profile?.displayName ? profile.displayName.slice(0, 2).toUpperCase() : '??'
+  const initials = profile?.username ? profile.username.slice(0, 2).toUpperCase() : '??'
 
   return (
     <div className="min-h-screen bg-slate-900 pt-20 pb-12 px-4 sm:px-6 lg:px-8">
@@ -54,11 +54,11 @@ export function ProviderDashboardPage() {
             </button>
             <div className="flex items-center gap-3">
               <div className="hidden sm:block text-right">
-                <p className="text-sm font-medium text-white">{profile?.displayName ?? '—'}</p>
+                <p className="text-sm font-medium text-white">{profile?.username ?? '—'}</p>
                 <p className="text-xs text-purple-400">Provider</p>
               </div>
               {profile?.avatarUrl ? (
-                <img src={profile.avatarUrl} alt={profile.displayName} className="w-10 h-10 rounded-full object-cover" />
+                <img src={profile.avatarUrl} alt={profile.username} className="w-10 h-10 rounded-full object-cover" />
               ) : (
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white font-bold">{initials}</div>
               )}

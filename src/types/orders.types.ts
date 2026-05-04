@@ -1,6 +1,15 @@
 // ─── Orders DTOs (backend snapshots) ─────────────────────────────────────────
 
-export type OrderStatus = 'QUEUED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED' | 'REFUNDED';
+export type OrderStatus =
+  | 'PENDING'
+  | 'PAID'
+  | 'QUEUED'
+  | 'ACCEPTED'
+  | 'IN_PROGRESS'
+  | 'COMPLETED'
+  | 'CANCELLED'
+  | 'DISPUTED'
+  | 'REFUNDED';
 
 export interface OrderServiceSnapshot {
   id: number;
@@ -22,8 +31,9 @@ export interface OrderAddonSnapshot {
 
 export interface OrderProviderSnapshot {
   id: number;
-  username: string;
-  avatarUrl?: string | null;
+  displayName: string;
+  avatarUrl: string | null;
+  ratingAvg: number;
 }
 
 export interface OrderDto {

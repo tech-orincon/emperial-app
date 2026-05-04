@@ -67,7 +67,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const loadBackendProfile = useCallback(async () => {
     try {
       const profile = await fetchBackendProfile();
-      console.log('profile ====>', profile);
       setUser(profile);
       setRole(profile.role as UserRole);
     } catch {
