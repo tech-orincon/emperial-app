@@ -12,12 +12,16 @@ import { Toaster } from 'sonner';
 import { useOrders } from './hooks/useOrders';
 import type { OrderDto, OrderStatus } from '../../types/orders.types';
 
-const STATUS_CONFIG: Record<OrderStatus, { label: string; color: string; progress: number }> = {
-  QUEUED: { label: 'Queued', color: 'text-amber-400 bg-amber-400/10 border-amber-400/20', progress: 0 },
-  IN_PROGRESS: { label: 'In Progress', color: 'text-blue-400 bg-blue-400/10 border-blue-400/20', progress: 50 },
-  COMPLETED: { label: 'Completed', color: 'text-green-400 bg-green-400/10 border-green-400/20', progress: 100 },
-  CANCELLED: { label: 'Cancelled', color: 'text-slate-400 bg-slate-400/10 border-slate-400/20', progress: 0 },
-  REFUNDED: { label: 'Refunded', color: 'text-slate-400 bg-slate-400/10 border-slate-400/20', progress: 0 },
+const STATUS_CONFIG: Record<OrderStatus, { label: string; color: string; bar: string; progress: number }> = {
+  PENDING:     { label: 'Processing Payment', color: 'text-slate-400 bg-slate-400/10 border-slate-400/20',   bar: 'bg-slate-500',   progress: 5 },
+  PAID:        { label: 'Payment Confirmed',  color: 'text-teal-400 bg-teal-400/10 border-teal-400/20',      bar: 'bg-teal-500',    progress: 15 },
+  QUEUED:      { label: 'In Queue',           color: 'text-amber-400 bg-amber-400/10 border-amber-400/20',   bar: 'bg-amber-500',   progress: 25 },
+  ACCEPTED:    { label: 'Booster Assigned',   color: 'text-blue-400 bg-blue-400/10 border-blue-400/20',      bar: 'bg-blue-500',    progress: 40 },
+  IN_PROGRESS: { label: 'In Progress',        color: 'text-purple-400 bg-purple-400/10 border-purple-400/20', bar: 'bg-purple-500', progress: 70 },
+  COMPLETED:   { label: 'Completed',          color: 'text-green-400 bg-green-400/10 border-green-400/20',   bar: 'bg-green-500',   progress: 100 },
+  CANCELLED:   { label: 'Cancelled',          color: 'text-slate-400 bg-slate-400/10 border-slate-400/20',   bar: 'bg-slate-600',   progress: 0 },
+  DISPUTED:    { label: 'Under Review',       color: 'text-orange-400 bg-orange-400/10 border-orange-400/20', bar: 'bg-orange-500', progress: 60 },
+  REFUNDED:    { label: 'Refunded',           color: 'text-slate-400 bg-slate-400/10 border-slate-400/20',   bar: 'bg-slate-600',   progress: 0 },
 };
 
 function formatDate(iso: string): string {
@@ -45,7 +49,7 @@ function OrderCard({ order, index, onViewDetails }: { order: OrderDto; index: nu
           </div>
           <div className="h-2 bg-slate-800 rounded-full overflow-hidden mb-6">
             <motion.div
-              className="h-full bg-emperial-500"
+              className={`h-full ${cfg.bar}`}
               initial={{ width: 0 }}
               animate={{ width: `${cfg.progress}%` }}
               transition={{ duration: 1, delay: index * 0.1 }}
@@ -55,9 +59,9 @@ function OrderCard({ order, index, onViewDetails }: { order: OrderDto; index: nu
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 rounded-full bg-slate-700 flex items-center justify-center text-xs text-white">
-                {order.provider ? order.provider.username.charAt(0).toUpperCase() : '?'}
+                {order.provider ? order.provider.displayName.charAt(0).toUpperCase() : '?'}
               </div>
-              <span className="text-sm text-slate-300">{order.provider?.username ?? 'Pending'}</span>
+              <span className="text-sm text-slate-300">{order.provider?.displayName ?? 'Pending'}</span>
             </div>
             <Button size="sm" variant="secondary" onClick={() => onViewDetails(order)}>
               View Details

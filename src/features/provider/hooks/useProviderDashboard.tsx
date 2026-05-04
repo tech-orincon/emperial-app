@@ -71,9 +71,8 @@ export function useProviderDashboard() {
       setProfile(rawProfile)
       setIsOnline(rawProfile.isOnline)
 
-      // Skip jobs/stats only for explicitly blocked statuses
-      const BLOCKED = ['PENDING', 'REJECTED', 'SUSPENDED']
-      if (rawProfile.verificationStatus && BLOCKED.includes(rawProfile.verificationStatus)) return
+      // Skip jobs/stats if provider is not verified yet
+      if (!rawProfile.isVerified) return
 
       const [jobsRes, rawStats] = await Promise.all([
         getProviderJobs(),
@@ -94,7 +93,9 @@ export function useProviderDashboard() {
   const filteredJobs = activeTab === 'all' ? jobs : jobs.filter((j) => j.status === activeTab)
 
   // profile is source of truth; fall back to auth's providerStatus while profile loads
-  const verificationStatus = profile?.verificationStatus ?? user?.providerStatus
+  const verificationStatus = profile
+    ? (profile.isVerified ? 'APPROVED' : 'PENDING')
+    : user?.providerStatus
 
   const getStatusConfig = (status: JobStatus) => {
     switch (status) {

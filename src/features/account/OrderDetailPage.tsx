@@ -8,7 +8,7 @@ import { GlassCard } from '../../components/ui/GlassCard';
 import { Modal } from '../../components/ui/Modal';
 import { ErrorState } from '../../components/ui/ErrorState';
 import { Skeleton } from '../../components/ui/Skeleton';
-import { ChevronRight, MessageSquare, AlertTriangle, CheckCircle2, Shield } from 'lucide-react';
+import { ChevronRight, MessageSquare, AlertTriangle, CheckCircle2, Shield, Star } from 'lucide-react';
 import { Toaster, toast } from 'sonner';
 import { useOrderDetail } from './hooks/useOrderDetail';
 import type { OrderDto, OrderStatus } from '../../types/orders.types';
@@ -16,10 +16,11 @@ import type { OrderDto, OrderStatus } from '../../types/orders.types';
 // ─── Timeline ─────────────────────────────────────────────────────────────────
 
 const STEPS = [
-  { label: 'Order Placed', activeAt: ['QUEUED', 'IN_PROGRESS', 'COMPLETED'] },
-  { label: 'Booster Assigned', activeAt: ['IN_PROGRESS', 'COMPLETED'] },
-  { label: 'Service In Progress', activeAt: ['IN_PROGRESS', 'COMPLETED'] },
-  { label: 'Completion', activeAt: ['COMPLETED'] },
+  { label: 'Order Placed',       activeAt: ['PENDING', 'PAID', 'QUEUED', 'ACCEPTED', 'IN_PROGRESS', 'COMPLETED', 'DISPUTED'] },
+  { label: 'Payment Confirmed',  activeAt: ['PAID', 'QUEUED', 'ACCEPTED', 'IN_PROGRESS', 'COMPLETED', 'DISPUTED'] },
+  { label: 'Booster Assigned',   activeAt: ['ACCEPTED', 'IN_PROGRESS', 'COMPLETED', 'DISPUTED'] },
+  { label: 'Service In Progress', activeAt: ['IN_PROGRESS', 'COMPLETED', 'DISPUTED'] },
+  { label: 'Completion',         activeAt: ['COMPLETED'] },
 ];
 
 function Timeline({ status, createdAt }: { status: OrderStatus; createdAt: string }) {
@@ -28,7 +29,7 @@ function Timeline({ status, createdAt }: { status: OrderStatus; createdAt: strin
     <div className="space-y-6 relative pl-4 border-l-2 border-slate-800 ml-2">
       {STEPS.map((step, i) => {
         const isDone = (step.activeAt as string[]).includes(status);
-        const isActive = status === 'IN_PROGRESS' && step.label === 'Service In Progress';
+        const isActive = (status === 'IN_PROGRESS' || status === 'DISPUTED') && step.label === 'Service In Progress';
         const dotColor = isDone ? (isActive ? 'bg-blue-500 animate-pulse' : 'bg-green-500') : 'bg-slate-700';
         return (
           <motion.div key={step.label} className={`relative ${!isDone ? 'opacity-50' : ''}`}
@@ -47,21 +48,39 @@ function Timeline({ status, createdAt }: { status: OrderStatus; createdAt: strin
 // ─── Status badge ─────────────────────────────────────────────────────────────
 
 const STATUS_STYLE: Record<OrderStatus, string> = {
-  QUEUED: 'bg-amber-500/10 border border-amber-500/20 text-amber-400',
-  IN_PROGRESS: 'bg-blue-500/10 border border-blue-500/20 text-blue-400',
-  COMPLETED: 'bg-green-500/10 border border-green-500/20 text-green-400',
-  CANCELLED: 'bg-slate-500/10 border border-slate-500/20 text-slate-400',
-  REFUNDED: 'bg-amber-500/10 border border-amber-500/20 text-amber-400',
+  PENDING:     'bg-slate-500/10 border border-slate-500/20 text-slate-400',
+  PAID:        'bg-teal-500/10 border border-teal-500/20 text-teal-400',
+  QUEUED:      'bg-amber-500/10 border border-amber-500/20 text-amber-400',
+  ACCEPTED:    'bg-blue-500/10 border border-blue-500/20 text-blue-400',
+  IN_PROGRESS: 'bg-purple-500/10 border border-purple-500/20 text-purple-400',
+  COMPLETED:   'bg-green-500/10 border border-green-500/20 text-green-400',
+  CANCELLED:   'bg-slate-500/10 border border-slate-500/20 text-slate-400',
+  DISPUTED:    'bg-orange-500/10 border border-orange-500/20 text-orange-400',
+  REFUNDED:    'bg-slate-500/10 border border-slate-500/20 text-slate-400',
 };
 
 const STATUS_LABEL: Record<OrderStatus, string> = {
-  QUEUED: 'Queued', IN_PROGRESS: 'In Progress', COMPLETED: 'Completed',
-  CANCELLED: 'Cancelled', REFUNDED: 'Refunded',
+  PENDING:     'Processing Payment',
+  PAID:        'Payment Confirmed',
+  QUEUED:      'In Queue',
+  ACCEPTED:    'Booster Assigned',
+  IN_PROGRESS: 'In Progress',
+  COMPLETED:   'Completed',
+  CANCELLED:   'Cancelled',
+  DISPUTED:    'Under Review',
+  REFUNDED:    'Refunded',
 };
 
 const STATUS_TEXT: Record<OrderStatus, string> = {
-  QUEUED: 'text-amber-400', IN_PROGRESS: 'text-blue-400', COMPLETED: 'text-green-400',
-  CANCELLED: 'text-slate-400', REFUNDED: 'text-slate-400',
+  PENDING:     'text-slate-400',
+  PAID:        'text-teal-400',
+  QUEUED:      'text-amber-400',
+  ACCEPTED:    'text-blue-400',
+  IN_PROGRESS: 'text-purple-400',
+  COMPLETED:   'text-green-400',
+  CANCELLED:   'text-slate-400',
+  DISPUTED:    'text-orange-400',
+  REFUNDED:    'text-slate-400',
 };
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
@@ -203,15 +222,19 @@ export function OrderDetailPage() {
                         <>
                           <div className="flex items-center gap-4 mb-6">
                             {order.provider.avatarUrl
-                              ? <img src={order.provider.avatarUrl} alt={order.provider.username} className="w-12 h-12 rounded-full bg-slate-800 object-cover" />
-                              : <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center text-sm font-bold text-slate-400">
-                                  {order.provider.username.slice(0, 2).toUpperCase()}
+                              ? <img src={order.provider.avatarUrl} alt={order.provider.displayName} className="w-12 h-12 rounded-full bg-slate-800 object-cover" />
+                              : <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-sm font-bold text-white">
+                                  {order.provider.displayName.slice(0, 2).toUpperCase()}
                                 </div>
                             }
                             <div className="flex-1">
-                              <div className="font-bold text-white flex items-center gap-1">
-                                {order.provider.username}
+                              <div className="font-bold text-white flex items-center gap-1 mb-1">
+                                {order.provider.displayName}
                                 <Shield className="w-4 h-4 text-purple-400" />
+                              </div>
+                              <div className="flex items-center gap-1 text-sm text-amber-400">
+                                <Star className="w-3 h-3 fill-amber-400" />
+                                <span>{order.provider.ratingAvg > 0 ? order.provider.ratingAvg.toFixed(1) : 'New'}</span>
                               </div>
                             </div>
                           </div>

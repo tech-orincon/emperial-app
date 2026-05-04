@@ -41,15 +41,23 @@ apiClient.interceptors.response.use(
       _retried?: boolean;
     };
 
-    if (error.response?.status === 401 && !originalRequest._retried) {
-      originalRequest._retried = true;
-      const user = auth.currentUser;
-      if (user) {
-        const freshToken = await user.getIdToken(true); // force refresh
-        originalRequest.headers.Authorization = `Bearer ${freshToken}`;
-        originalRequest.headers['uid'] = user.uid;
-        return apiClient(originalRequest);
+    if (error.response?.status === 401) {
+      if (!originalRequest._retried) {
+        originalRequest._retried = true;
+        const user = auth.currentUser;
+        if (user) {
+          try {
+            const freshToken = await user.getIdToken(true); // force refresh
+            originalRequest.headers.Authorization = `Bearer ${freshToken}`;
+            originalRequest.headers['uid'] = user.uid;
+            return await apiClient(originalRequest);
+          } catch {
+            // Token refresh failed — fall through to redirect
+          }
+        }
       }
+      // Retry failed or no Firebase user — send to login
+      window.location.href = '/auth';
     }
 
     return Promise.reject(error);
