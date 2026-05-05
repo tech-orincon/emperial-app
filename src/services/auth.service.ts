@@ -123,7 +123,7 @@ export async function updateProfile(payload: {
  */
 export async function startOnboarding(payload: {
   displayName: string;
-  realName?: string;
+  realName: string;
   countryId: number;
   timezone: string;
 }): Promise<void> {

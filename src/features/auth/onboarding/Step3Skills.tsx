@@ -65,14 +65,17 @@ export function Step3Skills({
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-medium text-slate-400">Highest Achievement</label>
+        <label className="text-sm font-medium text-slate-400">
+          Highest Achievement <span className="text-red-400">*</span>
+        </label>
         <input
           type="text"
           value={formData.highestAchievement}
           onChange={(e) => onChange('highestAchievement', e.target.value)}
-          className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+          className={`w-full bg-slate-800 border rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 ${errors.highestAchievement ? 'border-red-500' : 'border-white/10'}`}
           placeholder="e.g. Cutting Edge: Fyrakk, Rank 1 Gladiator"
         />
+        {errors.highestAchievement && <p className="text-xs text-red-400">{errors.highestAchievement}</p>}
       </div>
 
       <div className="space-y-2">

@@ -4,6 +4,7 @@ import {
   setPersistence,
   browserLocalPersistence,
 } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 
 // ─── Firebase Config ──────────────────────────────────────────────────────────
 
@@ -21,6 +22,7 @@ const firebaseConfig = {
 
 export const firebaseApp = initializeApp(firebaseConfig);
 export const auth = getAuth(firebaseApp);
+export const db = getFirestore(firebaseApp);
 
 // Persist session in localStorage so the user stays logged in across page
 // refreshes. Firebase will also automatically refresh the ID token (every hour).

@@ -11,16 +11,17 @@ import { Skeleton } from '../../components/ui/Skeleton';
 import { ChevronRight, MessageSquare, AlertTriangle, CheckCircle2, Shield, Star } from 'lucide-react';
 import { Toaster, toast } from 'sonner';
 import { useOrderDetail } from './hooks/useOrderDetail';
+import { useChat } from '../../context/ChatContext';
 import type { OrderDto, OrderStatus } from '../../types/orders.types';
 
 // ─── Timeline ─────────────────────────────────────────────────────────────────
 
 const STEPS = [
-  { label: 'Order Placed',       activeAt: ['PENDING', 'PAID', 'QUEUED', 'ACCEPTED', 'IN_PROGRESS', 'COMPLETED', 'DISPUTED'] },
-  { label: 'Payment Confirmed',  activeAt: ['PAID', 'QUEUED', 'ACCEPTED', 'IN_PROGRESS', 'COMPLETED', 'DISPUTED'] },
-  { label: 'Booster Assigned',   activeAt: ['ACCEPTED', 'IN_PROGRESS', 'COMPLETED', 'DISPUTED'] },
+  { label: 'Order Placed', activeAt: ['PENDING', 'PAID', 'QUEUED', 'ACCEPTED', 'IN_PROGRESS', 'COMPLETED', 'DISPUTED'] },
+  { label: 'Payment Confirmed', activeAt: ['PAID', 'QUEUED', 'ACCEPTED', 'IN_PROGRESS', 'COMPLETED', 'DISPUTED'] },
+  { label: 'Booster Assigned', activeAt: ['ACCEPTED', 'IN_PROGRESS', 'COMPLETED', 'DISPUTED'] },
   { label: 'Service In Progress', activeAt: ['IN_PROGRESS', 'COMPLETED', 'DISPUTED'] },
-  { label: 'Completion',         activeAt: ['COMPLETED'] },
+  { label: 'Completion', activeAt: ['COMPLETED'] },
 ];
 
 function Timeline({ status, createdAt }: { status: OrderStatus; createdAt: string }) {
@@ -48,39 +49,39 @@ function Timeline({ status, createdAt }: { status: OrderStatus; createdAt: strin
 // ─── Status badge ─────────────────────────────────────────────────────────────
 
 const STATUS_STYLE: Record<OrderStatus, string> = {
-  PENDING:     'bg-slate-500/10 border border-slate-500/20 text-slate-400',
-  PAID:        'bg-teal-500/10 border border-teal-500/20 text-teal-400',
-  QUEUED:      'bg-amber-500/10 border border-amber-500/20 text-amber-400',
-  ACCEPTED:    'bg-blue-500/10 border border-blue-500/20 text-blue-400',
+  PENDING: 'bg-slate-500/10 border border-slate-500/20 text-slate-400',
+  PAID: 'bg-teal-500/10 border border-teal-500/20 text-teal-400',
+  QUEUED: 'bg-amber-500/10 border border-amber-500/20 text-amber-400',
+  ACCEPTED: 'bg-blue-500/10 border border-blue-500/20 text-blue-400',
   IN_PROGRESS: 'bg-purple-500/10 border border-purple-500/20 text-purple-400',
-  COMPLETED:   'bg-green-500/10 border border-green-500/20 text-green-400',
-  CANCELLED:   'bg-slate-500/10 border border-slate-500/20 text-slate-400',
-  DISPUTED:    'bg-orange-500/10 border border-orange-500/20 text-orange-400',
-  REFUNDED:    'bg-slate-500/10 border border-slate-500/20 text-slate-400',
+  COMPLETED: 'bg-green-500/10 border border-green-500/20 text-green-400',
+  CANCELLED: 'bg-slate-500/10 border border-slate-500/20 text-slate-400',
+  DISPUTED: 'bg-orange-500/10 border border-orange-500/20 text-orange-400',
+  REFUNDED: 'bg-slate-500/10 border border-slate-500/20 text-slate-400',
 };
 
 const STATUS_LABEL: Record<OrderStatus, string> = {
-  PENDING:     'Processing Payment',
-  PAID:        'Payment Confirmed',
-  QUEUED:      'In Queue',
-  ACCEPTED:    'Booster Assigned',
+  PENDING: 'Processing Payment',
+  PAID: 'Payment Confirmed',
+  QUEUED: 'In Queue',
+  ACCEPTED: 'Booster Assigned',
   IN_PROGRESS: 'In Progress',
-  COMPLETED:   'Completed',
-  CANCELLED:   'Cancelled',
-  DISPUTED:    'Under Review',
-  REFUNDED:    'Refunded',
+  COMPLETED: 'Completed',
+  CANCELLED: 'Cancelled',
+  DISPUTED: 'Under Review',
+  REFUNDED: 'Refunded',
 };
 
 const STATUS_TEXT: Record<OrderStatus, string> = {
-  PENDING:     'text-slate-400',
-  PAID:        'text-teal-400',
-  QUEUED:      'text-amber-400',
-  ACCEPTED:    'text-blue-400',
+  PENDING: 'text-slate-400',
+  PAID: 'text-teal-400',
+  QUEUED: 'text-amber-400',
+  ACCEPTED: 'text-blue-400',
   IN_PROGRESS: 'text-purple-400',
-  COMPLETED:   'text-green-400',
-  CANCELLED:   'text-slate-400',
-  DISPUTED:    'text-orange-400',
-  REFUNDED:    'text-slate-400',
+  COMPLETED: 'text-green-400',
+  CANCELLED: 'text-slate-400',
+  DISPUTED: 'text-orange-400',
+  REFUNDED: 'text-slate-400',
 };
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
@@ -91,6 +92,7 @@ export function OrderDetailPage() {
   const location = useLocation();
   const stateOrder = location.state as OrderDto | null;
   const { data: fetchedOrder, isLoading, error, retry } = useOrderDetail(id);
+  const { openProviderChat } = useChat();
 
   // Use fetched data when available; fall back to navigation state while loading
   const order = fetchedOrder ?? stateOrder;
@@ -224,8 +226,8 @@ export function OrderDetailPage() {
                             {order.provider.avatarUrl
                               ? <img src={order.provider.avatarUrl} alt={order.provider.displayName} className="w-12 h-12 rounded-full bg-slate-800 object-cover" />
                               : <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-sm font-bold text-white">
-                                  {order.provider.displayName.slice(0, 2).toUpperCase()}
-                                </div>
+                                {order.provider.displayName.slice(0, 2).toUpperCase()}
+                              </div>
                             }
                             <div className="flex-1">
                               <div className="font-bold text-white flex items-center gap-1 mb-1">
@@ -239,7 +241,14 @@ export function OrderDetailPage() {
                             </div>
                           </div>
                           <div className="space-y-2">
-                            <Button className="w-full flex items-center justify-center gap-2">
+                            <Button
+                              className="w-full flex items-center justify-center gap-2"
+                              onClick={() => openProviderChat(
+                                String(order.provider!.id),
+                                order.provider!.displayName,
+                                String(order.id),
+                              )}
+                            >
                               <MessageSquare className="w-4 h-4" /> Chat with Provider
                             </Button>
                             <Button variant="secondary" className="w-full" onClick={() => navigate(`/provider/${order.provider!.id}`)}>
