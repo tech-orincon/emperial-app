@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { LogIn, UserPlus, ShoppingCart, User, LogOut } from 'lucide-react'
+import { LogIn, UserPlus, ShoppingCart, User, LogOut, LayoutDashboard, Package, Settings } from 'lucide-react'
 import { Button } from '../../ui/Button'
 import type { UserRole } from '../../../types/auth.types'
 import type React from 'react'
@@ -14,13 +14,11 @@ interface Props {
   role: UserRole
   navLinks: NavLink[]
   cartCount: number
-  isOnline: boolean
-  setIsOnline: (online: boolean) => void
   handleLogout: () => void
   onClose: () => void
 }
 
-export function MobileMenuContent({ role, navLinks, cartCount, isOnline, setIsOnline, handleLogout, onClose }: Props) {
+export function MobileMenuContent({ role, navLinks, cartCount, handleLogout, onClose }: Props) {
   const location = useLocation()
 
   return (
@@ -75,15 +73,26 @@ export function MobileMenuContent({ role, navLinks, cartCount, isOnline, setIsOn
 
         {role === 'PROVIDER' && (
           <>
-            <div className="flex items-center justify-between p-3 rounded-lg bg-slate-800/50">
-              <span className="text-sm text-slate-400">Availability</span>
-              <button
-                onClick={() => setIsOnline(!isOnline)}
-                className={`flex items-center gap-2 px-3 py-1 rounded-full ${isOnline ? 'bg-green-500/20 text-green-400' : 'bg-slate-700 text-slate-400'}`}
-              >
-                {isOnline ? 'Online' : 'Offline'}
-              </button>
-            </div>
+            <Link to="/checkout" onClick={onClose}>
+              <Button className="w-full justify-start">
+                <ShoppingCart className="w-4 h-4 mr-2" /> Cart ({cartCount})
+              </Button>
+            </Link>
+            <Link to="/account/profile" onClick={onClose}>
+              <Button variant="secondary" className="w-full justify-start">
+                <Settings className="w-4 h-4 mr-2" /> Profile Settings
+              </Button>
+            </Link>
+            <Link to="/account/orders" onClick={onClose}>
+              <Button variant="secondary" className="w-full justify-start">
+                <Package className="w-4 h-4 mr-2" /> My Orders
+              </Button>
+            </Link>
+            <Link to="/provider/dashboard" onClick={onClose}>
+              <Button variant="secondary" className="w-full justify-start text-purple-400 border-purple-500/20">
+                <LayoutDashboard className="w-4 h-4 mr-2" /> Provider Dashboard
+              </Button>
+            </Link>
             <Button variant="ghost" className="w-full justify-start text-red-400" onClick={handleLogout}>
               <LogOut className="w-4 h-4 mr-2" /> Sign Out
             </Button>

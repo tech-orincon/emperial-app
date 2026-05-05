@@ -15,6 +15,7 @@ import { TermsPage } from './features/legal/TermsPage';
 import { PrivacyPage } from './features/legal/PrivacyPage';
 import { RefundPolicyPage } from './features/legal/RefundPolicyPage';
 import { ChatCenter } from './features/chat/ChatCenter';
+import { ChatProvider } from './context/ChatContext';
 import { useAuth } from './context/AuthContext';
 import type { ReactNode } from 'react';
 
@@ -29,6 +30,7 @@ function RequireProvider({ children }: { children: ReactNode }) {
 export function App() {
   return (
     <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <ChatProvider>
       <Routes>
         {/* Public */}
         <Route path="/" element={<HomePage />} />
@@ -53,6 +55,7 @@ export function App() {
 
       {/* Global chat overlay */}
       <ChatCenter />
+      </ChatProvider>
     </Router>
   );
 }
