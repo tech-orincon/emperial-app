@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, Home, Store, Package, Briefcase, ClipboardList, DollarSign } from 'lucide-react'
+import { Menu, X, Home, Store, Package, Briefcase, ClipboardList } from 'lucide-react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { useCart } from '../../context/CartContext'
@@ -27,9 +27,10 @@ function getNavLinks(role: UserRole) {
       ]
     case 'PROVIDER':
       return [
+        { name: 'Home', href: '/', icon: Home },
+        { name: 'Services', href: '/catalog', icon: Store },
+        { name: 'My Orders', href: '/account/orders', icon: Package },
         { name: 'Dashboard', href: '/provider/dashboard', icon: Briefcase },
-        { name: 'Jobs', href: '/provider/dashboard', icon: ClipboardList },
-        { name: 'Earnings', href: '/provider/dashboard', icon: DollarSign },
       ]
   }
 }
@@ -40,7 +41,6 @@ export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
-  const [isOnline, setIsOnline] = useState(true)
   const location = useLocation()
   const navigate = useNavigate()
   const cartCount = items.reduce((sum, i) => sum + i.quantity, 0)
@@ -121,8 +121,7 @@ export function Navbar() {
           {role === 'PROVIDER' && (
             <ProviderNav
               user={user}
-              isOnline={isOnline}
-              setIsOnline={setIsOnline}
+              cartCount={cartCount}
               isUserMenuOpen={isUserMenuOpen}
               setIsUserMenuOpen={setIsUserMenuOpen}
               handleLogout={handleLogout}
@@ -147,8 +146,6 @@ export function Navbar() {
               role={role}
               navLinks={navLinks}
               cartCount={cartCount}
-              isOnline={isOnline}
-              setIsOnline={setIsOnline}
               handleLogout={handleLogout}
               onClose={() => setIsOpen(false)}
             />

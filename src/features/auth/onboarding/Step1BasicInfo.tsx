@@ -40,14 +40,17 @@ export function Step1BasicInfo({ formData, errors, countries, timezones, isLoadi
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-slate-400">Real Name (Optional)</label>
+          <label className="text-sm font-medium text-slate-400">
+            Real Name <span className="text-red-400">*</span>
+          </label>
           <input
             type="text"
             value={formData.realName}
             onChange={(e) => onChange('realName', e.target.value)}
-            className={inputCls()}
+            className={inputCls(errors.realName)}
             placeholder="John Doe"
           />
+          {errors.realName && <p className="text-xs text-red-400">{errors.realName}</p>}
         </div>
 
         <div className="space-y-2">

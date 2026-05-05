@@ -83,6 +83,7 @@ export function useOnboarding() {
     if (s === 1) {
       if (!formData.displayName || formData.displayName.length < 3)
         errs.displayName = 'Display name must be at least 3 characters'
+      if (!formData.realName.trim()) errs.realName = 'Real name is required'
       if (!formData.countryId) errs.countryId = 'Country is required'
       if (!formData.timezone) errs.timezone = 'Timezone is required'
     } else if (s === 2) {
@@ -94,6 +95,7 @@ export function useOnboarding() {
       }
     } else if (s === 3) {
       if (selectedCategoryIds.length === 0) errs.services = 'Select at least one service'
+      if (!formData.highestAchievement.trim()) errs.highestAchievement = 'Highest achievement is required'
     } else if (s === 4) {
       if (formData.schedule.length === 0) errs.schedule = 'Select at least one schedule option'
       if (!formData.hourlyRate || parseInt(formData.hourlyRate) <= 0)
@@ -149,7 +151,7 @@ export function useOnboarding() {
       if (step === 1) {
         await startOnboarding({
           displayName: formData.displayName,
-          realName: formData.realName || undefined,
+          realName: formData.realName,
           countryId: formData.countryId,
           timezone: formData.timezone,
         })
