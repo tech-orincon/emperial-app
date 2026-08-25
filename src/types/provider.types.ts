@@ -1,26 +1,30 @@
-// Tipos alineados exactamente con los DTOs del OpenAPI del backend.
+// Tipos alineados exactamente con los DTOs del backend (src/modules/provider/dto).
 // No usar modelos internos de Prisma. No inferir campos que no existan.
+
+export type ProviderTier = 'STANDARD' | 'ADVANCED' | 'MASTER' | 'ELITE'
 
 // ─── GET /provider/jobs ────────────────────────────────────────────────────────
 
 export interface ProviderJobDto {
   id: number
+  /** OrderStatus del backend: QUEUED | ACCEPTED | IN_PROGRESS | COMPLETED | ... */
   status: string
-  priority: string
+  priority: 'HIGH' | 'NORMAL'
   reward: string
   createdAt: string
   deadline: string | null
   service: {
     id: number
     title: string
-    imageUrl?: string
+    imageUrl: string | null
     game: { name: string }
     category: { name: string }
   }
+  /** null si la orden no tiene opción de tipo PACKAGE */
   package: {
     id: number
     name: string
-  }
+  } | null
   addons: {
     id: number
     name: string
@@ -41,78 +45,43 @@ export interface ProviderJobsResponseDto {
   limit: number
 }
 
-// ─── GET /provider/jobs/:id ────────────────────────────────────────────────────
+// ─── Acciones sobre jobs ───────────────────────────────────────────────────────
+//
+// accept / reject / start / complete devuelven el job actualizado, no { success }.
 
-export interface ProviderJobDetailResponseDto {
-  id: number
-  status: string
-  priority: string
-  totalPrice: string
-  currency: string
-  originalPrice?: string
-  discountAmount?: string
-  createdAt: string
-  deadline?: string
-  notes?: string
-  service: {
-    id: number
-    title: string
-    imageUrl?: string
-  }
-  user: {
-    id: number
-    username: string
-    avatarUrl?: string
-  }
-  options: {
-    name: string
-    type: string
-    price: string
-  }[]
-  canAccept: boolean
-  canStart: boolean
-  canComplete: boolean
-}
-
-// ─── Action responses ──────────────────────────────────────────────────────────
-
-export interface AcceptJobResponseDto {
-  success: boolean
-  message?: string
-}
-
-export interface RejectJobResponseDto {
-  success: boolean
-  message?: string
-}
-
-export interface StartJobResponseDto {
-  success: boolean
-}
-
-export interface CompleteJobResponseDto {
-  success: boolean
-}
+export type JobActionResponseDto = ProviderJobDto
 
 // ─── GET /provider/stats ───────────────────────────────────────────────────────
 
 export interface ProviderStatsResponseDto {
   activeJobs: number
   completedToday: number
+  /** monetario, serializado como string */
   earningsToday: string
-  totalEarnings: string
-  ratingAvg: number
-  totalOrdersCompleted: number
+  /** monetario, serializado como string */
+  earningsWeek: string
+  rating: number
+  totalReviews: number
+  completionRate: number
+  avgResponseMinutes: number
 }
 
 // ─── GET /provider/profile ─────────────────────────────────────────────────────
+
+export interface ProfileReviewDto {
+  id: number
+  customerUsername: string
+  rating: number
+  comment: string
+  createdAt: string
+}
 
 export interface ProviderProfileResponseDto {
   id: number
   username: string
   avatarUrl: string | null
-  specialization: string
-  tier: string
+  specialization: string | null
+  tier: ProviderTier
   isVerified: boolean
   isOnline: boolean
   completedJobs: number
@@ -123,7 +92,7 @@ export interface ProviderProfileResponseDto {
   avgResponseMinutes: number
   earningsWeek: string
   badges: string[]
-  recentReviews: unknown[]
+  recentReviews: ProfileReviewDto[]
 }
 
 // ─── PATCH /provider/availability ─────────────────────────────────────────────
@@ -133,5 +102,5 @@ export interface UpdateAvailabilityRequestDto {
 }
 
 export interface UpdateAvailabilityResponseDto {
-  success: boolean
+  isOnline: boolean
 }

@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import { forwardRef, type ReactNode } from 'react';
 import { motion, HTMLMotionProps } from 'framer-motion';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -7,6 +7,8 @@ function cn(...inputs: ClassValue[]) {
 }
 interface GlassCardProps extends HTMLMotionProps<'div'> {
   hoverEffect?: boolean;
+  // HTMLMotionProps widens children to include MotionValue; we only render plain nodes
+  children?: ReactNode;
 }
 export const GlassCard = forwardRef<HTMLDivElement, GlassCardProps>(
   ({ className, children, hoverEffect = false, ...props }, ref) => {

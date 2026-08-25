@@ -16,21 +16,16 @@ export interface ChatContextType {
 
 // ─── Context ──────────────────────────────────────────────────────────────────
 
-const ChatContext = createContext<ChatContextType>({
-  isOpen: false,
-  activeChannelId: null,
-  isMobileListView: true,
-  openChat: () => {},
-  openProviderChat: () => {},
-  closeChat: () => {},
-  selectConversation: () => {},
-  setIsMobileListView: () => {},
-})
+const ChatContext = createContext<ChatContextType | null>(null)
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 
 // eslint-disable-next-line react-refresh/only-export-components
-export const useChat = () => useContext(ChatContext)
+export function useChat(): ChatContextType {
+  const ctx = useContext(ChatContext)
+  if (!ctx) throw new Error('useChat must be used inside ChatProvider')
+  return ctx
+}
 
 // ─── Provider ─────────────────────────────────────────────────────────────────
 

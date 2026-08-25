@@ -126,6 +126,7 @@ export async function startOnboarding(payload: {
   realName: string;
   countryId: number;
   timezone: string;
+  bio?: string;
 }): Promise<void> {
   await apiClient.post('/auth/onboarding/start', payload);
 }

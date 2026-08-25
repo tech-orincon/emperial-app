@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Trophy, DollarSign, Clock, Users, ChevronRight } from 'lucide-react';
@@ -115,7 +114,7 @@ export function BoosterRecruitment() {
                 delay: 0.3
               }}>
               
-              <Link to="/provider/login">
+              <Link to="/auth">
                 <Button
                   size="lg"
                   className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-400 hover:to-pink-400 border-0 group">

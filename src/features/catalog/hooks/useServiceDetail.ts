@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { getServiceDetail } from '../../../services/catalog.service'
 import type { ServiceDetail } from '../../../types/catalog.types'
 
@@ -8,8 +8,11 @@ interface State {
   error: boolean
 }
 
-export function useServiceDetail(id: string | undefined): State {
+export function useServiceDetail(id: string | undefined): State & { retry: () => void } {
   const [state, setState] = useState<State>({ data: null, isLoading: true, error: false })
+  const [reloadToken, setReloadToken] = useState(0)
+
+  const retry = useCallback(() => setReloadToken((t) => t + 1), [])
 
   useEffect(() => {
     if (!id) return
@@ -19,7 +22,7 @@ export function useServiceDetail(id: string | undefined): State {
       .then((data) => { if (!cancelled) setState({ data, isLoading: false, error: false }) })
       .catch(() => { if (!cancelled) setState({ data: null, isLoading: false, error: true }) })
     return () => { cancelled = true }
-  }, [id])
+  }, [id, reloadToken])
 
-  return state
+  return { ...state, retry }
 }

@@ -35,7 +35,7 @@ export function ServiceDetailPage() {
   const [reviewPage] = useState(1)
 
   const { addItem } = useCart()
-  const { data: service, isLoading, error } = useServiceDetail(id)
+  const { data: service, isLoading, error, retry } = useServiceDetail(id)
   const { data: reviews, isLoading: isLoadingReviews } = useServiceReviews(
     activeTab === 'reviews' ? id : undefined,
     reviewPage,
@@ -100,8 +100,8 @@ export function ServiceDetailPage() {
   }
 
   const handleRetry = () => {
-    toast.loading('Retrying...', { id: 'retry' })
-    navigate(0)
+    toast.dismiss()
+    retry()
   }
 
   return (
@@ -205,7 +205,6 @@ export function ServiceDetailPage() {
                       description={service.description}
                       features={service.features}
                       requirements={service.requirements}
-                      provider={service.provider}
                       reviews={reviews}
                       isLoadingReviews={isLoadingReviews}
                     />

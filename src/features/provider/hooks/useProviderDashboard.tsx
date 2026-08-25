@@ -10,9 +10,12 @@ import {
 import type { Job, JobStatus, DashboardStats } from '../types/provider.dashboard.types'
 import type { ProviderJobDto, ProviderProfileResponseDto, ProviderStatsResponseDto } from '../../../types/provider.types'
 
-// Maps backend status → frontend display status
+// Maps backend OrderStatus → frontend display status.
+// PENDING/PAID no llegan a la cola del provider hoy, pero se mapean por completitud.
 const STATUS_MAP: Record<string, JobStatus> = {
   PENDING: 'new',
+  PAID: 'new',
+  QUEUED: 'new',
   ACCEPTED: 'accepted',
   IN_PROGRESS: 'in-progress',
   COMPLETED: 'completed',
@@ -26,7 +29,7 @@ function mapJob(pj: ProviderJobDto): Job {
     service: pj.service.title,
     game: pj.service.game.name,
     category: pj.service.category.name,
-    package: pj.package.name,
+    package: pj.package?.name ?? null,
     addons: pj.addons.map((a) => a.name),
     customer: pj.customer.username,
     customerAvatar: pj.customer.avatarInitials,
@@ -43,14 +46,23 @@ function mapStats(raw: ProviderStatsResponseDto): DashboardStats {
     activeJobs: raw.activeJobs,
     completedToday: raw.completedToday,
     earningsToday: raw.earningsToday,
-    totalEarnings: raw.totalEarnings,
-    ratingAvg: raw.ratingAvg,
-    totalOrdersCompleted: raw.totalOrdersCompleted,
+    earningsWeek: raw.earningsWeek,
+    rating: raw.rating,
+    totalReviews: raw.totalReviews,
+    completionRate: raw.completionRate,
+    avgResponseMinutes: raw.avgResponseMinutes,
   }
 }
 
 const EMPTY_STATS: DashboardStats = {
-  activeJobs: 0, completedToday: 0, earningsToday: '0', totalEarnings: '0', ratingAvg: 0, totalOrdersCompleted: 0,
+  activeJobs: 0,
+  completedToday: 0,
+  earningsToday: '0',
+  earningsWeek: '0',
+  rating: 0,
+  totalReviews: 0,
+  completionRate: 0,
+  avgResponseMinutes: 0,
 }
 
 export function useProviderDashboard() {

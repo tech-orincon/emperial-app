@@ -10,7 +10,7 @@ export interface Job {
   service: string
   game: string
   category: string
-  package: string
+  package: string | null
   addons: string[]
   customer: string
   customerAvatar: string
@@ -21,12 +21,14 @@ export interface Job {
   notes: string | null
 }
 
-// Matches ProviderStatsResponse exactly
+// Espejo de ProviderStatsResponseDto (GET /provider/stats)
 export interface DashboardStats {
   activeJobs: number
   completedToday: number
-  earningsToday: string   // string (monetary, from backend)
-  totalEarnings: string   // string (monetary, from backend)
-  ratingAvg: number
-  totalOrdersCompleted: number
+  earningsToday: string   // monetario, string desde el backend
+  earningsWeek: string    // monetario, string desde el backend
+  rating: number
+  totalReviews: number
+  completionRate: number
+  avgResponseMinutes: number
 }

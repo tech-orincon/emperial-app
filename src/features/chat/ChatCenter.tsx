@@ -225,5 +225,3 @@ export function ChatCenter() {
     </>
   )
 }
-
-export { ChatCenter as FloatingSupportChat }

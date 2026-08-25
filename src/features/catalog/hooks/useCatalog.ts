@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { getGameCategories, getCategoryServices } from '../../../services/catalog.service'
 import type { GameCategoryResponseDto, CategoryServiceResponseDto } from '../../../types/catalog.types'
 
@@ -17,11 +17,29 @@ interface ServiceLoadState {
 export interface CatalogState {
   categories: CategoryLoadState
   servicesBySlug: Record<string, ServiceLoadState>
+  /** Re-fetches categories and all their services */
+  reloadCategories: () => void
+  /** Re-fetches only the services of one category */
+  reloadCategoryServices: (slug: string) => void
 }
 
 export function useCatalog(gameId: number | null): CatalogState {
   const [categories, setCategories] = useState<CategoryLoadState>({ data: [], isLoading: false, error: false })
   const [servicesBySlug, setServicesBySlug] = useState<Record<string, ServiceLoadState>>({})
+  const [reloadToken, setReloadToken] = useState(0)
+
+  const reloadCategories = useCallback(() => setReloadToken((t) => t + 1), [])
+
+  const reloadCategoryServices = useCallback((slug: string) => {
+    setServicesBySlug((prev) => ({ ...prev, [slug]: { data: [], isLoading: true, error: false } }))
+    getCategoryServices(slug)
+      .then((services) => {
+        setServicesBySlug((prev) => ({ ...prev, [slug]: { data: services, isLoading: false, error: false } }))
+      })
+      .catch(() => {
+        setServicesBySlug((prev) => ({ ...prev, [slug]: { data: [], isLoading: false, error: true } }))
+      })
+  }, [])
 
   useEffect(() => {
     if (!gameId) return
@@ -70,7 +88,7 @@ export function useCatalog(gameId: number | null): CatalogState {
       })
 
     return () => { cancelled = true }
-  }, [gameId])
+  }, [gameId, reloadToken])
 
-  return { categories, servicesBySlug }
+  return { categories, servicesBySlug, reloadCategories, reloadCategoryServices }
 }
