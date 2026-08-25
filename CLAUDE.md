@@ -189,6 +189,34 @@ src/
 │   │   ├── types/chat.types.ts
 │   │   └── ChatCenter.tsx               # overlay global de chat
 │   │
+│   ├── admin/                 # Backoffice — sólo ADMIN, cargado con React.lazy
+│   │   ├── components/
+│   │   │   ├── AdminLayout.tsx      # Sidebar + cabecera
+│   │   │   ├── ResourceTable.tsx    # Tabla genérica (carga/error/vacío)
+│   │   │   └── StatusBadge.tsx      # Activo / Inactivo / Borrado
+│   │   │   └── GameFilter.tsx        # Selector de juego, usado como filtro
+│   │   ├── hooks/
+│   │   │   ├── useAdminGames.ts
+│   │   │   └── useAdminCatalog.ts    # useAdminResource: lista + mutaciones
+│   │   ├── games/
+│   │   │   ├── AdminGamesPage.tsx
+│   │   │   └── GameFormModal.tsx
+│   │   ├── categories/
+│   │   │   ├── AdminCategoriesPage.tsx
+│   │   │   └── CategoryFormModal.tsx
+│   │   ├── services/
+│   │   │   ├── AdminServicesPage.tsx
+│   │   │   └── ServiceFormModal.tsx
+│   │   ├── reference/                # Paso 1 del onboarding
+│   │   │   ├── AdminReferencePage.tsx   # Pestañas países / zonas
+│   │   │   ├── CountriesTab.tsx
+│   │   │   ├── CountryFormModal.tsx
+│   │   │   ├── TimezonesTab.tsx
+│   │   │   └── TimezoneFormModal.tsx
+│   │   └── attributes/               # Paso 2 del onboarding
+│   │       ├── AdminGameAttributesPage.tsx
+│   │       └── AttributeFormModal.tsx
+│   │
 │   └── legal/
 │       ├── TermsPage.tsx
 │       ├── PrivacyPage.tsx
@@ -201,6 +229,7 @@ src/
 │   ├── catalog.service.ts      # /catalog/*
 │   ├── orders.service.ts       # /orders
 │   ├── payments.service.ts     # /payments/intent
+│   ├── admin.service.ts        # /catalog/admin/* y escrituras de catálogo
 │   ├── provider.service.ts     # /provider/*
 │   └── chat.service.ts         # escritura de mensajes en Firestore
 │
@@ -209,6 +238,7 @@ src/
 │   ├── reference.types.ts      # CountryDto, TimezoneDto, GameDto, GameAttributeDto
 │   ├── catalog.types.ts
 │   ├── orders.types.ts
+│   ├── admin.types.ts
 │   ├── payments.types.ts
 │   └── provider.types.ts
 │
@@ -238,6 +268,12 @@ src/
 | `/account/orders/:id` | `OrderDetailPage` | `RequireAuth` |
 | `/provider/dashboard` | `ProviderDashboardPage` | `RequireProvider` |
 | `/provider/:id` | `ProviderProfilePage` | Público |
+| `/admin` → `/admin/games` | redirección | `RequireAdmin` |
+| `/admin/games` | `AdminGamesPage` | `RequireAdmin` (lazy) |
+| `/admin/categories` | `AdminCategoriesPage` | `RequireAdmin` (lazy) |
+| `/admin/services` | `AdminServicesPage` | `RequireAdmin` (lazy) |
+| `/admin/reference` | `AdminReferencePage` (países / zonas) | `RequireAdmin` (lazy) |
+| `/admin/games/:gameId/attributes` | `AdminGameAttributesPage` | `RequireAdmin` (lazy) |
 
 Los guards viven en `App.tsx`. Son sólo UX — la autorización real la aplica el backend.
 
@@ -288,6 +324,21 @@ verificado, así que no es spoofeable.
 | `GET /catalog/games` | `getGames()` |
 | `GET /catalog/games/:id/attributes`, `/categories` | `reference.service.ts` |
 | `GET /catalog/categories/:slug/services` | `getCategoryServices()` |
+| `GET /catalog/admin/games` (ADMIN) | backoffice — incluye inactivos y borrados |
+| `PATCH`/`DELETE /catalog/game/:id` (ADMIN) | backoffice — editar / soft delete |
+| `GET /catalog/admin/categories?gameId=` (ADMIN) | backoffice — incluye inactivas y borradas |
+| `PATCH`/`DELETE /catalog/category/:id` (ADMIN) | backoffice — editar / soft delete |
+| `GET /catalog/admin/services?gameId=&categoryId=` (ADMIN) | backoffice — incluye inactivos y borrados |
+| `PATCH`/`DELETE /catalog/service/:id` (ADMIN) | backoffice — editar / soft delete |
+| `POST /catalog/services/:id/options` (ADMIN) | crear paquete o add-on |
+| `PATCH`/`DELETE /catalog/service-option/:id` (ADMIN) | editar / soft delete |
+| `PATCH`/`DELETE /catalog/service-offer/:id` (ADMIN) | editar / soft delete |
+| `PUT /catalog/services/:id/features` (ADMIN) | **reemplazo total** de la lista |
+| `PUT /catalog/services/:id/requirements` (ADMIN) | **reemplazo total** de la lista |
+| `GET /catalog/admin/games/:gameId/attributes` (ADMIN) | campos del onboarding, incluye inactivos |
+| `PATCH`/`DELETE /catalog/game-attribute/:id` (ADMIN) | editar / desactivar |
+| `GET /reference/admin/countries` · `POST`/`PATCH`/`DELETE /reference/country[/:id]` (ADMIN) | países |
+| `GET /reference/admin/timezones` · `POST`/`PATCH`/`DELETE /reference/timezone[/:id]` (ADMIN) | zonas horarias |
 | `GET /catalog/services/:id`, `/reviews` | `catalog.service.ts` |
 | `GET`/`POST /orders`, `GET /orders/:id` | `orders.service.ts` |
 | `POST /payments/intent` | `payments.service.ts` |
@@ -295,6 +346,66 @@ verificado, así que no es spoofeable.
 | `GET /provider/jobs`, `/stats`, `/profile` | `provider.service.ts` |
 | `POST /provider/jobs/:id/{accept,reject,start,complete}` | `provider.service.ts` |
 | `PATCH /provider/availability` | `setAvailability()` |
+
+**Backoffice (`/admin`):**
+- Vive en la misma app bajo `src/features/admin/`, con `RequireAdmin` y `React.lazy`
+  para que no entre en el bundle público (chunk propio de ~13 kB).
+- Las pantallas describen columnas y delegan en `ResourceTable`; no reimplementes
+  estados de carga, error y vacío en cada una.
+- Los mensajes de error del backend son accionables (ej. *"still has 4 category(ies)"*):
+  el hook los propaga tal cual al toast en vez de sustituirlos por un genérico.
+- `useAdminResource` recibe un `fetcher` **memoizado con `useCallback`**: su identidad
+  es lo que dispara la recarga al cambiar un filtro.
+- **Tras tocar el API hay que reconstruir el contenedor** (`docker compose up -d --build api`).
+  Si un endpoint nuevo da 404 con token válido, es que el contenedor corre el build viejo.
+
+**Autorización:**
+- `RolesGuard` + `@Roles(UserRole.ADMIN)` protegen las escrituras de catálogo.
+  Corre después del `PreauthMiddleware`, así que el header `uid` ya viene del token
+  verificado. **No pongas `@Roles` en una ruta excluida del middleware** — ahí el
+  `uid` lo pondría el cliente.
+- El primer admin se crea a mano: `UPDATE users SET role='ADMIN' WHERE id=<n>;`
+- Las lecturas de admin van bajo **`/catalog/admin/*`**, no como flag en los endpoints
+  públicos: `/catalog/games` está excluido del middleware para que naveguen los
+  invitados, así que ahí no hay contexto de autenticación que autorizar.
+
+**Semántica de borrado en el catálogo:**
+- `PATCH { isActive: false }` → lo saca del storefront, reversible, sin efectos en cascada.
+- `DELETE` → soft delete (`deletedAt` + `isActive: false`). **Se niega si todavía cuelgan
+  hijos** (categorías, servicios, perfiles de provider). No cascadea a propósito: no
+  sabríamos qué hijos ya estaban inactivos antes, así que restaurar sería imposible.
+- `GameCategory` no tenía `isActive` (a diferencia de `Game` y `Service`); se añadió por
+  migración para que los tres niveles tengan la misma semántica.
+- **Servicios**: `DELETE` se niega mientras haya órdenes sin cerrar
+  (`PENDING`..`DISPUTED`). Las `COMPLETED`/`CANCELLED` no bloquean — cada `Order`
+  guarda su propio snapshot de título y precio.
+- **Paquetes/add-ons**: siempre soft delete, nunca duro. `OrderItemOption` los
+  referencia por FK.
+- **Features y requisitos** se editan con `PUT` de **reemplazo total**, no con CRUD por
+  elemento: son listas ordenadas de texto sin identidad ni referencias externas.
+  Enviar `items: []` vacía la lista. En `PATCH /service-option/:id`, omitir `features`
+  deja la lista intacta; mandar `[]` la vacía.
+- Mover un servicio de categoría sólo se permite **dentro del mismo juego**.
+- **Países**: `DELETE` es soft y se niega si usuarios o providers lo referencian (son FKs).
+  Para quitarlo del onboarding sin tocar a nadie, `status: DISABLED`.
+- **Zonas horarias**: la tabla no tiene `deletedAt`, así que `DELETE` = `isActive: false`.
+  **Renombrar se niega si algún provider la usa**: `ProviderProfile.timezone` guarda el
+  nombre como texto, no por FK. El `label` sí es seguro de cambiar.
+- **Atributos de juego**: `key` e `inputType` son **inmutables**. `key` indexa el JSON de
+  `ProviderGameProfile.data`; cambiarlo dejaría huérfanos los valores ya guardados.
+  `PATCH` devuelve `providersAffected` para saber a cuántos afecta el cambio.
+  Sin `deletedAt` → `DELETE` = `isActive: false`.
+
+**Deuda conocida del onboarding (`/auth`):** las listas de *años de experiencia*,
+*horas semanales*, *método de pago* y *preferencia de horario* están **hardcodeadas** en
+los componentes, y las etiquetas visibles son la **clave de mapeo**
+(`EXPERIENCE_YEARS[label]`, `SCHEDULE_ENUM[label]`). Traducir o retocar un texto corrompe
+datos en silencio: la experiencia cae a `0` y los horarios se descartan con `.filter(Boolean)`.
+Antes de hacerlas administrables hay que separar `value` de `label`.
+
+**Secuencias de Postgres:** los seeds insertan ids explícitos, así que deben terminar con
+`setval(...)`. Si no, el primer alta desde la API falla con *unique violation* en `id`.
+Para diagnosticar: comparar `MAX(id)` contra `last_value` de `<tabla>_id_seq`.
 
 **Notas de contrato que se rompen fácil:**
 - `GET /orders` **no pagina**: devuelve `{ data, total }`, sin `page`/`limit`.
@@ -333,9 +444,10 @@ verificado, así que no es spoofeable.
 Pendiente, deliberadamente no abordado todavía:
 
 **Fase de seguridad (aplazada):**
-- Los `POST` de catálogo (`/catalog/game`, `/category`, `/service`, `/service-offer`,
-  `/games/:id/attributes`, `/services/:id/details`) están documentados como *admin*
-  pero **sólo exigen un token válido** — no hay guard de rol en el backend.
+- ~~Los `POST` de catálogo sólo exigían un token válido~~ — **resuelto**: los seis
+  llevan `@UseGuards(RolesGuard)` + `@Roles(UserRole.ADMIN)`. El guard
+  (`src/common/auth/`) lee el rol persistido en BD a partir del `uid` que el
+  `PreauthMiddleware` ya verificó. Los demás módulos siguen sin guards de rol.
 - `firebase-service-account.json` y la contraseña de Postgres en `docker-compose.yml`
   están commiteados en `emperial-api`. Hay que rotar la clave y sacarla del historial.
 - ~~`PaymentForm` captura datos de tarjeta en estado de React~~ — **resuelto**: sustituido

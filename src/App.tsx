@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Suspense, lazy } from 'react';
 
 // Features
 import { HomePage } from './features/home/HomePage';
@@ -19,12 +20,54 @@ import { ChatProvider } from './context/ChatContext';
 import { useAuth } from './context/AuthContext';
 import type { ReactNode } from 'react';
 
+// El backoffice se carga bajo demanda: no tiene sentido enviárselo a cada visitante.
+const AdminGamesPage = lazy(() =>
+  import('./features/admin/games/AdminGamesPage').then((m) => ({ default: m.AdminGamesPage })),
+);
+const AdminCategoriesPage = lazy(() =>
+  import('./features/admin/categories/AdminCategoriesPage').then((m) => ({
+    default: m.AdminCategoriesPage,
+  })),
+);
+const AdminReferencePage = lazy(() =>
+  import('./features/admin/reference/AdminReferencePage').then((m) => ({
+    default: m.AdminReferencePage,
+  })),
+);
+const AdminGameAttributesPage = lazy(() =>
+  import('./features/admin/attributes/AdminGameAttributesPage').then((m) => ({
+    default: m.AdminGameAttributesPage,
+  })),
+);
+const AdminServicesPage = lazy(() =>
+  import('./features/admin/services/AdminServicesPage').then((m) => ({
+    default: m.AdminServicesPage,
+  })),
+);
+
 /** Only providers can access this route. Others are redirected to /. */
 function RequireProvider({ children }: { children: ReactNode }) {
   const { role, isLoading } = useAuth();
   if (isLoading) return null;
   if (role !== 'PROVIDER') return <Navigate to="/" replace />;
   return <>{children}</>;
+}
+
+/** Only admins can access this route. Others are redirected to /. */
+function RequireAdmin({ children }: { children: ReactNode }) {
+  const { role, isLoading } = useAuth();
+  if (isLoading) return null;
+  if (role !== 'ADMIN') return <Navigate to="/" replace />;
+  return <>{children}</>;
+}
+
+/** Guard + Suspense en una sola envoltura, para no repetirlo en cada ruta de admin. */
+function AdminRoute({ children }: { children: ReactNode }) {
+  return (
+    <RequireAdmin>
+      <Suspense fallback={<div className="min-h-screen bg-slate-900" />}>{children}</Suspense>
+    </RequireAdmin>
+  );
 }
 
 /** Requires a session. Guests are sent to /auth. */
@@ -58,6 +101,17 @@ export function App() {
         {/* Provider-only */}
         <Route path="/provider/dashboard" element={<RequireProvider><ProviderDashboardPage /></RequireProvider>} />
         <Route path="/provider/:id" element={<ProviderProfilePage />} />
+
+        {/* Backoffice — sólo ADMIN, cargado de forma diferida */}
+        <Route path="/admin" element={<Navigate to="/admin/games" replace />} />
+        <Route path="/admin/games" element={<AdminRoute><AdminGamesPage /></AdminRoute>} />
+        <Route path="/admin/categories" element={<AdminRoute><AdminCategoriesPage /></AdminRoute>} />
+        <Route path="/admin/services" element={<AdminRoute><AdminServicesPage /></AdminRoute>} />
+        <Route path="/admin/reference" element={<AdminRoute><AdminReferencePage /></AdminRoute>} />
+        <Route
+          path="/admin/games/:gameId/attributes"
+          element={<AdminRoute><AdminGameAttributesPage /></AdminRoute>}
+        />
       </Routes>
 
       {/* Global chat overlay */}
