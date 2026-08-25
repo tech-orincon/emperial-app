@@ -78,7 +78,7 @@ export function JobDetailPanel({ job, onClose, getStatusConfig, getActionButton 
             </div>
             <div className="flex justify-between">
               <span className="text-slate-400">Package</span>
-              <span className="text-white font-medium">{job.package}</span>
+              <span className="text-white font-medium">{job.package ?? "—"}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-slate-400">Deadline</span>

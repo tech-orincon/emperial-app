@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { ShieldCheck, Star, Sword } from 'lucide-react';
 import { Button } from '../../../components/ui/Button';

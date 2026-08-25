@@ -1,4 +1,3 @@
-import React from 'react'
 import { GlassCard } from '../../../components/ui/GlassCard'
 import { Shield, Star, Crown, Zap, CheckCircle2 } from 'lucide-react'
 import type { ProviderProfileResponseDto } from '../../../types/provider.types'

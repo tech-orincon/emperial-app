@@ -1,11 +1,7 @@
 import { apiClient } from './api/client'
 import type {
   ProviderJobsResponseDto,
-  ProviderJobDetailResponseDto,
-  AcceptJobResponseDto,
-  RejectJobResponseDto,
-  StartJobResponseDto,
-  CompleteJobResponseDto,
+  JobActionResponseDto,
   ProviderStatsResponseDto,
   ProviderProfileResponseDto,
   UpdateAvailabilityResponseDto,
@@ -18,28 +14,23 @@ export async function getProviderJobs(page = 1, limit = 20): Promise<ProviderJob
   return data
 }
 
-export async function getProviderJobById(id: number): Promise<ProviderJobDetailResponseDto> {
-  const { data } = await apiClient.get<ProviderJobDetailResponseDto>(`/provider/jobs/${id}`)
+export async function acceptJob(id: number): Promise<JobActionResponseDto> {
+  const { data } = await apiClient.post<JobActionResponseDto>(`/provider/jobs/${id}/accept`)
   return data
 }
 
-export async function acceptJob(id: number): Promise<AcceptJobResponseDto> {
-  const { data } = await apiClient.post<AcceptJobResponseDto>(`/provider/jobs/${id}/accept`)
+export async function rejectJob(id: number): Promise<JobActionResponseDto> {
+  const { data } = await apiClient.post<JobActionResponseDto>(`/provider/jobs/${id}/reject`)
   return data
 }
 
-export async function rejectJob(id: number): Promise<RejectJobResponseDto> {
-  const { data } = await apiClient.post<RejectJobResponseDto>(`/provider/jobs/${id}/reject`)
+export async function startJob(id: number): Promise<JobActionResponseDto> {
+  const { data } = await apiClient.post<JobActionResponseDto>(`/provider/jobs/${id}/start`)
   return data
 }
 
-export async function startJob(id: number): Promise<StartJobResponseDto> {
-  const { data } = await apiClient.post<StartJobResponseDto>(`/provider/jobs/${id}/start`)
-  return data
-}
-
-export async function completeJob(id: number): Promise<CompleteJobResponseDto> {
-  const { data } = await apiClient.post<CompleteJobResponseDto>(`/provider/jobs/${id}/complete`)
+export async function completeJob(id: number): Promise<JobActionResponseDto> {
+  const { data } = await apiClient.post<JobActionResponseDto>(`/provider/jobs/${id}/complete`)
   return data
 }
 

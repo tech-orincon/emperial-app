@@ -77,17 +77,6 @@ export function Step3Skills({
         />
         {errors.highestAchievement && <p className="text-xs text-red-400">{errors.highestAchievement}</p>}
       </div>
-
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-slate-400">Link to Raider.io / Armory (Optional)</label>
-        <input
-          type="url"
-          value={formData.raiderioLink}
-          onChange={(e) => onChange('raiderioLink', e.target.value)}
-          className="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-          placeholder="https://raider.io/characters/..."
-        />
-      </div>
     </div>
   )
 }

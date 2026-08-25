@@ -27,6 +27,14 @@ function RequireProvider({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
 
+/** Requires a session. Guests are sent to /auth. */
+function RequireAuth({ children }: { children: ReactNode }) {
+  const { isAuthenticated, isLoading } = useAuth();
+  if (isLoading) return null;
+  if (!isAuthenticated) return <Navigate to="/auth" replace />;
+  return <>{children}</>;
+}
+
 export function App() {
   return (
     <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
@@ -41,16 +49,15 @@ export function App() {
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/refund-policy" element={<RefundPolicyPage />} />
 
-        {/* Customer */}
-        <Route path="/checkout" element={<CheckoutPage />} />
-        <Route path="/account/profile" element={<ProfilePage />} />
-        <Route path="/account/orders" element={<OrdersPage />} />
-        <Route path="/account/orders/:id" element={<OrderDetailPage />} />
+        {/* Customer — require a session */}
+        <Route path="/checkout" element={<RequireAuth><CheckoutPage /></RequireAuth>} />
+        <Route path="/account/profile" element={<RequireAuth><ProfilePage /></RequireAuth>} />
+        <Route path="/account/orders" element={<RequireAuth><OrdersPage /></RequireAuth>} />
+        <Route path="/account/orders/:id" element={<RequireAuth><OrderDetailPage /></RequireAuth>} />
 
         {/* Provider-only */}
         <Route path="/provider/dashboard" element={<RequireProvider><ProviderDashboardPage /></RequireProvider>} />
         <Route path="/provider/:id" element={<ProviderProfilePage />} />
-        <Route path="/provider/login" element={<Navigate to="/auth" replace />} />
       </Routes>
 
       {/* Global chat overlay */}

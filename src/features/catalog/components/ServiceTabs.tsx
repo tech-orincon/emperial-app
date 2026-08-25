@@ -1,9 +1,8 @@
 import { motion } from 'framer-motion'
-import { Star, ShieldCheck, Check, MessageSquare } from 'lucide-react'
-import { Button } from '../../../components/ui/Button'
+import { Star, Check, MessageSquare } from 'lucide-react'
 import { GlassCard } from '../../../components/ui/GlassCard'
 import { Skeleton } from '../../../components/ui/Skeleton'
-import type { ServiceProviderDto, ServiceRequirementDto, ReviewsResponse } from '../../../types/catalog.types'
+import type { ServiceRequirementDto, ReviewsResponse } from '../../../types/catalog.types'
 
 interface Props {
   activeTab: string
@@ -11,7 +10,6 @@ interface Props {
   description: string
   features: string[]
   requirements: ServiceRequirementDto[]
-  provider: ServiceProviderDto | null
   reviews: ReviewsResponse | null
   isLoadingReviews: boolean
 }
@@ -20,7 +18,7 @@ const TABS = ['Overview', 'Requirements', 'Reviews']
 
 export function ServiceTabs({
   activeTab, setActiveTab, description, features,
-  requirements, provider, reviews, isLoadingReviews,
+  requirements, reviews, isLoadingReviews,
 }: Props) {
   return (
     <>
@@ -56,28 +54,6 @@ export function ServiceTabs({
                 </ul>
               )}
             </div>
-
-            {provider && (
-              <GlassCard className="p-6">
-                <h3 className="text-lg font-bold text-white mb-4">Service Provider</h3>
-                <div className="flex items-center gap-4">
-                  {provider.avatarUrl
-                    ? <img src={provider.avatarUrl} alt={provider.username} className="w-12 h-12 rounded-full bg-slate-800 object-cover" />
-                    : <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center text-sm font-bold text-slate-400">{provider.username.slice(0, 2).toUpperCase()}</div>
-                  }
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-white">{provider.username}</span>
-                      {provider.isVerified && <ShieldCheck className="w-4 h-4 text-green-500" />}
-                    </div>
-                    <div className="text-sm text-slate-400">
-                      {provider.completedJobs}+ jobs completed · {provider.ratingAvg.toFixed(1)} rating
-                    </div>
-                  </div>
-                  <Button variant="secondary" size="sm" className="ml-auto">View Profile</Button>
-                </div>
-              </GlassCard>
-            )}
           </motion.div>
         )}
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -141,7 +141,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  to="/provider/login"
+                  to="/auth"
                   className="hover:text-emperial-400 transition-colors">
                   
                   Work with Us

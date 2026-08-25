@@ -57,7 +57,6 @@ const STATUS_STYLE: Record<OrderStatus, string> = {
   COMPLETED: 'bg-green-500/10 border border-green-500/20 text-green-400',
   CANCELLED: 'bg-slate-500/10 border border-slate-500/20 text-slate-400',
   DISPUTED: 'bg-orange-500/10 border border-orange-500/20 text-orange-400',
-  REFUNDED: 'bg-slate-500/10 border border-slate-500/20 text-slate-400',
 };
 
 const STATUS_LABEL: Record<OrderStatus, string> = {
@@ -69,7 +68,6 @@ const STATUS_LABEL: Record<OrderStatus, string> = {
   COMPLETED: 'Completed',
   CANCELLED: 'Cancelled',
   DISPUTED: 'Under Review',
-  REFUNDED: 'Refunded',
 };
 
 const STATUS_TEXT: Record<OrderStatus, string> = {
@@ -81,7 +79,6 @@ const STATUS_TEXT: Record<OrderStatus, string> = {
   COMPLETED: 'text-green-400',
   CANCELLED: 'text-slate-400',
   DISPUTED: 'text-orange-400',
-  REFUNDED: 'text-slate-400',
 };
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
@@ -194,7 +191,7 @@ export function OrderDetailPage() {
                         <div className="grid grid-cols-2 gap-4 text-sm">
                           <div>
                             <span className="block text-slate-500 mb-1">Package</span>
-                            <span className="text-white">{order.package.name}</span>
+                            <span className="text-white">{order.package?.name ?? "—"}</span>
                           </div>
                           <div>
                             <span className="block text-slate-500 mb-1">Add-ons</span>

@@ -21,7 +21,6 @@ const STATUS_CONFIG: Record<OrderStatus, { label: string; color: string; bar: st
   COMPLETED:   { label: 'Completed',          color: 'text-green-400 bg-green-400/10 border-green-400/20',   bar: 'bg-green-500',   progress: 100 },
   CANCELLED:   { label: 'Cancelled',          color: 'text-slate-400 bg-slate-400/10 border-slate-400/20',   bar: 'bg-slate-600',   progress: 0 },
   DISPUTED:    { label: 'Under Review',       color: 'text-orange-400 bg-orange-400/10 border-orange-400/20', bar: 'bg-orange-500', progress: 60 },
-  REFUNDED:    { label: 'Refunded',           color: 'text-slate-400 bg-slate-400/10 border-slate-400/20',   bar: 'bg-slate-600',   progress: 0 },
 };
 
 function formatDate(iso: string): string {
@@ -39,7 +38,7 @@ function OrderCard({ order, index, onViewDetails }: { order: OrderDto; index: nu
         </div>
 
         <h3 className="text-lg font-bold text-white mb-1">{order.service.title}</h3>
-        <p className="text-sm text-slate-400 mb-1">{order.package.name} Package</p>
+        <p className="text-sm text-slate-400 mb-1">{order.package?.name ?? "—"} Package</p>
         <p className="text-sm text-slate-500 mb-6">Order #{order.id}</p>
 
         <div className="mt-auto">

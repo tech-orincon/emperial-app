@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { Headphones, WifiOff, Shield, Percent } from 'lucide-react';
 const features = [

@@ -21,7 +21,6 @@ export interface OnboardingFormData {
   gameId: number
   experience: string
   highestAchievement: string
-  raiderioLink: string
   weeklyHours: string
   schedule: string[]
   hourlyRate: string
@@ -54,7 +53,6 @@ const INITIAL_FORM: OnboardingFormData = {
   gameId: 0,
   experience: 'Less than 1 year',
   highestAchievement: '',
-  raiderioLink: '',
   weeklyHours: '10-20 hours',
   schedule: [],
   hourlyRate: '',
@@ -154,6 +152,7 @@ export function useOnboarding() {
           realName: formData.realName,
           countryId: formData.countryId,
           timezone: formData.timezone,
+          bio: formData.bio.trim() || undefined,
         })
       } else if (step === 2) {
         const slugAttr = referenceData.gameAttributes.find(

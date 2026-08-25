@@ -44,7 +44,9 @@ export function CatalogPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const { categories, servicesBySlug } = useCatalog(selectedGame?.id ?? null)
+  const { categories, servicesBySlug, reloadCategories, reloadCategoryServices } = useCatalog(
+    selectedGame?.id ?? null,
+  )
 
   const handleSelectGame = (game: GameDto) => {
     setSelectedGame(game)
@@ -102,7 +104,7 @@ export function CatalogPage() {
                 <ErrorState
                   title="Unable to load categories"
                   description="We couldn't fetch the categories for this game."
-                  onRetry={() => setSelectedGame((g) => g ? { ...g } : g)}
+                  onRetry={reloadCategories}
                 />
               </motion.div>
             )}
@@ -126,7 +128,7 @@ export function CatalogPage() {
                   categoryName={selectedCategoryName ?? ''}
                   isLoading={categoryServices.isLoading}
                   error={categoryServices.error}
-                  onRetry={() => setSelectedCategorySlug((s) => s)}
+                  onRetry={() => reloadCategoryServices(selectedCategorySlug)}
                 />
               </motion.div>
             )}

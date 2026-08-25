@@ -1,48 +1,3 @@
-export interface Game {
-  id: string;
-  title: string;
-  subtitle: string;
-  imageUrl: string;
-  isAvailable: boolean;
-}
-
-export interface Category {
-  id: string;
-  gameId: string;
-  label: string;
-  description: string;
-  iconName: string;
-}
-
-export interface ServiceTier {
-  id: string;
-  name: 'Basic' | 'Standard' | 'Premium';
-  price: number;
-  features: string[];
-  duration: string;
-}
-
-export interface Service {
-  id: string;
-  gameId: string;
-  categoryId: string;
-  title: string;
-  description: string;
-  price: number;
-  rating: number;
-  reviewCount: number;
-  completionTime: string;
-  tiers: ServiceTier[];
-  addons: ServiceAddon[];
-  tags: string[];
-}
-
-export interface ServiceAddon {
-  id: string;
-  label: string;
-  price: number;
-}
-
 // ─── Catalog API ─────────────────────────────────────────────────────────────
 
 export interface GameCategoryResponseDto {
@@ -162,15 +117,6 @@ export interface ServiceActiveOfferDto {
   tag?: OfferTag | null;
 }
 
-export interface ServiceProviderDto {
-  id: number;
-  username: string;
-  avatarUrl?: string | null;
-  ratingAvg: number;
-  completedJobs: number;
-  isVerified: boolean;
-}
-
 export interface ServiceDetail {
   id: number;
   title: string;
@@ -189,7 +135,6 @@ export interface ServiceDetail {
   addons: ServiceAddonDetailDto[];
   ratingBreakdown: RatingBreakdownDto;
   activeOffer?: ServiceActiveOfferDto | null;
-  provider: ServiceProviderDto | null;
   status: ServiceStatus;
 }
 
@@ -212,11 +157,3 @@ export interface ReviewsResponse {
   limit: number;
 }
 
-// ─── Order ────────────────────────────────────────────────────────────────────
-
-export interface CreateOrderPayload {
-  serviceId: number;
-  packageId: number;
-  addons: number[];
-  totalPrice: number;
-}

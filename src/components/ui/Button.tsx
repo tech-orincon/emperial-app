@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import { forwardRef, type ReactNode } from 'react';
 import { motion, HTMLMotionProps } from 'framer-motion';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -9,6 +9,8 @@ interface ButtonProps extends HTMLMotionProps<'button'> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
+  // HTMLMotionProps widens children to include MotionValue; we only render plain nodes
+  children?: ReactNode;
 }
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (

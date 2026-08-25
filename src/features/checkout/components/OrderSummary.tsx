@@ -7,7 +7,8 @@ import type { PaymentState } from '../hooks/useCheckout'
 
 interface Props {
   paymentState: PaymentState
-  onPay: () => void
+  /** No se usa en el estado vacío, donde no se renderiza el botón */
+  onPay?: () => void
 }
 
 export function OrderSummary({ paymentState, onPay }: Props) {
