@@ -80,7 +80,7 @@ export function FeaturedDeals({ offers, isLoading }: Props) {
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
                 >
-                  <Link to={`/service/${offer.id}`} className="block group">
+                  <Link to={`/service/${offer.serviceId}`} className="block group">
                     <div className="bg-slate-900/50 border border-white/10 rounded-2xl overflow-hidden hover:border-emperial-500/30 transition-all duration-300">
                       <div className="relative h-40 overflow-hidden">
                         {offer.imageUrl ? (

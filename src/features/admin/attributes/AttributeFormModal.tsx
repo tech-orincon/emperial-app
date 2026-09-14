@@ -46,7 +46,29 @@ export function AttributeFormModal({ attribute, isSaving, onClose, onSubmit }: P
     new Set(options.map((o) => o.value.trim())).size === options.length
 
   return (
-    <Modal isOpen onClose={onClose} title="Editar campo del onboarding" size="lg">
+    <Modal
+      isOpen
+      onClose={onClose}
+      title="Editar campo del onboarding"
+      size="lg"
+      footer={
+        <div className="flex gap-3">
+          <Button variant="secondary" className="flex-1" onClick={onClose} disabled={isSaving}>Cancelar</Button>
+          <Button
+            className="flex-1"
+            disabled={!valid || isSaving}
+            onClick={() =>
+              onSubmit({
+                label, isRequired, displayOrder,
+                ...(hasOptions && { options }),
+              })
+            }
+          >
+            {isSaving ? 'Guardando…' : 'Guardar cambios'}
+          </Button>
+        </div>
+      }
+    >
       <div className="space-y-4">
         {/* key e inputType son inmutables: la key indexa ProviderGameProfile.data */}
         <div className="grid grid-cols-2 gap-3">
@@ -123,21 +145,6 @@ export function AttributeFormModal({ attribute, isSaving, onClose, onSubmit }: P
           </div>
         )}
 
-        <div className="flex gap-3 pt-4">
-          <Button variant="secondary" className="flex-1" onClick={onClose} disabled={isSaving}>Cancelar</Button>
-          <Button
-            className="flex-1"
-            disabled={!valid || isSaving}
-            onClick={() =>
-              onSubmit({
-                label, isRequired, displayOrder,
-                ...(hasOptions && { options }),
-              })
-            }
-          >
-            {isSaving ? 'Guardando…' : 'Guardar cambios'}
-          </Button>
-        </div>
       </div>
     </Modal>
   )

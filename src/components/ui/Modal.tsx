@@ -6,14 +6,17 @@ interface ModalProps {
   onClose: () => void;
   title?: string;
   children: React.ReactNode;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  /** Barra de acciones fija al pie; no scrollea con el contenido */
+  footer?: React.ReactNode;
 }
 export function Modal({
   isOpen,
   onClose,
   title,
   children,
-  size = 'md'
+  size = 'md',
+  footer
 }: ModalProps) {
   // Close on escape key
   useEffect(() => {
@@ -32,7 +35,8 @@ export function Modal({
   const sizeClasses = {
     sm: 'max-w-sm',
     md: 'max-w-md',
-    lg: 'max-w-lg'
+    lg: 'max-w-lg',
+    xl: 'max-w-2xl'
   };
   return (
     <AnimatePresence>
@@ -73,11 +77,11 @@ export function Modal({
               damping: 25,
               stiffness: 300
             }}
-            className={`w-full ${sizeClasses[size]} bg-slate-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden`}
+            className={`w-full ${sizeClasses[size]} max-h-[calc(100dvh-2rem)] flex flex-col bg-slate-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden`}
             onClick={(e) => e.stopPropagation()}>
             
               {title &&
-            <div className="flex items-center justify-between p-4 border-b border-white/10">
+            <div className="flex items-center justify-between p-4 border-b border-white/10 shrink-0">
                   <h3 className="text-lg font-bold text-white">{title}</h3>
                   <button
                 onClick={onClose}
@@ -87,7 +91,13 @@ export function Modal({
                   </button>
                 </div>
             }
-              <div className="p-6">{children}</div>
+              <div className="p-6 grow min-h-0 overflow-y-auto">{children}</div>
+
+              {footer &&
+            <div className="shrink-0 p-4 border-t border-white/10 bg-slate-900">
+                  {footer}
+                </div>
+            }
             </motion.div>
           </div>
         </>

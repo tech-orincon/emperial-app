@@ -86,6 +86,26 @@ export type UpdateCategoryPayload = Partial<
   Omit<CreateCategoryPayload, 'gameId'> & { isActive: boolean }
 >
 
+export interface CreateServicePayload {
+  gameId: number
+  gameCategoryId: number
+  title: string
+  description: string
+  imageUrl?: string
+  isBestSeller: boolean
+  isInstant: boolean
+  deliveryType: DeliveryType
+  deliveryTime: string
+  /** El backend lo valida como positivo: 0 se rechaza */
+  basePrice: number
+  estimatedTime: string
+  isActive: boolean
+  isFeatured: boolean
+  /** Opcionales; por defecto 0 en el backend */
+  ratingAvg?: number
+  reviewsCount?: number
+}
+
 export type UpdateServicePayload = Partial<{
   gameCategoryId: number
   title: string

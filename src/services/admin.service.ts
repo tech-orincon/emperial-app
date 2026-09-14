@@ -11,6 +11,7 @@ import type {
   AdminService,
   AdminTimezone,
   CreateCountryPayload,
+  CreateServicePayload,
   CreateTimezonePayload,
   UpdateCountryPayload,
   UpdateGameAttributePayload,
@@ -77,6 +78,11 @@ export async function getAdminServices(filter?: {
     params: filter,
   })
   return data
+}
+
+/** POST /catalog/service — devuelve { success }, no el id del creado */
+export async function createService(payload: CreateServicePayload): Promise<void> {
+  await apiClient.post('/catalog/service', payload)
 }
 
 export async function updateService(

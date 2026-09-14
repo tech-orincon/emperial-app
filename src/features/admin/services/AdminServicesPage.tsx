@@ -1,22 +1,27 @@
 import { useCallback, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Toaster } from 'sonner'
-import { Pencil, Eye, EyeOff, Trash2, Star, Zap } from 'lucide-react'
+import { Plus, Pencil, Eye, EyeOff, Trash2, Star, Zap, Layers, AlertTriangle } from 'lucide-react'
+import { Button } from '../../../components/ui/Button'
 import { AdminLayout } from '../components/AdminLayout'
 import { ResourceTable, type Column } from '../components/ResourceTable'
 import { StatusBadge } from '../components/StatusBadge'
 import { GameFilter } from '../components/GameFilter'
 import { ServiceFormModal } from './ServiceFormModal'
+import type { ServiceFormValues } from './service-form.types'
 import { useAdminResource } from '../hooks/useAdminCatalog'
 import {
+  createService,
   deleteService,
   getAdminServices,
   updateService,
 } from '../../../services/admin.service'
-import type { AdminService, UpdateServicePayload } from '../../../types/admin.types'
+import type { AdminService } from '../../../types/admin.types'
 
 export function AdminServicesPage() {
   const [gameId, setGameId] = useState<number | null>(null)
   const [editing, setEditing] = useState<AdminService | null>(null)
+  const [isFormOpen, setIsFormOpen] = useState(false)
 
   const fetcher = useCallback(
     () => getAdminServices(gameId ? { gameId } : undefined),
@@ -24,15 +29,45 @@ export function AdminServicesPage() {
   )
   const { rows, isLoading, error, isSaving, reload, run } = useAdminResource<AdminService>({ fetcher })
 
-  const handleSubmit = async (payload: UpdateServicePayload) => {
-    if (!editing) return
-    const ok = await run(
-      () => updateService(editing.id, payload),
-      'Servicio actualizado',
-      'No se pudo actualizar',
-    )
-    if (ok) setEditing(null)
+  const handleSubmit = async (v: ServiceFormValues) => {
+    const basePrice = Number.parseFloat(v.basePrice)
+    const common = {
+      title: v.title,
+      description: v.description,
+      imageUrl: v.imageUrl || undefined,
+      basePrice,
+      deliveryType: v.deliveryType,
+      deliveryTime: v.deliveryTime,
+      estimatedTime: v.estimatedTime,
+      isBestSeller: v.isBestSeller,
+      isInstant: v.isInstant,
+      isFeatured: v.isFeatured,
+    }
+
+    const ok = editing
+      ? await run(
+          () => updateService(editing.id, common),
+          'Servicio actualizado',
+          'No se pudo actualizar',
+        )
+      : v.gameId === null || v.gameCategoryId === null
+        ? false
+        : await run(
+            () => createService({
+              ...common,
+              gameId: v.gameId as number,
+              gameCategoryId: v.gameCategoryId as number,
+              isActive: v.isActive,
+            }),
+            'Servicio creado',
+            'No se pudo crear',
+          )
+
+    if (ok) { setIsFormOpen(false); setEditing(null) }
   }
+
+  const openCreate = () => { setEditing(null); setIsFormOpen(true) }
+  const openEdit = (s: AdminService) => { setEditing(s); setIsFormOpen(true) }
 
   const handleDelete = (s: AdminService) => {
     const aviso = s.ordersCount > 0
@@ -65,19 +100,34 @@ export function AdminServicesPage() {
     { header: 'Estado', className: 'w-28', render: (s) => <StatusBadge isActive={s.isActive} deletedAt={s.deletedAt} /> },
     {
       header: 'Contenido',
-      className: 'w-40',
+      className: 'w-44',
       render: (s) => (
-        <span className="text-slate-400 text-xs">
-          {s.optionsCount} opc · {s.offersCount} ofertas · {s.ordersCount} órdenes
-        </span>
+        <div className="text-xs">
+          <span className="text-slate-400">
+            {s.optionsCount} opc · {s.offersCount} ofertas · {s.ordersCount} órdenes
+          </span>
+          {s.optionsCount === 0 && (
+            <div className="flex items-center gap-1 text-amber-400 mt-0.5">
+              <AlertTriangle className="w-3 h-3 shrink-0" />
+              Sin paquetes: no se puede comprar
+            </div>
+          )}
+        </div>
       ),
     },
     {
       header: 'Acciones',
-      className: 'w-32',
+      className: 'w-40',
       render: (s) => (
         <div className="flex items-center gap-1">
-          <button onClick={() => setEditing(s)} title="Editar"
+          <Link
+            to={`/admin/services/${s.id}`}
+            title="Paquetes, add-ons, features, requisitos y ofertas"
+            className="p-1.5 rounded hover:bg-amber-500/10 text-slate-400 hover:text-amber-400 transition-colors"
+          >
+            <Layers className="w-4 h-4" />
+          </Link>
+          <button onClick={() => openEdit(s)} title="Editar"
             className="p-1.5 rounded hover:bg-white/10 text-slate-400 hover:text-white transition-colors">
             <Pencil className="w-4 h-4" />
           </button>
@@ -105,8 +155,15 @@ export function AdminServicesPage() {
   return (
     <AdminLayout
       title="Servicios"
-      description="Lo que compran los clientes. El alta se hace hoy por API; aquí se edita y se retira."
-      actions={<GameFilter value={gameId} onChange={setGameId} />}
+      description="Lo que compran los clientes. Tras crearlo, añade sus paquetes y add-ons."
+      actions={
+        <div className="flex items-center gap-3">
+          <GameFilter value={gameId} onChange={setGameId} />
+          <Button onClick={openCreate} className="flex items-center gap-2">
+            <Plus className="w-4 h-4" /> Nuevo servicio
+          </Button>
+        </div>
+      }
     >
       <Toaster theme="dark" position="top-right" richColors />
       <ResourceTable
@@ -120,9 +177,10 @@ export function AdminServicesPage() {
         rowClassName={(s) => (s.deletedAt ? 'opacity-40' : '')}
       />
       <ServiceFormModal
+        isOpen={isFormOpen}
         service={editing}
         isSaving={isSaving}
-        onClose={() => setEditing(null)}
+        onClose={() => { setIsFormOpen(false); setEditing(null) }}
         onSubmit={handleSubmit}
       />
     </AdminLayout>

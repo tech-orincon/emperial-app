@@ -44,6 +44,11 @@ const AdminServicesPage = lazy(() =>
     default: m.AdminServicesPage,
   })),
 );
+const AdminServiceDetailPage = lazy(() =>
+  import('./features/admin/services/detail/AdminServiceDetailPage').then((m) => ({
+    default: m.AdminServiceDetailPage,
+  })),
+);
 
 /** Only providers can access this route. Others are redirected to /. */
 function RequireProvider({ children }: { children: ReactNode }) {
@@ -107,6 +112,10 @@ export function App() {
         <Route path="/admin/games" element={<AdminRoute><AdminGamesPage /></AdminRoute>} />
         <Route path="/admin/categories" element={<AdminRoute><AdminCategoriesPage /></AdminRoute>} />
         <Route path="/admin/services" element={<AdminRoute><AdminServicesPage /></AdminRoute>} />
+        <Route
+          path="/admin/services/:id"
+          element={<AdminRoute><AdminServiceDetailPage /></AdminRoute>}
+        />
         <Route path="/admin/reference" element={<AdminRoute><AdminReferencePage /></AdminRoute>} />
         <Route
           path="/admin/games/:gameId/attributes"
