@@ -1,160 +1,114 @@
 import { useEffect, useState } from 'react'
 import { Modal } from '../../../components/ui/Modal'
 import { Button } from '../../../components/ui/Button'
-import type { AdminService, UpdateServicePayload } from '../../../types/admin.types'
-import type { DeliveryType } from '../../../types/catalog.types'
+import { GameFilter } from '../components/GameFilter'
+import { CategorySelect } from '../components/CategorySelect'
+import { ServiceFormFields } from './ServiceFormFields'
+import {
+  EMPTY_SERVICE,
+  inputCls,
+  type ServiceFormValues,
+} from './service-form.types'
+import type { AdminService } from '../../../types/admin.types'
 
 interface Props {
-  /** null = cerrado */
+  isOpen: boolean
+  /** null = alta; un servicio = edición */
   service: AdminService | null
   isSaving: boolean
   onClose: () => void
-  onSubmit: (payload: UpdateServicePayload) => void
+  onSubmit: (values: ServiceFormValues) => void
 }
 
-const DELIVERY: DeliveryType[] = ['FIXED', 'RANGE', 'FLEXIBLE', 'SCHEDULED']
-
-const inputCls =
-  'w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-amber-500'
-
-interface FormState {
-  title: string
-  description: string
-  imageUrl: string
-  basePrice: string
-  deliveryType: DeliveryType
-  deliveryTime: string
-  estimatedTime: string
-  isBestSeller: boolean
-  isInstant: boolean
-  isFeatured: boolean
-}
-
-export function ServiceFormModal({ service, isSaving, onClose, onSubmit }: Props) {
-  const [form, setForm] = useState<FormState | null>(null)
+export function ServiceFormModal({ isOpen, service, isSaving, onClose, onSubmit }: Props) {
+  const [form, setForm] = useState<ServiceFormValues>(EMPTY_SERVICE)
+  const isEdit = service !== null
 
   useEffect(() => {
-    if (!service) { setForm(null); return }
-    setForm({
-      title: service.title,
-      description: service.description,
-      imageUrl: service.imageUrl ?? '',
-      basePrice: service.basePrice,
-      deliveryType: service.deliveryType,
-      deliveryTime: service.deliveryTime ?? '',
-      estimatedTime: service.estimatedTime,
-      isBestSeller: service.isBestSeller,
-      isInstant: service.isInstant,
-      isFeatured: service.isFeatured,
-    })
-  }, [service])
+    if (!isOpen) return
+    setForm(
+      service
+        ? {
+            gameId: service.game.id,
+            gameCategoryId: service.category.id,
+            title: service.title,
+            description: service.description,
+            imageUrl: service.imageUrl ?? '',
+            basePrice: service.basePrice,
+            deliveryType: service.deliveryType,
+            deliveryTime: service.deliveryTime ?? '',
+            estimatedTime: service.estimatedTime,
+            isBestSeller: service.isBestSeller,
+            isInstant: service.isInstant,
+            isFeatured: service.isFeatured,
+            isActive: service.isActive,
+          }
+        : EMPTY_SERVICE,
+    )
+  }, [isOpen, service])
 
-  if (!service || !form) {
-    return <Modal isOpen={false} onClose={onClose}><div /></Modal>
-  }
+  const set = <K extends keyof ServiceFormValues>(key: K, value: ServiceFormValues[K]) =>
+    setForm((prev) => ({ ...prev, [key]: value }))
 
-  const set = <K extends keyof FormState>(k: K, v: FormState[K]) =>
-    setForm((prev) => (prev ? { ...prev, [k]: v } : prev))
+  // Cambiar de juego invalida la categoría elegida: pertenece al juego anterior
+  const setGame = (gameId: number | null) =>
+    setForm((prev) => ({ ...prev, gameId, gameCategoryId: null }))
 
   const price = Number.parseFloat(form.basePrice)
+  const priceOk = Number.isFinite(price) && price > 0
+
   const canSubmit =
-    form.title.trim() !== '' && Number.isFinite(price) && price >= 0 && !isSaving
-
-  const submit = () =>
-    onSubmit({
-      title: form.title,
-      description: form.description,
-      imageUrl: form.imageUrl || undefined,
-      basePrice: price,
-      deliveryType: form.deliveryType,
-      deliveryTime: form.deliveryTime || undefined,
-      estimatedTime: form.estimatedTime,
-      isBestSeller: form.isBestSeller,
-      isInstant: form.isInstant,
-      isFeatured: form.isFeatured,
-    })
-
-  const toggle = (k: 'isBestSeller' | 'isInstant' | 'isFeatured', label: string) => (
-    <label className="flex items-center gap-2 cursor-pointer text-sm text-slate-300">
-      <input
-        type="checkbox"
-        checked={form[k]}
-        onChange={(e) => set(k, e.target.checked)}
-        className="rounded border-slate-600 text-amber-500 focus:ring-amber-500 bg-slate-700"
-      />
-      {label}
-    </label>
-  )
+    form.title.trim() !== '' &&
+    form.description.trim() !== '' &&
+    form.deliveryTime.trim() !== '' &&
+    form.estimatedTime.trim() !== '' &&
+    priceOk &&
+    (isEdit || (form.gameId !== null && form.gameCategoryId !== null)) &&
+    !isSaving
 
   return (
-    <Modal isOpen onClose={onClose} title="Editar servicio" size="lg">
-      <div className="space-y-4">
-        <p className="text-xs text-slate-500">
-          {service.game.name} · {service.category.name} — mover de categoría sólo se permite
-          dentro del mismo juego, y aún no está en este formulario.
-        </p>
-
-        <div className="space-y-1.5">
-          <label className="text-sm text-slate-400">Título *</label>
-          <input className={inputCls} value={form.title} onChange={(e) => set('title', e.target.value)} />
-        </div>
-
-        <div className="space-y-1.5">
-          <label className="text-sm text-slate-400">Descripción</label>
-          <textarea
-            className={`${inputCls} h-20 resize-none`}
-            value={form.description}
-            onChange={(e) => set('description', e.target.value)}
-          />
-        </div>
-
-        <div className="grid sm:grid-cols-2 gap-4">
-          <div className="space-y-1.5">
-            <label className="text-sm text-slate-400">Precio base (USD) *</label>
-            <input
-              className={inputCls}
-              value={form.basePrice}
-              onChange={(e) => set('basePrice', e.target.value)}
-              inputMode="decimal"
-            />
-          </div>
-          <div className="space-y-1.5">
-            <label className="text-sm text-slate-400">Tipo de entrega</label>
-            <select
-              className={inputCls}
-              value={form.deliveryType}
-              onChange={(e) => set('deliveryType', e.target.value as DeliveryType)}
-            >
-              {DELIVERY.map((d) => <option key={d} value={d}>{d}</option>)}
-            </select>
-          </div>
-          <div className="space-y-1.5">
-            <label className="text-sm text-slate-400">Tiempo de entrega</label>
-            <input className={inputCls} value={form.deliveryTime} onChange={(e) => set('deliveryTime', e.target.value)} placeholder="45 min" />
-          </div>
-          <div className="space-y-1.5">
-            <label className="text-sm text-slate-400">Tiempo estimado</label>
-            <input className={inputCls} value={form.estimatedTime} onChange={(e) => set('estimatedTime', e.target.value)} placeholder="1-2 hours" />
-          </div>
-        </div>
-
-        <div className="space-y-1.5">
-          <label className="text-sm text-slate-400">Imagen (URL)</label>
-          <input className={inputCls} value={form.imageUrl} onChange={(e) => set('imageUrl', e.target.value)} />
-        </div>
-
-        <div className="flex flex-wrap gap-5 pt-1">
-          {toggle('isBestSeller', 'Best seller')}
-          {toggle('isInstant', 'Entrega instantánea')}
-          {toggle('isFeatured', 'Destacado')}
-        </div>
-
-        <div className="flex gap-3 pt-4">
-          <Button variant="secondary" className="flex-1" onClick={onClose} disabled={isSaving}>Cancelar</Button>
-          <Button className="flex-1" onClick={submit} disabled={!canSubmit}>
-            {isSaving ? 'Guardando…' : 'Guardar cambios'}
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={isEdit ? 'Editar servicio' : 'Nuevo servicio'}
+      size="lg"
+      footer={
+        <div className="flex gap-3">
+          <Button variant="secondary" className="flex-1" onClick={onClose} disabled={isSaving}>
+            Cancelar
+          </Button>
+          <Button className="flex-1" onClick={() => onSubmit(form)} disabled={!canSubmit}>
+            {isSaving ? 'Guardando…' : isEdit ? 'Guardar cambios' : 'Crear servicio'}
           </Button>
         </div>
+      }
+    >
+      <div className="space-y-4">
+        {isEdit ? (
+          <p className="text-xs text-slate-500">
+            {service.game.name} · {service.category.name} — mover de categoría sólo se
+            permite dentro del mismo juego, y aún no está en este formulario.
+          </p>
+        ) : (
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label className="text-sm text-slate-400">Juego *</label>
+              <GameFilter value={form.gameId} onChange={setGame} label="" />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-sm text-slate-400">Categoría *</label>
+              <CategorySelect
+                gameId={form.gameId}
+                value={form.gameCategoryId}
+                onChange={(id) => set('gameCategoryId', id)}
+                className={inputCls}
+              />
+            </div>
+          </div>
+        )}
+
+        <ServiceFormFields values={form} onChange={set} showActiveToggle={!isEdit} />
+
       </div>
     </Modal>
   )

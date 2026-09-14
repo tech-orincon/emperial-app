@@ -206,7 +206,19 @@ src/
 │   │   │   └── CategoryFormModal.tsx
 │   │   ├── services/
 │   │   │   ├── AdminServicesPage.tsx
-│   │   │   └── ServiceFormModal.tsx
+│   │   │   ├── ServiceFormModal.tsx
+│   │   │   ├── ServiceFormFields.tsx
+│   │   │   ├── service-form.types.ts
+│   │   │   └── detail/               # Sub-entidades de un servicio
+│   │   │       ├── AdminServiceDetailPage.tsx
+│   │   │       ├── useAdminServiceDetail.ts
+│   │   │       ├── SectionCard.tsx
+│   │   │       ├── OptionsSection.tsx      # Paquetes y add-ons (mismo componente)
+│   │   │       ├── OptionFormModal.tsx
+│   │   │       ├── FeaturesSection.tsx     # Reemplazo total
+│   │   │       ├── RequirementsSection.tsx # Reemplazo total
+│   │   │       ├── OffersSection.tsx
+│   │   │       └── OfferFormModal.tsx
 │   │   ├── reference/                # Paso 1 del onboarding
 │   │   │   ├── AdminReferencePage.tsx   # Pestañas países / zonas
 │   │   │   ├── CountriesTab.tsx
@@ -230,6 +242,7 @@ src/
 │   ├── orders.service.ts       # /orders
 │   ├── payments.service.ts     # /payments/intent
 │   ├── admin.service.ts        # /catalog/admin/* y escrituras de catálogo
+│   ├── admin-service-detail.service.ts  # opciones y ofertas de un servicio
 │   ├── provider.service.ts     # /provider/*
 │   └── chat.service.ts         # escritura de mensajes en Firestore
 │
@@ -239,6 +252,7 @@ src/
 │   ├── catalog.types.ts
 │   ├── orders.types.ts
 │   ├── admin.types.ts
+│   ├── admin-service-detail.types.ts
 │   ├── payments.types.ts
 │   └── provider.types.ts
 │
@@ -272,6 +286,7 @@ src/
 | `/admin/games` | `AdminGamesPage` | `RequireAdmin` (lazy) |
 | `/admin/categories` | `AdminCategoriesPage` | `RequireAdmin` (lazy) |
 | `/admin/services` | `AdminServicesPage` | `RequireAdmin` (lazy) |
+| `/admin/services/:id` | `AdminServiceDetailPage` (paquetes, add-ons, features, requisitos, ofertas) | `RequireAdmin` (lazy) |
 | `/admin/reference` | `AdminReferencePage` (países / zonas) | `RequireAdmin` (lazy) |
 | `/admin/games/:gameId/attributes` | `AdminGameAttributesPage` | `RequireAdmin` (lazy) |
 
@@ -329,6 +344,7 @@ verificado, así que no es spoofeable.
 | `GET /catalog/admin/categories?gameId=` (ADMIN) | backoffice — incluye inactivas y borradas |
 | `PATCH`/`DELETE /catalog/category/:id` (ADMIN) | backoffice — editar / soft delete |
 | `GET /catalog/admin/services?gameId=&categoryId=` (ADMIN) | backoffice — incluye inactivos y borrados |
+| `GET /catalog/admin/services/:id` (ADMIN) | detalle completo: opciones, features, requisitos y **todas** las ofertas con su id |
 | `PATCH`/`DELETE /catalog/service/:id` (ADMIN) | backoffice — editar / soft delete |
 | `POST /catalog/services/:id/options` (ADMIN) | crear paquete o add-on |
 | `PATCH`/`DELETE /catalog/service-option/:id` (ADMIN) | editar / soft delete |
@@ -359,6 +375,17 @@ verificado, así que no es spoofeable.
 - **Tras tocar el API hay que reconstruir el contenedor** (`docker compose up -d --build api`).
   Si un endpoint nuevo da 404 con token válido, es que el contenedor corre el build viejo.
 
+**Un servicio recién creado no se puede comprar.** `POST /catalog/service` sólo crea la
+fila: sin al menos un `ServiceOption` de tipo `PACKAGE`, el detalle público muestra
+`$0.00` y deja *Buy Now* deshabilitado (`ServiceSidebar` calcula desde `selectedPkg`, y
+`ServiceTabs` esconde "Select Tier" y "Add-ons" cuando las listas vienen vacías). El alta
+completa vive en `/admin/services/:id`, no en el formulario de creación.
+
+**Por qué hay un `GET /catalog/admin/services/:id` aparte del detalle público:** el
+público filtra las ofertas por vigencia y **no expone el `id` de la oferta**, así que
+desde ahí no se podrían editar ni borrar. El de admin devuelve todas — caducadas e
+inactivas — con sus ids.
+
 **Autorización:**
 - `RolesGuard` + `@Roles(UserRole.ADMIN)` protegen las escrituras de catálogo.
   Corre después del `PreauthMiddleware`, así que el header `uid` ya viene del token
@@ -368,6 +395,10 @@ verificado, así que no es spoofeable.
 - Las lecturas de admin van bajo **`/catalog/admin/*`**, no como flag en los endpoints
   públicos: `/catalog/games` está excluido del middleware para que naveguen los
   invitados, así que ahí no hay contexto de autenticación que autorizar.
+
+**El home sólo publica ofertas comprables.** `getHomeData()` filtra la oferta por
+`deletedAt: null` **y** por `service: { isActive: true, deletedAt: null }`. Sin lo
+segundo, retirar un servicio dejaba su oferta en la portada enlazando a un 404.
 
 **Semántica de borrado en el catálogo:**
 - `PATCH { isActive: false }` → lo saca del storefront, reversible, sin efectos en cascada.
@@ -384,7 +415,9 @@ verificado, así que no es spoofeable.
 - **Features y requisitos** se editan con `PUT` de **reemplazo total**, no con CRUD por
   elemento: son listas ordenadas de texto sin identidad ni referencias externas.
   Enviar `items: []` vacía la lista. En `PATCH /service-option/:id`, omitir `features`
-  deja la lista intacta; mandar `[]` la vacía.
+  deja la lista intacta; mandar `[]` la vacía. La UI (`OptionFormModal`) **siempre**
+  manda `features`, porque muestra la lista completa: omitirlo haría que borrar la
+  última fila no tuviera efecto.
 - Mover un servicio de categoría sólo se permite **dentro del mismo juego**.
 - **Países**: `DELETE` es soft y se niega si usuarios o providers lo referencian (son FKs).
   Para quitarlo del onboarding sin tocar a nadie, `status: DISABLED`.
@@ -408,6 +441,9 @@ Antes de hacerlas administrables hay que separar `value` de `label`.
 Para diagnosticar: comparar `MAX(id)` contra `last_value` de `<tabla>_id_seq`.
 
 **Notas de contrato que se rompen fácil:**
+- En `HomeOfferDto` (`GET /catalog/home`) **`id` es el id de la oferta, no el del
+  servicio**. Para enlazar a `/service/:id` usa **`serviceId`**. Confundirlos no da 404:
+  manda al cliente a otro producto cualquiera con ese id.
 - `GET /orders` **no pagina**: devuelve `{ data, total }`, sin `page`/`limit`.
 - `OrderDto.package` y `ProviderJobDto.package` pueden ser `null`.
 - Las acciones sobre jobs devuelven el `ProviderJobDto` actualizado, **no** `{ success }`.

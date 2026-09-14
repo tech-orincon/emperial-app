@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { ArrowRight, Lock, Gamepad2, Sword, Shield, Crosshair, Trophy, Zap, Star, Flame, Crown, Swords, Coins, Skull, Package } from 'lucide-react'
+import { ArrowRight, Lock, Gamepad2, Sword, Shield, Crosshair, Trophy, Zap, Star, Flame, Crown, Swords, Coins, Skull, Package, Pickaxe } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { GlassCard } from '../../../components/ui/GlassCard'
 import { Skeleton } from '../../../components/ui/Skeleton'
@@ -13,7 +13,7 @@ interface Props {
 
 const CATEGORY_ICONS: Record<string, LucideIcon> = {
   Sword, Shield, Crosshair, Trophy, Zap, Star, Flame, Crown,
-  Swords, Coins, Skull, Package, Gamepad2,
+  Swords, Coins, Skull, Package, Pickaxe, Gamepad2,
 }
 
 function CategoryIcon({ name }: { name: string | null | undefined }) {

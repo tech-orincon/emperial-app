@@ -2,7 +2,7 @@ import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import {
   ChevronRight, Gamepad2, Sword, Shield, Crosshair, Trophy,
-  Zap, Star, Target, Flame, Crown, Swords, Joystick, Dice5,
+  Zap, Star, Target, Flame, Crown, Swords, Joystick, Dice5, Pickaxe,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import type { HomeGame } from '../../../types/catalog.types'
@@ -11,7 +11,7 @@ import type { HomeGame } from '../../../types/catalog.types'
 // Add more entries here as needed when new games are created in the backend
 const GAME_ICONS: Record<string, LucideIcon> = {
   Sword, Shield, Crosshair, Trophy, Zap, Star, Target,
-  Flame, Crown, Swords, Joystick, Dice5, Gamepad2,
+  Flame, Crown, Swords, Joystick, Dice5, Pickaxe, Gamepad2,
 }
 
 function GameIcon({ name }: { name: string | null }) {

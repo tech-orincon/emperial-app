@@ -55,7 +55,10 @@ export interface HomeGame {
 export type OfferTag = 'BEST_VALUE' | 'POPULAR' | 'FLASH_SALE' | 'LIMITED';
 
 export interface HomeOffer {
+  /** Id de la oferta, NO del servicio: no sirve para enlazar */
   id: number;
+  /** Destino del enlace a `/service/:id` */
+  serviceId: number;
   title: string | null;
   description: string;
   imageUrl: string | null;
