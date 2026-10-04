@@ -1,5 +1,5 @@
-import { ListPlus, Pencil, Trash2 } from 'lucide-react'
-import { CONTROLS, formatAmount } from './config.types'
+import { ListPlus, Pencil, Ruler, Trash2 } from 'lucide-react'
+import { CONTROLS, formatAmount, isScaleControl } from './config.types'
 import type { ConfigGroup } from '../../../../../types/service-config.types'
 
 interface Props {
@@ -12,6 +12,10 @@ interface Props {
 }
 
 export function GroupCard({ group, triggerLabel, onEditOptions, onEdit, onDelete }: Props) {
+  const escala = isScaleControl(group.control)
+  const puntos = group.scalePoints ?? []
+  const recorrido = puntos.reduce((s, p) => s + parseFloat(p.stepPrice), 0)
+
   return (
     <div className="rounded-xl border border-white/10 bg-slate-900/40 p-3">
       <div className="flex items-start gap-3">
@@ -32,10 +36,10 @@ export function GroupCard({ group, triggerLabel, onEditOptions, onEdit, onDelete
         <div className="shrink-0 flex gap-1">
           <button
             onClick={onEditOptions}
-            title="Editar opciones"
+            title={escala ? 'Editar escala' : 'Editar opciones'}
             className="p-1.5 rounded text-slate-400 hover:text-amber-400 hover:bg-amber-500/10"
           >
-            <ListPlus className="w-4 h-4" />
+            {escala ? <Ruler className="w-4 h-4" /> : <ListPlus className="w-4 h-4" />}
           </button>
           <button
             onClick={onEdit}
@@ -54,7 +58,20 @@ export function GroupCard({ group, triggerLabel, onEditOptions, onEdit, onDelete
         </div>
       </div>
 
-      {group.options.length === 0 ? (
+      {escala ? (
+        puntos.length < 2 ? (
+          <p className="text-[11px] text-amber-400/80 mt-2">
+            Sin escala: este grupo no se muestra al cliente.
+          </p>
+        ) : (
+          <p className="text-[11px] text-slate-500 mt-2">
+            {puntos.length} puntos · {puntos[0].label ?? puntos[0].value} →{' '}
+            {puntos[puntos.length - 1].label ?? puntos[puntos.length - 1].value} · recorrido
+            completo <span className="text-amber-400">${recorrido.toFixed(2)}</span>
+            {puntos.some((p) => p.iconUrl) && ' · con emblemas'}
+          </p>
+        )
+      ) : group.options.length === 0 ? (
         <p className="text-[11px] text-amber-400/80 mt-2">
           Sin opciones: este grupo no se muestra al cliente.
         </p>
