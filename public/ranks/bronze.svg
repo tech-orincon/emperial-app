@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 110" width="120" height="110" role="img" aria-label="bronze">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#cd7f4d"/><stop offset="1" stop-color="#6b3d22"/>
+    </linearGradient>
+    <linearGradient id="w" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e8a877"/><stop offset="1" stop-color="#6b3d22"/>
+    </linearGradient>
+  </defs>
+  <!-- alas -->
+  <path d="M6 30 L34 22 L30 44 L54 34 L46 60 L26 58 Z" fill="url(#w)" opacity=".9"/>
+  <path d="M114 30 L86 22 L90 44 L66 34 L74 60 L94 58 Z" fill="url(#w)" opacity=".9"/>
+  <!-- escudo -->
+  <path d="M60 14 L88 30 L88 62 Q88 84 60 100 Q32 84 32 62 L32 30 Z" fill="url(#g)" stroke="#e8a877" stroke-width="2.5"/>
+  <!-- gema -->
+  <path d="M60 38 L74 54 L60 76 L46 54 Z" fill="#e8a877" opacity=".85"/>
+  <path d="M60 38 L74 54 L60 60 Z" fill="#ffffff" opacity=".35"/>
+</svg>

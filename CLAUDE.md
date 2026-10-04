@@ -103,6 +103,7 @@ src/
 ├── context/                   # React Context providers (estado global)
 │   ├── AuthContext.tsx         # Firebase session + perfil del backend, role, refreshProfile
 │   ├── CartContext.tsx         # Carrito, persistido en localStorage (key: "cart")
+│   ├── cart.utils.ts           # buildLineKey: identidad de una línea
 │   └── ChatContext.tsx         # Apertura del chat y canal activo
 │
 ├── features/                  # Módulos por feature
@@ -143,6 +144,14 @@ src/
 │   │   │   ├── useCatalog.ts            # categorías + servicios, con refetch
 │   │   │   ├── useServiceDetail.ts
 │   │   │   └── useServiceReviews.ts
+│   │   ├── configurator/               # Vitrina del configurador
+│   │   │   ├── useConfigurator.ts       # selección + tramos, cotización con debounce
+│   │   │   ├── ConfiguratorSidebar.tsx
+│   │   │   ├── ConfigGroupControl.tsx   # BUTTONS / DROPDOWN / SWITCH
+│   │   │   ├── ScaleControl.tsx         # RANGE (deslizadores) / FROM_TO
+│   │   │   ├── RankBanner.tsx           # estandarte con emblema
+│   │   │   └── ScalePickerModal.tsx     # rejilla de ligas a ancho completo
+│   │   ├── hooks/useAddToCart.ts        # las dos vías: paquete o configuración
 │   │   ├── CatalogPage.tsx
 │   │   └── ServiceDetailPage.tsx
 │   │
@@ -218,7 +227,15 @@ src/
 │   │   │       ├── FeaturesSection.tsx     # Reemplazo total
 │   │   │       ├── RequirementsSection.tsx # Reemplazo total
 │   │   │       ├── OffersSection.tsx
-│   │   │       └── OfferFormModal.tsx
+│   │   │       ├── OfferFormModal.tsx
+│   │   │       └── config/              # Configurador (grupos + modificadores)
+│   │   │           ├── ConfigSection.tsx
+│   │   │           ├── GroupCard.tsx
+│   │   │           ├── GroupFormModal.tsx
+│   │   │           ├── OptionsEditorModal.tsx
+│   │   │           ├── OptionRow.tsx
+│   │   │           ├── QuotePreview.tsx    # Réplica de lo que ve el cliente
+│   │   │           └── config.types.ts
 │   │   ├── reference/                # Paso 1 del onboarding
 │   │   │   ├── AdminReferencePage.tsx   # Pestañas países / zonas
 │   │   │   ├── CountriesTab.tsx
@@ -243,6 +260,7 @@ src/
 │   ├── payments.service.ts     # /payments/intent
 │   ├── admin.service.ts        # /catalog/admin/* y escrituras de catálogo
 │   ├── admin-service-detail.service.ts  # opciones y ofertas de un servicio
+│   ├── service-config.service.ts        # configurador y cotización
 │   ├── provider.service.ts     # /provider/*
 │   └── chat.service.ts         # escritura de mensajes en Firestore
 │
@@ -253,10 +271,12 @@ src/
 │   ├── orders.types.ts
 │   ├── admin.types.ts
 │   ├── admin-service-detail.types.ts
+│   ├── service-config.types.ts
 │   ├── payments.types.ts
 │   └── provider.types.ts
 │
 ├── lib/
+│   ├── configuratorSelection.ts # espejo en cliente de quote.engine (sin precios)
 │   ├── firebase.ts             # initializeApp, auth (localPersistence), firestore
 │   ├── firebaseErrors.ts       # códigos de Firebase → mensajes legibles
 │   └── stripe.ts               # loadStripe (una sola promesa por página)
@@ -298,7 +318,9 @@ Los guards viven en `App.tsx`. Son sólo UX — la autorización real la aplica 
 
 ### Customer
 1. **Catálogo** → selecciona juego → categoría → servicios
-2. **Detalle** → elige paquete → add-ons → precio (aplica `activeOffer` si existe)
+2. **Detalle** → dos vías según el servicio:
+   - **Paquetes**: elige tier → add-ons → precio (aplica `activeOffer` si existe)
+   - **Configurador**: grupos de opciones; el precio lo devuelve `POST /quote` en cada cambio
 3. **Carrito** (`CartContext`, localStorage) → **Checkout** → al pulsar Pagar: `POST /orders`
    por ítem y un único `POST /payments/intent` que las cubre todas
 4. **Cuenta** → historial de órdenes → detalle + chat con el provider
@@ -344,7 +366,11 @@ verificado, así que no es spoofeable.
 | `GET /catalog/admin/categories?gameId=` (ADMIN) | backoffice — incluye inactivas y borradas |
 | `PATCH`/`DELETE /catalog/category/:id` (ADMIN) | backoffice — editar / soft delete |
 | `GET /catalog/admin/services?gameId=&categoryId=` (ADMIN) | backoffice — incluye inactivos y borrados |
-| `GET /catalog/admin/services/:id` (ADMIN) | detalle completo: opciones, features, requisitos y **todas** las ofertas con su id |
+| `GET /catalog/admin/services/:id` (ADMIN) | detalle completo: opciones, features, requisitos, **todas** las ofertas y `configGroups` |
+| `GET /catalog/services/:id/config` | configurador + selección por defecto y su cotización (público) |
+| `POST /catalog/services/:id/quote` | cotiza una selección (público) |
+| `POST /catalog/services/:id/config-groups` · `PATCH`/`DELETE /catalog/config-group/:id` (ADMIN) | grupos del configurador |
+| `PUT /catalog/config-group/:id/options` (ADMIN) | **reemplazo total** de las opciones de un grupo |
 | `PATCH`/`DELETE /catalog/service/:id` (ADMIN) | backoffice — editar / soft delete |
 | `POST /catalog/services/:id/options` (ADMIN) | crear paquete o add-on |
 | `PATCH`/`DELETE /catalog/service-option/:id` (ADMIN) | editar / soft delete |
@@ -399,6 +425,110 @@ inactivas — con sus ids.
 **El home sólo publica ofertas comprables.** `getHomeData()` filtra la oferta por
 `deletedAt: null` **y** por `service: { isActive: true, deletedAt: null }`. Sin lo
 segundo, retirar un servicio dejaba su oferta en la portada enlazando a un 404.
+
+## Configurador de servicios
+
+Modelo **aditivo** junto a paquetes/add-ons: un servicio sin `ServiceConfigGroup`
+se sigue vendiendo como siempre. Con grupos, el precio se recalcula en cada elección.
+
+**El orden de aplicación es contrato, no detalle** (`domain/pricing/quote.engine.ts`).
+Queda congelado en las órdenes ya vendidas, así que cambiarlo rompe el histórico:
+
+1. `ABSOLUTE` fija la base — la última seleccionada gana, y las anteriores aportan **0**
+   al desglose (si no, parecería un cobro doble).
+2. `PERCENT` se **suman entre sí** y se aplican sobre esa base. No componen:
+   +30% y +20% dan +50%, no +56%.
+3. `FIXED` se suma al final.
+
+Con base 100, +30% y +10 → **140**, no 143. La suma del desglose siempre cuadra
+con el total; hay un test que lo fija.
+
+**El precio nunca llega del cliente.** `POST /catalog/services/:id/quote` lo calcula
+en el servidor, y la creación de órdenes reutilizará el mismo caso de uso.
+
+**Validaciones que no son opcionales** — son las que evitan el abuso:
+- Una opción de un grupo **no visible** se rechaza. Si no, el cliente elige la opción
+  barata de un grupo condicional, cambia el disparador, y se queda con ese precio
+  aunque el grupo ya no aplique.
+- Un grupo `isRequired` visible sin elección se rechaza; un `SWITCH` puede ir vacío.
+- Los ids duplicados se deduplican antes de calcular.
+
+**Visibilidad condicional**: `visibleWhenOptionId` apunta a una opción de *otro* grupo.
+Se resuelve en cascada (un grupo puede depender de otro condicional) e itera hasta
+punto fijo, con corte por si el admin configuró un ciclo. La FK es `ON DELETE SET NULL`,
+lo que volvería el grupo **siempre visible** — por eso `ManageConfigGroupsUseCase`
+se niega a borrar un grupo o reemplazar sus opciones mientras otro dependa de ellas.
+
+`/catalog/services/:id/config` y `/quote` están **excluidas del `PreauthMiddleware`**
+(el invitado configura antes de registrarse) y por eso no llevan `@Roles`.
+
+### Comprar una configuración
+
+`CartItem.packageId` es **`number | null`**: null marca una línea del configurador,
+que lleva `selection: number[]` en su lugar. La identidad de la línea es
+`lineKey` (`cart.utils.ts`), no `(serviceId, packageId)` — el mismo servicio puede
+ir dos veces con configuraciones distintas. Los carritos guardados antes de
+`lineKey` se descartan al cargar, en vez de dejar líneas imposibles de borrar.
+
+`POST /orders` acepta **`packageId` o `selection`, exactamente uno**; mandar los dos
+o ninguno es un 400. Con `selection`, el precio lo recalcula `QuoteServiceUseCase`
+(exportado por `CatalogModule`) y se guarda el desglose completo en
+`OrderConfigSelection`: etiquetas, tipo de regla, valor y dinero aportado. Sin ese
+snapshot no podrías atender una disputa tras cambiar los precios.
+
+**Al revelar un grupo obligatorio hay que rellenar su valor por defecto.** Elegir el
+disparador deja la selección incompleta y el backend responde
+`"<grupo> is required"`, con lo que la cotización vieja se queda congelada y el grupo
+nuevo nunca aparece. De eso se encarga `fillDefaults()` en
+`lib/configuratorSelection.ts`, que usan tanto la vitrina como la vista previa del
+admin. Los grupos visibles se derivan de la selección **local**, no del `quote`, para
+que aparezcan sin esperar al viaje de red.
+
+### Escalas: RANGE y FROM_TO
+
+Un grupo de escala no tiene opciones, tiene **puntos**. El precio de ir de A a B
+es la **suma de `stepPrice` de los puntos en [A, B)** — el último punto vale 0
+porque no hay salto después de él.
+
+Guardar saltos en vez de una matriz de pares es la diferencia entre **29 filas y
+435** para una escala de 30 rangos, y entre **89 y 4.005** para 90 niveles. Además
+es como tarifan los sitios del sector.
+
+El tramo **fija la base**, igual que un `ABSOLUTE`: los porcentajes actúan sobre él.
+
+**Validaciones propias**: `from < to` (un tramo vacío o invertido regalaría el
+servicio a $0), ambos valores dentro de la escala, y el grupo debe estar visible.
+
+**Presentación**: `ScalePoint.tier` agrupa puntos en una columna del selector
+("Bronze" cubre Bronze IV..I) e `iconUrl` es el emblema de esa columna. Un punto
+sin `tier` va solo — así salen Master y Grandmaster, que no tienen divisiones.
+Si la escala trae emblemas se pinta `RankBanner` + `ScalePickerModal`; si no,
+dos desplegables. Los SVG de ejemplo están en `public/ranks/`.
+
+**`Modal` se monta con `createPortal` en `<body>`.** Un ancestro con `transform`
+—cualquier `motion.div` de framer— convierte `position: fixed` en relativo a él y
+encierra el modal dentro de su columna. Le pasó al selector de ligas dentro del
+sidebar animado.
+
+**Dos reglas que parecen cosméticas y causan parpadeos al abrir un modal:**
+
+1. **No estilizar la barra de scroll del documento.** `::-webkit-scrollbar { width }`
+   convierte la barra flotante de macOS en una clásica que ocupa layout. Al bloquear
+   el scroll esos 8px desaparecen y la página entera se reajusta; como el contenido
+   vive dentro de un `motion.div` (capa de composición), el reajuste la repinta
+   entera. Medido: 8px de reflujo con la regla, 0px sin ella. Para contenedores con
+   scroll propio existe la clase `.custom-scrollbar`.
+2. **El panel sale antes que el velo** (`PANEL_EXIT` 90ms, `BACKDROP_EXIT` 200ms con
+   50ms de retardo). Si se desvanecen a la vez, a mitad del cierre el velo ya no
+   separa y el panel medio transparente queda superpuesto sobre lo que hay debajo:
+   se ven las dos UIs mezcladas durante ~3 fotogramas. Con el escalonado, el panel
+   llega a 0 mientras el velo sigue al 62%.
+3. **El fondo del modal no lleva `backdrop-filter`.** Estrenar una capa así obliga a
+   rehacer el *backdrop root*, y todo lo que queda debajo con `backdrop-filter`
+   —`GlassCard` usa `backdrop-blur-xl`, el navbar `backdrop-blur-lg`— se vuelve a
+   rasterizar y se pinta transparente durante un fotograma. El síntoma era que la
+   tarjeta del sidebar desaparecía un instante. El tinte `bg-black/70` oscurece igual
+   sin crear la capa.
 
 **Semántica de borrado en el catálogo:**
 - `PATCH { isActive: false }` → lo saca del storefront, reversible, sin efectos en cascada.

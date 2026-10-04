@@ -18,22 +18,40 @@
     background-color: #0f172a;
     color: #f8fafc;
   }
+  /* Al abrir un modal se oculta el scroll y la barra desaparece, ensanchando
+     el viewport 8px. Se compensa con el mismo ancho: en el body para el
+     contenido normal, y en el chrome `fixed`, que ignora el padding del body
+     porque se posiciona respecto al viewport. */
+  body.modal-open {
+    padding-right: var(--scrollbar-w, 0px);
+  }
+  body.modal-open nav[class*='fixed'] {
+    padding-right: var(--scrollbar-w, 0px);
+  }
+
   body {
     @apply font-sans antialiased;
   }
 }
 /* Custom Scrollbar */
-::-webkit-scrollbar {
+/* OJO: no estilizar la barra del documento.
+   `::-webkit-scrollbar { width }` convierte la barra flotante de macOS en una
+   clásica que ocupa 8px de layout. Al abrir un modal se oculta el scroll, esos
+   8px desaparecen y TODA la página se reajusta; como el contenido vive dentro
+   de un motion.div (capa de composición), el reajuste la repinta entera y se
+   ve como un parpadeo. Medido: 8px de reflujo con la regla, 0px sin ella.
+   Para contenedores internos con scroll propio, usa `.custom-scrollbar`. */
+.custom-scrollbar::-webkit-scrollbar {
   width: 8px;
 }
-::-webkit-scrollbar-track {
+.custom-scrollbar::-webkit-scrollbar-track {
   background: #0f172a;
 }
-::-webkit-scrollbar-thumb {
+.custom-scrollbar::-webkit-scrollbar-thumb {
   background: #334155;
   border-radius: 4px;
 }
-::-webkit-scrollbar-thumb:hover {
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #475569;
 }
 /* Hide scrollbar for horizontal scroll containers */
