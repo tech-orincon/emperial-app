@@ -4,18 +4,22 @@ import { Button } from '../../../../../components/ui/Button'
 import { SectionCard } from '../SectionCard'
 import { GroupFormModal } from './GroupFormModal'
 import { OptionsEditorModal } from './OptionsEditorModal'
+import { ScaleEditorModal } from './ScaleEditorModal'
+import { isScaleControl } from './config.types'
 import { QuotePreview } from './QuotePreview'
 import { GroupCard } from './GroupCard'
 import {
   createConfigGroup,
   deleteConfigGroup,
   replaceConfigOptions,
+  replaceScalePoints,
   updateConfigGroup,
 } from '../../../../../services/service-config.service'
 import type {
   ConfigGroup,
   ConfigOptionInput,
   CreateConfigGroupPayload,
+  ScalePointInput,
 } from '../../../../../types/service-config.types'
 
 interface Props {
@@ -28,6 +32,7 @@ export function ConfigSection({ serviceId, groups, mutate }: Props) {
   const [editingGroup, setEditingGroup] = useState<ConfigGroup | null>(null)
   const [groupOpen, setGroupOpen] = useState(false)
   const [optionsFor, setOptionsFor] = useState<ConfigGroup | null>(null)
+  const [scaleFor, setScaleFor] = useState<ConfigGroup | null>(null)
   const [showPreview, setShowPreview] = useState(false)
   const [revision, setRevision] = useState(0)
 
@@ -57,6 +62,16 @@ export function ConfigSection({ serviceId, groups, mutate }: Props) {
       () => replaceConfigOptions(group.id, items),
       'Opciones guardadas',
       'No se pudieron guardar',
+    ).then(bump)
+  }
+
+  const submitScale = async (items: ScalePointInput[]) => {
+    const group = scaleFor
+    if (!group) return false
+    return mutate(
+      () => replaceScalePoints(group.id, items),
+      'Escala guardada',
+      'No se pudo guardar la escala',
     ).then(bump)
   }
 
@@ -109,7 +124,9 @@ export function ConfigSection({ serviceId, groups, mutate }: Props) {
               key={group.id}
               group={group}
               triggerLabel={labelOfTrigger(group.visibleWhenOptionId)}
-              onEditOptions={() => setOptionsFor(group)}
+              onEditOptions={() =>
+                isScaleControl(group.control) ? setScaleFor(group) : setOptionsFor(group)
+              }
               onEdit={() => {
                 setEditingGroup(group)
                 setGroupOpen(true)
@@ -138,6 +155,12 @@ export function ConfigSection({ serviceId, groups, mutate }: Props) {
         group={optionsFor}
         onClose={() => setOptionsFor(null)}
         onSubmit={submitOptions}
+      />
+      <ScaleEditorModal
+        isOpen={scaleFor !== null}
+        group={scaleFor}
+        onClose={() => setScaleFor(null)}
+        onSubmit={submitScale}
       />
     </SectionCard>
   )

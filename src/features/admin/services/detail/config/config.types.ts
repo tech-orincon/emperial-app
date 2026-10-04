@@ -4,7 +4,13 @@ export const CONTROLS: { value: ConfigControl; label: string; hint: string }[] =
   { value: 'BUTTONS', label: 'Botones', hint: 'Excluyente: exactamente una' },
   { value: 'DROPDOWN', label: 'Desplegable', hint: 'Excluyente: exactamente una' },
   { value: 'SWITCH', label: 'Interruptor', hint: 'Opcional: ninguna o una' },
+  { value: 'FROM_TO', label: 'Escala con etiquetas', hint: 'Origen → destino (ligas)' },
+  { value: 'RANGE', label: 'Escala numérica', hint: 'Dos deslizadores (niveles)' },
 ]
+
+/** Los grupos de escala no tienen opciones: tienen puntos */
+export const SCALE_CONTROLS: ConfigControl[] = ['RANGE', 'FROM_TO']
+export const isScaleControl = (c: ConfigControl) => SCALE_CONTROLS.includes(c)
 
 export const PRICE_KINDS: { value: PriceKind; label: string; hint: string }[] = [
   { value: 'ABSOLUTE', label: 'Fija el precio', hint: 'Sustituye la base (ej. 114.99)' },

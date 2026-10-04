@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Modal } from '../../../../../components/ui/Modal'
 import { Button } from '../../../../../components/ui/Button'
 import { inputCls } from '../../service-form.types'
-import { CONTROLS } from './config.types'
+import { CONTROLS, isScaleControl } from './config.types'
 import type {
   ConfigControl,
   ConfigGroup,
@@ -25,6 +25,7 @@ export function GroupFormModal({ isOpen, group, allGroups, onClose, onSubmit }: 
   const [isRequired, setIsRequired] = useState(true)
   const [displayOrder, setDisplayOrder] = useState('0')
   const [trigger, setTrigger] = useState<string>('')
+  const [scaleUnit, setScaleUnit] = useState('')
   const [isSaving, setIsSaving] = useState(false)
 
   useEffect(() => {
@@ -34,6 +35,7 @@ export function GroupFormModal({ isOpen, group, allGroups, onClose, onSubmit }: 
     setIsRequired(group?.isRequired ?? true)
     setDisplayOrder(String(group?.displayOrder ?? allGroups.length))
     setTrigger(group?.visibleWhenOptionId ? String(group.visibleWhenOptionId) : '')
+    setScaleUnit(group?.scaleUnit ?? '')
     setIsSaving(false)
   }, [isOpen, group, allGroups.length])
 
@@ -49,6 +51,7 @@ export function GroupFormModal({ isOpen, group, allGroups, onClose, onSubmit }: 
       isRequired,
       displayOrder: parseInt(displayOrder, 10) || 0,
       visibleWhenOptionId: trigger ? Number(trigger) : null,
+      scaleUnit: isScaleControl(control) ? scaleUnit.trim() || null : null,
     })
     setIsSaving(false)
     if (ok) onClose()
@@ -101,6 +104,22 @@ export function GroupFormModal({ isOpen, group, allGroups, onClose, onSubmit }: 
             ))}
           </div>
         </div>
+
+        {isScaleControl(control) && (
+          <div>
+            <label className="block text-xs text-slate-400 mb-1.5">Unidad de la escala</label>
+            <input
+              className={inputCls}
+              value={scaleUnit}
+              onChange={(e) => setScaleUnit(e.target.value)}
+              placeholder={control === 'FROM_TO' ? 'división' : 'nivel'}
+            />
+            <p className="text-[11px] text-slate-500 mt-1.5">
+              Los puntos de la escala se cargan aparte, con el botón de la regla en la tarjeta
+              del grupo.
+            </p>
+          </div>
+        )}
 
         <div className="grid sm:grid-cols-2 gap-4 items-end">
           <div>
