@@ -45,6 +45,8 @@ export interface OrderDto {
   /** null si la orden no tiene opción de tipo PACKAGE */
   package: OrderItemSnapshot | null
   addons: OrderItemSnapshot[]
+  /** Desglose del configurador; vacío si se compró por paquete */
+  configuration: OrderConfigLine[]
   provider: OrderProviderSnapshot | null
 }
 
@@ -56,6 +58,19 @@ export interface OrdersResponse {
 
 export interface CreateOrderRequest {
   serviceId: number
-  packageId: number
-  addonIds: number[]
+  /** Exactamente uno de packageId o selection; el backend rechaza ambos o ninguno */
+  packageId?: number
+  /** Opciones del configurador. El precio lo recalcula el servidor. */
+  selection?: number[]
+  /** Tramos de los grupos de escala; acompaña a `selection` */
+  ranges?: { groupId: number; from: number; to: number }[]
+  addonIds?: number[]
+}
+
+/** Línea del desglose del configurador, congelada al comprar */
+export interface OrderConfigLine {
+  groupLabel: string
+  label: string
+  kind: 'ABSOLUTE' | 'PERCENT' | 'FIXED'
+  amount: string
 }

@@ -44,6 +44,8 @@ export interface AdminOffer {
   tag: OfferTag | null
 }
 
+import type { ConfigGroup } from './service-config.types'
+
 export interface AdminServiceDetail {
   id: number
   title: string
@@ -57,6 +59,8 @@ export interface AdminServiceDetail {
   requirements: AdminRequirement[]
   /** Incluye caducadas e inactivas */
   offers: AdminOffer[]
+  /** Vacío si el servicio se vende por paquetes */
+  configGroups: ConfigGroup[]
 }
 
 // ─── Payloads ─────────────────────────────────────────────────────────────────

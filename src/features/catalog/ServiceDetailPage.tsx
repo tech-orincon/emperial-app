@@ -10,9 +10,11 @@ import { ServiceLoadingSkeleton } from './components/ServiceLoadingSkeleton'
 import { ServiceUnavailableView } from './components/ServiceUnavailableView'
 import { ServiceTabs } from './components/ServiceTabs'
 import { ServiceSidebar } from './components/ServiceSidebar'
+import { ConfiguratorSidebar } from './configurator/ConfiguratorSidebar'
+import { useConfigurator } from './configurator/useConfigurator'
 import { useServiceDetail } from './hooks/useServiceDetail'
 import { useServiceReviews } from './hooks/useServiceReviews'
-import { useCart } from '../../context/CartContext'
+import { useAddToCart } from './hooks/useAddToCart'
 
 type PageState = 'loading' | 'success' | 'error' | 'unavailable'
 
@@ -34,8 +36,9 @@ export function ServiceDetailPage() {
   const [selectedAddonIds, setSelectedAddonIds] = useState<number[]>([])
   const [reviewPage] = useState(1)
 
-  const { addItem } = useCart()
   const { data: service, isLoading, error, retry } = useServiceDetail(id)
+  const cfg = useConfigurator(service?.id)
+  const { buyPackage, buyConfigured } = useAddToCart(service)
   const { data: reviews, isLoading: isLoadingReviews } = useServiceReviews(
     activeTab === 'reviews' ? id : undefined,
     reviewPage,
@@ -65,39 +68,6 @@ export function ServiceDetailPage() {
     )
   }
 
-  const handleBuyNow = () => {
-    if (!service || selectedPackageId === null) return
-    const pkg = service.packages.find((p) => p.id === selectedPackageId) ?? service.packages[0]
-    const pkgPrice = parseFloat(pkg.price)
-    const discountedBase = service.activeOffer?.discountPct
-      ? pkgPrice * (1 - service.activeOffer.discountPct / 100)
-      : pkgPrice
-    const discountMultiplier = service.activeOffer?.discountPct
-      ? (1 - service.activeOffer.discountPct / 100)
-      : 1
-    const addonsTotal = selectedAddonIds.reduce((sum, addonId) => {
-      const addon = service.addons.find((a) => a.id === addonId)
-      return sum + (addon ? parseFloat(addon.price) * discountMultiplier : 0)
-    }, 0)
-
-    addItem({
-      serviceId: service.id,
-      serviceTitle: service.title,
-      imageUrl: service.imageUrl,
-      packageId: pkg.id,
-      packageName: pkg.name,
-      packagePrice: pkg.price,
-      addonIds: selectedAddonIds,
-      addonDetails: selectedAddonIds.map((addonId) => {
-        const a = service.addons.find((x) => x.id === addonId)!
-        return { id: a.id, name: a.name, price: a.price }
-      }),
-      discountPct: service.activeOffer?.discountPct ?? null,
-      totalPrice: discountedBase + addonsTotal,
-      quantity: 1,
-    })
-    navigate('/checkout')
-  }
 
   const handleRetry = () => {
     toast.dismiss()
@@ -210,16 +180,30 @@ export function ServiceDetailPage() {
                     />
                   </div>
                   <div>
-                    <ServiceSidebar
-                      packages={service.packages}
-                      addons={service.addons}
-                      activeOffer={service.activeOffer}
-                      selectedPackageId={selectedPackageId}
-                      setSelectedPackageId={setSelectedPackageId}
-                      selectedAddonIds={selectedAddonIds}
-                      toggleAddon={toggleAddon}
-                      onBuyNow={handleBuyNow}
-                    />
+                    {cfg.hasConfigurator ? (
+                      <ConfiguratorSidebar
+                        groups={cfg.groups}
+                        selected={cfg.selected}
+                        ranges={cfg.ranges}
+                        quote={cfg.quote}
+                        isQuoting={cfg.isQuoting}
+                        error={cfg.error}
+                        onPick={cfg.pick}
+                        onRange={cfg.setRange}
+                        onBuyNow={() => buyConfigured(cfg.selected, cfg.ranges, cfg.quote)}
+                      />
+                    ) : (
+                      <ServiceSidebar
+                        packages={service.packages}
+                        addons={service.addons}
+                        activeOffer={service.activeOffer}
+                        selectedPackageId={selectedPackageId}
+                        setSelectedPackageId={setSelectedPackageId}
+                        selectedAddonIds={selectedAddonIds}
+                        toggleAddon={toggleAddon}
+                        onBuyNow={() => buyPackage(selectedPackageId, selectedAddonIds)}
+                      />
+                    )}
                   </div>
                 </div>
               </motion.div>

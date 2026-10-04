@@ -8,6 +8,7 @@ import { OptionsSection } from './OptionsSection'
 import { FeaturesSection } from './FeaturesSection'
 import { RequirementsSection } from './RequirementsSection'
 import { OffersSection } from './OffersSection'
+import { ConfigSection } from './config/ConfigSection'
 
 export function AdminServiceDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -34,7 +35,8 @@ export function AdminServiceDetailPage() {
     )
   }
 
-  const hasNoPackages = detail.packages.length === 0
+  // Con configurador el precio ya no sale de los paquetes
+  const hasNoPackages = detail.packages.length === 0 && detail.configGroups.length === 0
 
   return (
     <AdminLayout
@@ -72,6 +74,7 @@ export function AdminServiceDetailPage() {
           </div>
         )}
 
+        <ConfigSection serviceId={detail.id} groups={detail.configGroups} mutate={mutate} />
         <OptionsSection serviceId={detail.id} type="PACKAGE" options={detail.packages} mutate={mutate} />
         <OptionsSection serviceId={detail.id} type="ADDON" options={detail.addons} mutate={mutate} />
         <FeaturesSection serviceId={detail.id} features={detail.features} mutate={mutate} />

@@ -61,7 +61,11 @@ export function useCheckout() {
       items.map((item) =>
         createOrder({
           serviceId: item.serviceId,
-          packageId: item.packageId,
+          // Una línea del configurador no lleva packageId: manda `selection`.
+          // El backend exige exactamente una de las dos vías.
+          ...(item.packageId !== null
+            ? { packageId: item.packageId }
+            : { selection: item.selection ?? [], ranges: item.ranges ?? [] }),
           addonIds: item.addonIds,
         }),
       ),

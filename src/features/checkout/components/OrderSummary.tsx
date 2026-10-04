@@ -38,7 +38,7 @@ export function OrderSummary({ paymentState, onPay }: Props) {
 
       <div className="space-y-4 mb-6">
         {items.map((item) => (
-          <div key={`${item.serviceId}-${item.packageId}`} className="pb-4 border-b border-white/10 last:border-0">
+          <div key={item.lineKey} className="pb-4 border-b border-white/10 last:border-0">
             <div className="flex items-start gap-3">
               {item.imageUrl
                 ? <img src={item.imageUrl} alt={item.serviceTitle} className="w-14 h-14 rounded-lg object-cover shrink-0" />
@@ -46,10 +46,12 @@ export function OrderSummary({ paymentState, onPay }: Props) {
               }
               <div className="flex-1 min-w-0">
                 <h4 className="font-bold text-white text-sm leading-tight truncate">{item.serviceTitle}</h4>
-                <p className="text-slate-400 text-xs mt-0.5">{item.packageName} Package</p>
+                <p className="text-slate-400 text-xs mt-0.5">
+                  {item.packageId === null ? 'Configurado a medida' : `${item.packageName} Package`}
+                </p>
               </div>
               <button
-                onClick={() => removeItem(item.serviceId, item.packageId)}
+                onClick={() => removeItem(item.lineKey)}
                 className="text-slate-600 hover:text-red-400 transition-colors shrink-0 ml-1"
               >
                 <Trash2 className="w-4 h-4" />
@@ -57,6 +59,14 @@ export function OrderSummary({ paymentState, onPay }: Props) {
             </div>
 
             <div className="mt-3 space-y-1.5 text-sm">
+              {item.packageId === null ? (
+                (item.configLines ?? []).map((l, i) => (
+                  <div key={i} className="flex justify-between">
+                    <span className="text-slate-400 truncate mr-2">{l.label}</span>
+                    <span className="text-white shrink-0">${l.amount}</span>
+                  </div>
+                ))
+              ) : (
               <div className="flex justify-between">
                 <span className="text-slate-400">{item.packageName}</span>
                 <span className="text-white">
@@ -66,6 +76,7 @@ export function OrderSummary({ paymentState, onPay }: Props) {
                   }
                 </span>
               </div>
+              )}
               {item.addonDetails.map((addon) => (
                 <div key={addon.id} className="flex justify-between">
                   <span className="text-slate-400 truncate mr-2">+ {addon.name}</span>
